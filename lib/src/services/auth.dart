@@ -55,9 +55,37 @@ class AuthService {
     UserCredential userCredential = await confirmationResult.confirm(verificationCode);
   }
 
-//sign in email password
+  //sign in email password
+  Future<void> signOut() async {
+    try {
+      await _auth.signOut();
+    }catch (e) {
+      print(e);
+    }
+  }
 
-//register phone
-
-//register email password
+  //register phone
+  Future registerEmailAndPassword(String email, String password) async {
+    Custom.User _user;
+    try {
+      UserCredential credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      User user = credential.user;
+      _user = _userFromFirebaseUser(user);
+    } catch (e) {
+      print(e);
+    }
+    return _user;
+  }
+  //register email password
+  Future signInWithEmailAndPassword(String email, String password) async {
+    Custom.User _user;
+    try {
+      UserCredential credential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      User user = credential.user;
+      _user = _userFromFirebaseUser(user);
+    } catch (e) {
+      print(e);
+    }
+    return _user;
+  }
 }

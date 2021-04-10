@@ -15,28 +15,26 @@ class MyApp extends StatelessWidget {
   final Future<FirebaseApp> _fbApp = Firebase.initializeApp();
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<User>.value(
-      value: AuthService().user,
-      initialData: null,
-      child: MaterialApp(
-        theme: ThemeData(fontFamily: 'Poppins'),
-        home: FutureBuilder(
-          future: _fbApp,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              print('You have an error! ${snapshot.error.toString()}');
-              return Text('Something went wrong',
-                  style: TextStyle(fontFamily: 'PoppinsBold'));
-            } else if (snapshot.hasData) {
-              return Wrapper();
-            } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
-        ),
-      ),
+    return FutureBuilder(
+      future: _fbApp,
+      builder: (context, snapshot){
+        if(snapshot.hasError) {
+          print('You have an error! ${snapshot.error.toString()}');
+          return Text('Something went wrong');
+        }else if(snapshot.hasData) {
+          return StreamProvider<User>.value(
+            value: AuthService().user,
+            initialData: User(name: '', uid: ''),
+            child: MaterialApp(
+              home: Wrapper(),
+            ),
+          );
+        }else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
     );
   }
 }

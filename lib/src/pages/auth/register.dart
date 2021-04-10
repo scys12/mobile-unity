@@ -71,7 +71,7 @@ class _RegisterState extends State<Register> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                      'Sudah Punya Akun FinApp?'
+                      'Sudah Punya Akun AturUang?'
                   ),
                   TextButton(
                     onPressed: ()=>widget.toggleView(),

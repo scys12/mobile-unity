@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mobile_unity/src/models/user.dart' as Custom;
+import 'package:mobile_unity/src/services/parent_database.dart';
 
 class AuthService {
   final FirebaseAuth _auth =  FirebaseAuth.instance;
@@ -70,6 +71,7 @@ class AuthService {
     try {
       UserCredential credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User user = credential.user;
+      await ParentDatabase(uid: user.uid).updateParentData('', 0, '');
       _user = _userFromFirebaseUser(user);
     } catch (e) {
       print(e);

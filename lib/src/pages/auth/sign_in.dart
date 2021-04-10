@@ -73,7 +73,7 @@ class _SignInState extends State<SignIn> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                      'Belum punya akun FinApp?'
+                      'Belum punya akun AturUang?'
                   ),
                   TextButton(
                     onPressed: ()=> widget.toggleView(),

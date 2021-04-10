@@ -23,107 +23,128 @@ class _DashboardParentState extends State<DashboardParent> {
       body: ListView(
         physics: ClampingScrollPhysics(),
         children: [
-          Container(
-            child: Stack(
-              children: [
-                Image.asset('assets/images/header.png'),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
+          Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(60.0),bottomRight: Radius.circular(60.0)),
+                ),
+                margin: EdgeInsets.only(bottom: 50),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 30.0, bottom: 50.0, left: 20.0, right: 20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.account_circle,
-                              size: 50.0,
-                              color: Colors.white,
-                            ),
-                            SizedBox(width: 15,),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Selamat Datang,',
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.account_circle,
+                            size: 50.0,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 15,),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Selamat Datang,',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 1.0,
+                                  fontSize: 20.0,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              TextButton(
+                                child: Text(
+                                  'Lengkapi Profile',
                                   style: TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w500,
-                                    letterSpacing: 1.0,
-                                    fontSize: 20.0,
-                                    color: Colors.white,
+                                      fontWeight: FontWeight.w700
                                   ),
                                 ),
-                                TextButton(
-                                  child: Text(
-                                    'Lengkapi Profile',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w700
-                                    ),
-                                  ),
-                                  style: TextButton.styleFrom(
-                                      backgroundColor: Colors.white,
-                                      primary: primaryColor,
-                                      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0)
-                                  ),
-                                  onPressed: () async {
-                                  },
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
+                                style: TextButton.styleFrom(
+
+                                    backgroundColor: Colors.white,
+                                    primary: primaryColor,
+                                    padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0)
+                                ),
+                                onPressed: () async {
+                                },
+                              )
+                            ],
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 15.0,),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: thirdColor,
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 35.0),
-                        margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                        child:  Stack(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                            Icons.account_box_outlined
-                                        ),
-                                        SizedBox(width: 10.0,),
-                                        Text(
-                                          'Tambahkan Anak',
-                                          style: TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontWeight: FontWeight.w500,
-                                            letterSpacing: 1.0,
-                                            fontSize: 15.0,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.keyboard_arrow_down,
-                                    size: 30.0,
-                                    color: Colors.black,
-                                  )
-                                ],
-                              ),
-                            ]
-                        ),
-                      )
+
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              Positioned(
+                top: 120 ,
+                left: 0,
+                right: 0,
+                child:  Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20.0),
+                  child: TextButton(
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        thirdColor,
+                      ),
+                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0)
+                      ),
+                    ),
+                    onPressed: _addChildButtonPressed,
+                    child:  Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.account_box_outlined,
+                                      color: Colors.black,
+                                    ),
+                                    SizedBox(width: 10.0,),
+                                    Text(
+                                      'Tambahkan Anak',
+                                      style: TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: .5,
+                                        fontSize: 17.0,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Icon(
+                                Icons.keyboard_arrow_down,
+                                size: 30.0,
+                                color: Colors.black,
+                              )
+                            ],
+                          ),
+                        ]
+                    ),
+                  ),
+                ),
+              )
+            ],
           ),
+          SizedBox(height: 10.0,),
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
@@ -272,5 +293,83 @@ class _DashboardParentState extends State<DashboardParent> {
           .toList(),
       ),
     );
+  }
+
+  void _addChildButtonPressed(){
+    showModalBottomSheet(context: context, builder: (context) {
+      return Container(
+        color: Color(0XFF737373),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+                topLeft: const Radius.circular(20),
+                topRight: const Radius.circular(20)
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.account_circle),
+                  title: Text(
+                    'Nama anak',
+                    style: TextStyle(
+                      fontFamily: "Poppins",
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.check_box,
+                    color: primaryColor,
+                  ),
+                  onTap: () {},
+                ),
+                ElevatedButton(
+                  onPressed: (){},
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                    ),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0)
+                      ),
+                    ),
+                    elevation: MaterialStateProperty.all<double>(
+                      0.0
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      primaryColor
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.add,
+                      ),
+                      SizedBox(width: 15.0,),
+                      Text(
+                        "Tambahkan anak",
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 17.0,
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    });
   }
 }

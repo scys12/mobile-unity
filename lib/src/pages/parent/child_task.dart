@@ -20,7 +20,7 @@ class _ChildTaskState extends State<ChildTask> {
           physics: ClampingScrollPhysics(),
           children: [
             SizedBox(height: 25.0,),
-            _buildHeader(),
+            _buildHeader(context),
             SizedBox(height: 25.0,),
             SubHeader(title: 'Tugas'),
             Row(
@@ -51,8 +51,94 @@ class _ChildTaskState extends State<ChildTask> {
             ),
             SizedBox(height: 25.0,),
             SubHeader(title: 'Impian'),
+            _buildImpian(),
+            SizedBox(height: 15.0,),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildImpian(){
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+          boxShadow: [
+            BoxShadow(
+                color: shadowColor,
+                blurRadius: 8,
+                spreadRadius: 0,
+                offset: Offset(1.0, 3.0)
+            )
+          ]
+      ),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                Icons.nights_stay_rounded,
+                color: primaryColor,
+                size: 30.0,
+              ),
+              SizedBox(width: 10,),
+              Expanded(
+                child: Text(
+                  'Berhasil menyelesaikan tugas abcdeffsdfasdfaskl',
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15.0,
+                      color: Colors.black
+                  ),
+                ),
+              ),
+              Text(
+                "30 tahun lagi",
+                style: TextStyle(
+                    color: shadowColor,
+                    fontFamily: "Poppins",
+                    fontWeight: FontWeight.w600
+                ),
+              )
+            ],
+          ),
+          SizedBox(height: 12.0,),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10.0),
+            child: LinearProgressIndicator(
+              minHeight: 5.0,
+              backgroundColor: thirdColor,
+              valueColor: AlwaysStoppedAnimation<Color>(secondaryColor),
+              value: .5,
+            ),
+          ),
+          SizedBox(height: 8.0,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Rp 40000",
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Poppins',
+                    fontSize: 13.0
+                ),
+              ),
+              Text(
+                "Rp 100000",
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Poppins',
+                    fontSize: 13.0
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -131,7 +217,7 @@ class _ChildTaskState extends State<ChildTask> {
     );
   }
 
-  Widget _buildHeader(){
+  Widget _buildHeader(BuildContext context){
     return Container(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -165,10 +251,112 @@ class _ChildTaskState extends State<ChildTask> {
               color: secondaryColor,
               splashRadius: 30.0,
               iconSize: 50.0,
-              onPressed: () {},
+              onPressed: () => createAlertDialog(context),
             )
           ],
         )
     );
+  }
+  
+  createAlertDialog(BuildContext context){
+    return showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Tambahkan",
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 17.0
+              ),
+            ),
+            SizedBox(height: 20.0,),
+            ElevatedButton(
+              onPressed: (){
+                Navigator.pushNamed(context, '/parent/add_child');
+              },
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                  EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                ),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0)
+                  ),
+                ),
+                elevation: MaterialStateProperty.all<double>(
+                    0.0
+                ),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    primaryColor
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add,
+                  ),
+                  SizedBox(width: 15.0,),
+                  Text(
+                    "Edukasi Baru",
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 17.0,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(height: 10.0,),
+            ElevatedButton(
+              onPressed: (){
+                Navigator.pushNamed(context, '/parent/add_child');
+              },
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                  EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                ),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0)
+                  ),
+                ),
+                elevation: MaterialStateProperty.all<double>(
+                    0.0
+                ),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    primaryColor
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add,
+                  ),
+                  SizedBox(width: 15.0,),
+                  Text(
+                    "Tugas Baru",
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 17.0,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 }

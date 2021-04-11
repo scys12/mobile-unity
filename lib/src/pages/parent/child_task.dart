@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
@@ -14,47 +15,45 @@ class _ChildTaskState extends State<ChildTask> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(false, "Tugas"),
-      body: Container(
+      body: ListView(
         padding: EdgeInsets.symmetric(horizontal: 20.0),
-        child: ListView(
-          physics: ClampingScrollPhysics(),
-          children: [
-            SizedBox(height: 25.0,),
-            _buildHeader(context),
-            SizedBox(height: 25.0,),
-            SubHeader(title: 'Tugas'),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
+        physics: ClampingScrollPhysics(),
+        children: [
+          SizedBox(height: 25.0,),
+          _buildHeader(context),
+          SizedBox(height: 25.0,),
+          SubHeader(title: 'Tugas', isLihatSemua: true, path: '/parent/all_tasks'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
                   child: _buildCard()
-                ),
-                SizedBox(width: 15.0,),
-                Expanded(
-                  child: _buildCard(),
-                ),
-              ],
-            ),
-            SizedBox(height: 25.0,),
-            SubHeader(title: 'Edukasi Finansial'),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                    child: _buildCard()
-                ),
-                SizedBox(width: 15.0,),
-                Expanded(
-                  child: _buildCard(),
-                ),
-              ],
-            ),
-            SizedBox(height: 25.0,),
-            SubHeader(title: 'Impian'),
-            _buildImpian(),
-            SizedBox(height: 15.0,),
-          ],
-        ),
+              ),
+              SizedBox(width: 15.0,),
+              Expanded(
+                child: _buildCard(),
+              ),
+            ],
+          ),
+          SizedBox(height: 25.0,),
+          SubHeader(title: 'Edukasi Finansial', isLihatSemua: true, path: '/parent/all_tasks'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                  child: _buildCard()
+              ),
+              SizedBox(width: 15.0,),
+              Expanded(
+                child: _buildCard(),
+              ),
+            ],
+          ),
+          SizedBox(height: 25.0,),
+          SubHeader(title: 'Impian', isLihatSemua: true,),
+          _buildImpian(),
+          SizedBox(height: 15.0,),
+        ],
       ),
     );
   }
@@ -258,105 +257,5 @@ class _ChildTaskState extends State<ChildTask> {
     );
   }
   
-  createAlertDialog(BuildContext context){
-    return showDialog(context: context, builder: (context) {
-      return AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "Tambahkan",
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 17.0
-              ),
-            ),
-            SizedBox(height: 20.0,),
-            ElevatedButton(
-              onPressed: (){
-                Navigator.pushNamed(context, '/parent/new_education');
-              },
-              style: ButtonStyle(
-                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                  EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                ),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0)
-                  ),
-                ),
-                elevation: MaterialStateProperty.all<double>(
-                    0.0
-                ),
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    primaryColor
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.add,
-                  ),
-                  SizedBox(width: 15.0,),
-                  Text(
-                    "Edukasi Baru",
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 17.0,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(height: 10.0,),
-            ElevatedButton(
-              onPressed: (){
-                Navigator.pushNamed(context, '/parent/new_task');
-              },
-              style: ButtonStyle(
-                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                  EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                ),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0)
-                  ),
-                ),
-                elevation: MaterialStateProperty.all<double>(
-                    0.0
-                ),
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    primaryColor
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.add,
-                  ),
-                  SizedBox(width: 15.0,),
-                  Text(
-                    "Tugas Baru",
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 17.0,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    });
-  }
+
 }

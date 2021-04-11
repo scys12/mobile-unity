@@ -3,8 +3,10 @@ import 'package:mobile_unity/src/shared/constants.dart';
 
 class SubHeader extends StatelessWidget {
   String title;
+  bool isLihatSemua;
+  String path;
 
-  SubHeader({this.title});
+  SubHeader({this.title, this.isLihatSemua, this.path});
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +24,10 @@ class SubHeader extends StatelessWidget {
               color: Colors.black,
             ),
           ),
-          TextButton(
-            onPressed: () {  },
+          isLihatSemua ? TextButton(
+            onPressed: () { 
+              Navigator.pushNamed(context, path);
+            },
             child: Text(
               'LIHAT SEMUA',
               style: TextStyle(
@@ -34,7 +38,7 @@ class SubHeader extends StatelessWidget {
                   color: secondaryColor
               ),
             ),
-          )
+          ) : Container()
         ],
       ),
     );

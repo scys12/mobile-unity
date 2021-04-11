@@ -21,28 +21,31 @@ class _NewEducationChildState extends State<NewEducationChild> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(true, "Edukasi Baru"),
-      body: Container(
-        margin: EdgeInsets.all(25.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              _buildChildProfile(),
-              SizedBox(height: 20.0,),
-              _buildTitleField(),
-              _buildDeadlineField(),
-              _buildCategoryField(),
-              _buildPointField(),
-              _buildSliderPoint(),
-              SizedBox(height: 20.0,),
-              Container(
-                alignment: Alignment.centerRight,
-                child: _buildSubmitButton(),
-              ),
-            ],
+      body: ListView(
+        physics: ClampingScrollPhysics(),
+        padding: EdgeInsets.all(30.0),
+        children: [
+          Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                _buildChildProfile(),
+                SizedBox(height: 20.0,),
+                _buildTitleField(),
+                _buildDeadlineField(),
+                _buildCategoryField(),
+                _buildPointField(),
+                _buildSliderPoint(),
+                SizedBox(height: 20.0,),
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: _buildSubmitButton(),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+        ],
+      )
     );
   }
 

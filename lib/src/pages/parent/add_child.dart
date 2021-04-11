@@ -19,26 +19,30 @@ class _AddChildScreenState extends State<AddChildScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(true, "Tambahkan Anak"),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: EdgeInsets.all(16.0),
-          children: [
-            _buildChildName(),
-            SizedBox(height: 16.0,),
-            _buildPhoneNumber(),
-            SizedBox(height: 16.0,),
-            Row(
+      body: ListView(
+        padding: EdgeInsets.all(16.0),
+        children: [
+          Form(
+            key: _formKey,
+            child: Column(
               children: [
-                _buildBornDate(),
-                SizedBox(width: 16.0,),
-                _buildGender(),
+                _buildChildName(),
+                SizedBox(height: 16.0,),
+                _buildPhoneNumber(),
+                SizedBox(height: 16.0,),
+                Row(
+                  children: [
+                    _buildBornDate(),
+                    SizedBox(width: 16.0,),
+                    _buildGender(),
+                  ],
+                ),
+                SizedBox(height: 16.0,),
+                _buildSubmitButton(),
               ],
             ),
-            SizedBox(height: 16.0,),
-            _buildSubmitButton(),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

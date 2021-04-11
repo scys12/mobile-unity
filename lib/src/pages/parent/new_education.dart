@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
 
-class NewTaskChild extends StatefulWidget {
+class NewEducationChild extends StatefulWidget {
   @override
-  _NewTaskChildState createState() => _NewTaskChildState();
+  _NewEducationChildState createState() => _NewEducationChildState();
 }
 
-class _NewTaskChildState extends State<NewTaskChild> {
+class _NewEducationChildState extends State<NewEducationChild> {
   String _title;
   String _deadline;
   String _category;
@@ -20,7 +20,7 @@ class _NewTaskChildState extends State<NewTaskChild> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(true, "Tugas Baru"),
+      appBar: CustomAppBar(true, "Edukasi Baru"),
       body: Container(
         margin: EdgeInsets.all(25.0),
         child: Form(
@@ -57,23 +57,23 @@ class _NewTaskChildState extends State<NewTaskChild> {
         Text(
           "Lumen",
           style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 25.0,
-              fontWeight: FontWeight.w700
+            fontFamily: 'Poppins',
+            fontSize: 25.0,
+            fontWeight: FontWeight.w700
           ),
         )
       ],
     );
   }
-  
+
   Widget _buildSubmitButton(){
     return ElevatedButton(
       onPressed: () {},
-      child: Text('Buat Tugas'),
+      child: Text('Buat Edukasi'),
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(
-          secondaryColor
-        )
+          backgroundColor: MaterialStateProperty.all<Color>(
+              secondaryColor
+          )
       ),
     );
   }
@@ -162,6 +162,8 @@ class _NewTaskChildState extends State<NewTaskChild> {
         floatingLabelBehavior: FloatingLabelBehavior.never,
         prefixIcon: Icon(Icons.category, color: shadowColor,),
       ),
+      enabled: false,
+      initialValue: 'Edukasi Finansial',
       validator: (value) => value.isEmpty ? 'Name is required' : '',
       onSaved: (value) => setState(() => _title = value),
     );
@@ -176,27 +178,27 @@ class _NewTaskChildState extends State<NewTaskChild> {
       ),
       cursorColor: secondaryColor,
       decoration: InputDecoration(
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-              color: shadowColor,
-              width: 2.0
-          )
-        ),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: secondaryColor,
-            width: 2.0
-          )
-        ),
-        hintText: 'Judul Tugas',
-        hintStyle: TextStyle(
-          fontSize: 20.0,
-          fontWeight: FontWeight.w600,
-          color: shadowColor,
-          fontFamily: 'Poppins',
-        ),
+          enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                  color: shadowColor,
+                  width: 2.0
+              )
+          ),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                  color: secondaryColor,
+                  width: 2.0
+              )
+          ),
+          hintText: 'Judul Edukasi',
+          hintStyle: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.w600,
+            color: shadowColor,
+            fontFamily: 'Poppins',
+          ),
 
-        floatingLabelBehavior: FloatingLabelBehavior.never
+          floatingLabelBehavior: FloatingLabelBehavior.never
       ),
       validator: (value) => value.isEmpty ? 'Name is required' : '',
       onSaved: (value) => setState(() => _title = value),

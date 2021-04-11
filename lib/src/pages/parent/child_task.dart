@@ -277,7 +277,7 @@ class _ChildTaskState extends State<ChildTask> {
             SizedBox(height: 20.0,),
             ElevatedButton(
               onPressed: (){
-                Navigator.pushNamed(context, '/parent/add_child');
+                Navigator.pushNamed(context, '/parent/new_education');
               },
               style: ButtonStyle(
                 padding: MaterialStateProperty.all<EdgeInsetsGeometry>(

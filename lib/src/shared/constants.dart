@@ -11,6 +11,24 @@ const textInputDecoration =  InputDecoration(
     )
 );
 
+Widget abc(){
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+    decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.0),
+        boxShadow: [
+          BoxShadow(
+              color: shadowColor,
+              blurRadius: 8,
+              spreadRadius: 0,
+              offset: Offset(1.0, 3.0)
+          )
+        ]
+    ),
+  );
+}
+
 const primaryColor = Color.fromRGBO(252, 162, 17, 1.0);
 const secondaryColor = Color.fromRGBO(50, 83, 154, 1.0);
 const thirdColor = Color.fromRGBO(229, 229, 229, 1.0);

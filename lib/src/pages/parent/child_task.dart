@@ -36,7 +36,7 @@ class _ChildTaskState extends State<ChildTask> {
             ],
           ),
           SizedBox(height: 25.0,),
-          SubHeader(title: 'Edukasi Finansial', isLihatSemua: true, path: '/parent/all_tasks'),
+          SubHeader(title: 'Edukasi Finansial', isLihatSemua: true, path: '/parent/all_educations'),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

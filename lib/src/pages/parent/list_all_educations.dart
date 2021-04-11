@@ -5,16 +5,16 @@ import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
 
-class ListChildTasks extends StatefulWidget {
+class ListChildEducations extends StatefulWidget {
   @override
-  _ListChildTasksState createState() => _ListChildTasksState();
+  _ListChildEducationsState createState() => _ListChildEducationsState();
 }
 
-class _ListChildTasksState extends State<ListChildTasks> {
+class _ListChildEducationsState extends State<ListChildEducations> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(true, "Semua Tugas"),
+      appBar: CustomAppBar(true, "Semua Edukasi Finansial"),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 25.0),
         physics: ScrollPhysics(),
@@ -22,7 +22,7 @@ class _ListChildTasksState extends State<ListChildTasks> {
           children: [
             _buildHeader(context),
             SizedBox(height: 25.0,),
-            SubHeader(title: 'Tugas',isLihatSemua: false,),
+            SubHeader(title: 'Edukasi Finansial',isLihatSemua: false,),
             SizedBox(height: 15.0,),
             ListView.builder(
               itemCount: 9,
@@ -45,7 +45,7 @@ class _ListChildTasksState extends State<ListChildTasks> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                              'Berhasil menyelesaikan tugas',
+                            'Berhasil menyelesaikan tugas',
                             style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontWeight: FontWeight.w600,
@@ -54,59 +54,59 @@ class _ListChildTasksState extends State<ListChildTasks> {
                             ),
                           ),
                           ListTile(
-                            dense: true,
-                            leading: Icon(
-                              Icons.schedule,
-                              color: shadowColor,
-                              size: 23.0,
-                            ),
-                            visualDensity: VisualDensity.compact,
-                            contentPadding: EdgeInsets.zero,
-                            minLeadingWidth: 0.0,
-                            title: Text(
-                              '25-05-2021',
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15.0,
-                                color: shadowColor
+                              dense: true,
+                              leading: Icon(
+                                Icons.schedule,
+                                color: shadowColor,
+                                size: 23.0,
                               ),
-                            ),
-                            trailing: Container(
-                              padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
-                              decoration: BoxDecoration(
-                                color: redColor,
-                                borderRadius: BorderRadius.circular(10.0)
-                              ),
-                              child: Text(
-                                "Sedang Berjuang",
+                              visualDensity: VisualDensity.compact,
+                              contentPadding: EdgeInsets.zero,
+                              minLeadingWidth: 0.0,
+                              title: Text(
+                                '25-05-2021',
                                 style: TextStyle(
                                     fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w400,
+                                    fontWeight: FontWeight.w600,
                                     fontSize: 15.0,
-                                    color: Colors.white
+                                    color: shadowColor
                                 ),
                               ),
-                            )
+                              trailing: Container(
+                                padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
+                                decoration: BoxDecoration(
+                                    color: redColor,
+                                    borderRadius: BorderRadius.circular(10.0)
+                                ),
+                                child: Text(
+                                  "Sedang Berjuang",
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 15.0,
+                                      color: Colors.white
+                                  ),
+                                ),
+                              )
                           ),
                           ListTile(
-                            dense: true,
-                            visualDensity: VisualDensity.compact,
-                            leading: Icon(
-                              Icons.card_giftcard,
-                              color: shadowColor,
-                              size: 23.0,
-                            ),
-                            contentPadding: EdgeInsets.zero,
-                            minLeadingWidth: 0.0,
-                            title: Text(
-                              '10pts',
-                              style: TextStyle(
+                              dense: true,
+                              visualDensity: VisualDensity.compact,
+                              leading: Icon(
+                                Icons.card_giftcard,
+                                color: shadowColor,
+                                size: 23.0,
+                              ),
+                              contentPadding: EdgeInsets.zero,
+                              minLeadingWidth: 0.0,
+                              title: Text(
+                                '10pts',
+                                style: TextStyle(
                                   fontFamily: 'Poppins',
                                   fontWeight: FontWeight.w600,
                                   fontSize: 20.0,
-                              ),
-                            )
+                                ),
+                              )
                           )
                         ],
                       ),

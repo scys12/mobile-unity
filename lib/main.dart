@@ -5,6 +5,8 @@ import 'package:mobile_unity/src/pages/auth/authenticate.dart';
 import 'package:mobile_unity/src/pages/parent/add_child.dart';
 import 'package:mobile_unity/src/pages/parent/child_task.dart';
 import 'package:mobile_unity/src/pages/parent/dashboard.dart';
+import 'package:mobile_unity/src/pages/parent/detail_task.dart';
+import 'package:mobile_unity/src/pages/parent/list_all_educations.dart';
 import 'package:mobile_unity/src/pages/parent/list_all_tasks.dart';
 import 'package:mobile_unity/src/pages/parent/new_education.dart';
 import 'package:mobile_unity/src/pages/parent/new_task.dart';
@@ -41,7 +43,9 @@ class MyApp extends StatelessWidget {
                 '/parent/add_child' : (context) => AddChildScreen(),
                 '/parent/new_task' : (context) => NewTaskChild(),
                 '/parent/new_education' : (context) => NewEducationChild(),
-                '/parent/all_tasks' : (context) => ListChildTasks()
+                '/parent/all_tasks' : (context) => ListChildTasks(),
+                '/parent/all_educations' : (context) => ListChildEducations(),
+                '/parent/detail_task' : (context) => DetailTaskChild()
               },
             ),
           );

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_unity/src/models/user.dart';
+import 'package:mobile_unity/src/pages/parent/child_task.dart';
 import 'package:mobile_unity/src/services/auth.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:provider/provider.dart';
@@ -329,7 +330,9 @@ class _DashboardParentState extends State<DashboardParent> {
                   onTap: () {},
                 ),
                 ElevatedButton(
-                  onPressed: (){},
+                  onPressed: (){
+                    Navigator.pushNamed(context, '/parent/add_child');
+                  },
                   style: ButtonStyle(
                     padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
                       EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),

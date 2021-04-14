@@ -4,6 +4,7 @@ import 'package:mobile_unity/src/models/user.dart';
 import 'package:mobile_unity/src/pages/auth/authenticate.dart';
 import 'package:mobile_unity/src/pages/child/dashboard.dart';
 import 'package:mobile_unity/src/pages/parent/add_child.dart';
+import 'package:mobile_unity/src/pages/parent/child_achievement.dart';
 import 'package:mobile_unity/src/pages/parent/child_task.dart';
 import 'package:mobile_unity/src/pages/parent/dashboard.dart';
 import 'package:mobile_unity/src/pages/parent/detail_task.dart';

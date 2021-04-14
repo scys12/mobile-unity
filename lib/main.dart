@@ -11,6 +11,7 @@ import 'package:mobile_unity/src/pages/parent/list_all_educations.dart';
 import 'package:mobile_unity/src/pages/parent/list_all_tasks.dart';
 import 'package:mobile_unity/src/pages/parent/new_education.dart';
 import 'package:mobile_unity/src/pages/parent/new_task.dart';
+import 'package:mobile_unity/src/pages/splashscreen.dart';
 import 'package:mobile_unity/src/pages/wrapper.dart';
 import 'package:mobile_unity/src/services/auth.dart';
 import 'package:provider/provider.dart';
@@ -26,37 +27,47 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _fbApp,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          print('You have an error! ${snapshot.error.toString()}');
-          return Text('Something went wrong');
-        } else if (snapshot.hasData) {
-          return StreamProvider<User>.value(
-            value: AuthService().user,
-            initialData: User(name: '', uid: ''),
-            child: MaterialApp(
-              home: Wrapper(),
-              routes: {
-                '/authenticate': (context) => Authenticate(),
-                '/parent/dashboard': (context) => DashboardParent(),
-                '/parent/task': (context) => ChildTask(),
-                '/parent/add_child': (context) => AddChildScreen(),
-                '/parent/new_task': (context) => NewTaskChild(),
-                '/parent/new_education': (context) => NewEducationChild(),
-                '/parent/all_tasks': (context) => ListChildTasks(),
-                '/parent/all_educations': (context) => ListChildEducations(),
-                '/parent/detail_task': (context) => DetailTaskChild(),
-                '/child/dashboard': (context) => DashboardChild()
+        future: Future.delayed(Duration(seconds: 2)),
+        builder: (contextSplash, snapshotSplash) {
+          if (snapshotSplash.connectionState == ConnectionState.waiting) {
+            return MaterialApp(home: SplashScreen());
+          } else {
+            return FutureBuilder(
+              future: _fbApp,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  print('You have an error! ${snapshot.error.toString()}');
+                  return Text('Something went wrong');
+                } else if (snapshot.hasData) {
+                  return StreamProvider<User>.value(
+                    value: AuthService().user,
+                    initialData: User(name: '', uid: ''),
+                    child: MaterialApp(
+                      home: Wrapper(),
+                      routes: {
+                        '/authenticate': (context) => Authenticate(),
+                        '/parent/dashboard': (context) => DashboardParent(),
+                        '/parent/task': (context) => ChildTask(),
+                        '/parent/add_child': (context) => AddChildScreen(),
+                        '/parent/new_task': (context) => NewTaskChild(),
+                        '/parent/new_education': (context) =>
+                            NewEducationChild(),
+                        '/parent/all_tasks': (context) => ListChildTasks(),
+                        '/parent/all_educations': (context) =>
+                            ListChildEducations(),
+                        '/parent/detail_task': (context) => DetailTaskChild(),
+                        '/child/dashboard': (context) => DashboardChild()
+                      },
+                    ),
+                  );
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
               },
-            ),
-          );
-        } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      },
-    );
+            );
+          }
+        });
   }
 }

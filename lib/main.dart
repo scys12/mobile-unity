@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_unity/src/models/user.dart';
+import 'package:mobile_unity/src/models/parent.dart';
+import 'package:mobile_unity/src/models/tab_index.dart';
 import 'package:mobile_unity/src/pages/auth/authenticate.dart';
 import 'package:mobile_unity/src/pages/child/dashboard.dart';
 import 'package:mobile_unity/src/pages/parent/add_child.dart';
@@ -40,9 +41,14 @@ class MyApp extends StatelessWidget {
                   print('You have an error! ${snapshot.error.toString()}');
                   return Text('Something went wrong');
                 } else if (snapshot.hasData) {
-                  return StreamProvider<User>.value(
-                    value: AuthService().user,
-                    initialData: User(name: '', uid: ''),
+                  return MultiProvider(
+                    providers: [
+                      StreamProvider<Parent>.value(
+                        value: AuthService().user,
+                        initialData: Parent(name: '', uid: ''),
+                      ),
+                      ChangeNotifierProvider(create: (e) => TabIndex())
+                    ],
                     child: MaterialApp(
                       home: Wrapper(),
                       routes: {
@@ -59,7 +65,7 @@ class MyApp extends StatelessWidget {
                         '/parent/detail_task': (context) => DetailTaskChild(),
                         '/child/dashboard': (context) => DashboardChild()
                       },
-                    ),
+                    )
                   );
                 } else {
                   return Center(

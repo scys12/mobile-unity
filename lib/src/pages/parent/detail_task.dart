@@ -107,7 +107,7 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
                         primaryColor
                     ),
                   ),
-                  onPressed: () {  },
+
                   child: Text(
                     "Lihat Setuju",
                     style: TextStyle(

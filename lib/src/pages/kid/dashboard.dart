@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_unity/src/models/user.dart';
+import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/services/auth.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';

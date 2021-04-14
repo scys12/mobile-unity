@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_unity/src/models/user.dart';
+import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/pages/parent/child_task.dart';
 import 'package:mobile_unity/src/services/auth.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
@@ -18,7 +18,7 @@ class _DashboardParentState extends State<DashboardParent> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
+    final user = Provider.of<Parent>(context);
     var size = MediaQuery.of(context).size;
     return Scaffold(
       body: ListView(
@@ -259,39 +259,6 @@ class _DashboardParentState extends State<DashboardParent> {
             },
           )
         ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey,
-          items: [Icons.home, Icons.subject_outlined, Icons.emoji_events, Icons.settings]
-            .asMap()
-            .map((key, value) => MapEntry(
-          key,
-          BottomNavigationBarItem(
-            label: '',
-            tooltip: '',
-            icon: Container(
-              padding: EdgeInsets.symmetric(
-                vertical: 6.0,
-                horizontal: 16.0
-              ),
-              decoration: BoxDecoration(color: _currentIndex == key
-                  ? primaryColor
-                  : thirdColor,
-                  borderRadius: BorderRadius.circular(20.0),
-              ),
-              child: Icon(value),
-            ),
-          ),
-        ))
-          .values
-          .toList(),
       ),
     );
   }

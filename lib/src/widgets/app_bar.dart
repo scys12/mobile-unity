@@ -23,7 +23,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget{
       leading: showBackIcon ?
       IconButton(
         icon: Icon(Icons.arrow_back_ios),
-        onPressed: () => print("clicked"),
+        onPressed: () => Navigator.pop(context),
       ) : null
     );
   }

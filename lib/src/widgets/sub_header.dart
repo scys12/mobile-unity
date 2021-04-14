@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 
 class SubHeader extends StatelessWidget {
-  String title;
-  bool isLihatSemua;
-  String path;
+  String title ='';
+  bool isLihatSemua = false;
+  String path = '';
 
   SubHeader({this.title, this.isLihatSemua, this.path});
 

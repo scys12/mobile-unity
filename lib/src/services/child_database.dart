@@ -5,7 +5,7 @@ class ParentDatabase{
   final String uid;
   ParentDatabase({this.uid});
 
-  final CollectionReference _parentCollection = FirebaseFirestore.instance.collection("parents");
+  final CollectionReference _parentCollection = FirebaseFirestore.instance.collection("childs");
 
   Future updateParentData(String name, int gender, String phone_number) async {
     return await _parentCollection.doc(uid).set({

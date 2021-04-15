@@ -1,9 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:mobile_unity/src/models/task.dart';
+import 'package:mobile_unity/src/services/task_database.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
+import 'package:provider/provider.dart';
 
 class ChildTask extends StatefulWidget {
   @override
@@ -11,8 +15,17 @@ class ChildTask extends StatefulWidget {
 }
 
 class _ChildTaskState extends State<ChildTask> {
+  List<Task> tasks = [];
+
+  get i => null;
+
+  @override
+  void initState() {
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
+    tasks = Provider.of<List<Task>>(context);
     return Scaffold(
       appBar: CustomAppBar(false, "Tugas"),
       body: ListView(
@@ -22,35 +35,48 @@ class _ChildTaskState extends State<ChildTask> {
           SizedBox(height: 25.0,),
           _buildHeader(context),
           SizedBox(height: 25.0,),
-          SubHeader(title: 'Tugas', isLihatSemua: true, path: '/parent/all_tasks'),
-          Row(
+          SubHeader(title: 'Tugas', isLihatSemua: tasks.length > 0 ? true : false, path: '/parent/all_tasks'),
+          SizedBox(height: 25.0,),
+          tasks.length > 0 ? Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                  child: _buildCard()
-              ),
-              SizedBox(width: 15.0,),
-              Expanded(
-                child: _buildCard(),
-              ),
+              ...tasks.asMap().map((idx, element) =>
+                MapEntry(idx, Expanded(
+                  child: _buildCard(idx, element),
+                )
+              )).values.toList(),
             ],
+          ) : Text(
+            'Tidak ada tugas',
+            style: TextStyle(
+              fontSize: 15.0,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w500
+            ),
           ),
           SizedBox(height: 25.0,),
           SubHeader(title: 'Edukasi Finansial', isLihatSemua: true, path: '/parent/all_educations'),
-          Row(
+          SizedBox(height: 25.0,),
+          tasks.length > 0 ? Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                  child: _buildCard()
-              ),
-              SizedBox(width: 15.0,),
-              Expanded(
-                child: _buildCard(),
-              ),
+              ...tasks.asMap().map((idx, element) =>
+                  MapEntry(idx, Expanded(
+                    child: _buildCard(idx, element),
+                  )
+                  )).values.toList(),
             ],
+          ) : Text(
+            'Tidak ada edukasi finansial',
+            style: TextStyle(
+                fontSize: 15.0,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500
+            ),
           ),
           SizedBox(height: 25.0,),
           SubHeader(title: 'Impian', isLihatSemua: true,),
+          SizedBox(height: 25.0,),
           _buildImpian(),
           SizedBox(height: 15.0,),
         ],
@@ -142,9 +168,10 @@ class _ChildTaskState extends State<ChildTask> {
     );
   }
 
-  Widget _buildCard(){
+  Widget _buildCard(int idx, Task task){
     return Container(
       padding: EdgeInsets.all(15.0),
+      margin: (idx < tasks.length-1) ? EdgeInsets.only(right: 10.0) : EdgeInsets.only(left: 10.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.all(
@@ -164,7 +191,7 @@ class _ChildTaskState extends State<ChildTask> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Berhasil menyelesaikan 1 tugas",
+            task.title,
             style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w700,
@@ -176,10 +203,10 @@ class _ChildTaskState extends State<ChildTask> {
             padding: EdgeInsets.all(10.0),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10)),
-              color: redColor,
+              color: task.isDone ? greenColor : redColor,
             ),
             child: Text(
-              "Sedang Berjuang",
+              task.isDone ? 'Sudah Selesai' : 'Sedang Berjuang',
               style: TextStyle(
                 color: Colors.white,
                 fontFamily: 'Poppins',
@@ -193,7 +220,7 @@ class _ChildTaskState extends State<ChildTask> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '05-04-2021',
+                DateFormat("dd-MM-yyyy").format(task.deadline).toString(),
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w600,
@@ -202,7 +229,7 @@ class _ChildTaskState extends State<ChildTask> {
                 ),
               ),
               Text(
-                '10pts',
+                "${task.point}pts",
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Poppins',

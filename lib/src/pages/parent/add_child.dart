@@ -149,7 +149,8 @@ class _AddChildScreenState extends State<AddChildScreen> {
   );
 
   Widget _buildSubmitButton() => ElevatedButton(
-    onPressed: () {},
+    onPressed: () {
+    },
     child: Text('Simpan Profile Anak'),
     style: ButtonStyle(
       backgroundColor: MaterialStateProperty.all<Color>(

@@ -18,7 +18,7 @@ class _DashboardKidState extends State<DashboardKid> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
+    final user = Provider.of<Parent>(context);
     var size = MediaQuery.of(context).size;
     return Scaffold(
       body: ListView(

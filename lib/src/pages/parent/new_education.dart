@@ -22,6 +22,7 @@ class _NewEducationChildState extends State<NewEducationChild> {
   final _titleController = TextEditingController();
   final _deadlineController = TextEditingController();
   final _taskDatabase = TaskDatabase();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -247,7 +248,6 @@ class _NewEducationChildState extends State<NewEducationChild> {
 
   Widget _buildDeadlineField() {
     return TextFormField(
-
       onTap: (){
         DatePicker.showPicker(context, showTitleActions: true, onChanged: (date) {
           setState(() {

@@ -1,9 +1,9 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ParentDatabase{
+class ChildDatabase{
   final String uid;
-  ParentDatabase({this.uid});
+  ChildDatabase({this.uid});
 
   final CollectionReference _parentCollection = FirebaseFirestore.instance.collection("childs");
 

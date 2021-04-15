@@ -283,6 +283,4 @@ class _ChildTaskState extends State<ChildTask> {
         )
     );
   }
-  
-
 }

@@ -4,6 +4,7 @@ import 'package:mobile_unity/src/services/parent_database.dart';
 
 class AuthService {
   final FirebaseAuth _auth =  FirebaseAuth.instance;
+  String verificationId;
 
   Custom.Parent _userFromFirebaseUser(User user){
     return user != null ? Custom.Parent(uid: user.uid, name: user.displayName) : null ;
@@ -15,27 +16,23 @@ class AuthService {
   }
 
   //sign in phone
-  Future verifyPhoneNumber(String phoneNumber) async {
-    phoneNumber  = "+62 " + phoneNumber.toString().trim();
+  Future<void> verifyPhoneNumber(String phoneNumber) async {
+    phoneNumber  = phoneNumber.toString().trim();
 
     void verificationCompleted(PhoneAuthCredential credential) async {
       await _auth.signInWithCredential(credential);
     }
 
     void verificationFailed(FirebaseAuthException e){
-      if (e.code == 'invalid-phone-number') {
-        print('The provided phone number is not valid');
-      }
+     print(e.message);
     }
 
-    void codeSent(String verificationId, int resendToken) async {
-      String smsCode = '123456';
-      AuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: smsCode);
-      await _auth.signInWithCredential(credential);
+    void codeSent(String verificationId, [int resendToken]) async {
+      this.verificationId = verificationId;
     }
 
     void codeAutoRetrievalTimeout(String verificationId){
-
+      this.verificationId = verificationId;
     }
 
     try {
@@ -51,9 +48,10 @@ class AuthService {
     }
   }
 
-  Future signInWithPhoneNumber(String phoneNumber, String verificationCode) async{
-    ConfirmationResult confirmationResult = await _auth.signInWithPhoneNumber(phoneNumber);
-    UserCredential userCredential = await confirmationResult.confirm(verificationCode);
+  Future<UserCredential> signInWithPhoneNumber(String pin) async{
+    PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: pin);
+    UserCredential userCredential = await _auth.signInWithCredential(phoneAuthCredential);
+    return userCredential;
   }
 
   //sign in email password

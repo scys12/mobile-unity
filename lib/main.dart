@@ -4,6 +4,8 @@ import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/models/tab_index.dart';
 import 'package:mobile_unity/src/models/task.dart';
 import 'package:mobile_unity/src/pages/auth/authenticate.dart';
+import 'package:mobile_unity/src/pages/auth/otp.dart';
+import 'package:mobile_unity/src/pages/auth/sign_phone.dart';
 import 'package:mobile_unity/src/pages/child/dashboard.dart';
 import 'package:mobile_unity/src/pages/parent/add_child.dart';
 import 'package:mobile_unity/src/pages/parent/child_achievement.dart';
@@ -68,7 +70,8 @@ class MyApp extends StatelessWidget {
                           '/parent/all_educations': (context) =>
                               ListChildEducations(),
                           '/parent/detail_task': (context) => DetailTaskChild(),
-                          '/child/dashboard': (context) => DashboardChild()
+                          '/child/dashboard': (context) => DashboardChild(),
+                          '/auth/sign_phone': (context) => SignPhone(),
                         },
                       ));
                 } else {

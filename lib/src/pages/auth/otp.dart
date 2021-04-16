@@ -150,7 +150,7 @@ class _OTPScreenState extends State<OTPScreen> {
                           createLoadingAlertDialog(context);
                         }
                         var resp = await _authService.signInWithPhoneNumber(v);
-                        if(resp.user != null) {
+                        if(resp != null) {
                           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => DashboardKid()), (route) => false);
                         }
                         else {

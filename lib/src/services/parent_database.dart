@@ -7,11 +7,12 @@ class ParentDatabase{
 
   final CollectionReference _parentCollection = FirebaseFirestore.instance.collection("parents");
 
-  Future updateParentData(String name, int gender, String phone_number) async {
+  Future updateParentData(Map<String, dynamic> data) async {
     return await _parentCollection.doc(uid).set({
-      'name' : name,
-      'gender' : gender,
-      'phone_number' : phone_number,
+      'name' : data["name"],
+      'gender' : data["gender"],
+      'phone_number' : data["phone_number"],
+      'is_profile_filled' : data["is_profile_filled"],
     });
   }
 }

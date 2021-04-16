@@ -3,6 +3,7 @@ import 'package:mobile_unity/src/models/tab_index.dart';
 import 'package:mobile_unity/src/pages/parent/child_achievement.dart';
 import 'package:mobile_unity/src/pages/parent/child_task.dart';
 import 'package:mobile_unity/src/pages/parent/dashboard.dart';
+import 'package:mobile_unity/src/pages/parent/setting.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +17,7 @@ class _WrapperParentState extends State<WrapperParent> {
     DashboardParent(),
     ChildTask(),
     ChildAchievement(),
+    ParentSetting(),
   ];
 
   @override

@@ -1,18 +1,28 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/parent.dart';
+import 'package:mobile_unity/src/services/child_database.dart';
 import 'package:mobile_unity/src/services/parent_database.dart';
 
 class AuthService {
   final FirebaseAuth _auth =  FirebaseAuth.instance;
   String verificationId;
 
-  Parent _userFromFirebaseUser(User user){
-    return user != null ? Parent(uid: user.uid, name: user.displayName) : null ;
+  Parent _parentFromFirebaseUser(User user){
+    return user != null && user.providerData[0].providerId == 'password' ? Parent(uid: user.uid, name: user.displayName) : null ;
+  }
+  Child _childFromFirebaseUser(User user){
+    return user != null && user.providerData[0].providerId == 'phone' ? Child(uid: user.uid, name: user.displayName) : null ;
   }
 
-  Stream<Parent> get user{
+  Stream<Parent> get parent{
     return _auth.authStateChanges()
-        .map(_userFromFirebaseUser);
+        .map(_parentFromFirebaseUser);
+  }
+
+  Stream<Child> get child{
+    return _auth.authStateChanges()
+        .map(_childFromFirebaseUser);
   }
 
   //sign in phone
@@ -48,10 +58,13 @@ class AuthService {
     }
   }
 
-  Future<UserCredential> signInWithPhoneNumber(String pin) async{
+  Future<Child> signInWithPhoneNumber(String pin) async{
+    Child _user;
     PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: pin);
     UserCredential userCredential = await _auth.signInWithCredential(phoneAuthCredential);
-    return userCredential;
+    User user = userCredential.user;
+    _user = _childFromFirebaseUser(user);
+    return _user;
   }
 
   //sign in email password
@@ -69,8 +82,14 @@ class AuthService {
     try {
       UserCredential credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User user = credential.user;
-      await ParentDatabase(uid: user.uid).updateParentData('', 0, '');
-      _user = _userFromFirebaseUser(user);
+      var data = {
+        "name": "",
+        "gender" : "",
+        "phone_number" : "",
+        "is_profile_filled" : 0,
+      };
+      await ParentDatabase(uid: user.uid).updateParentData(data);
+      _user = _parentFromFirebaseUser(user);
     } on FirebaseAuthException catch (e) {
       return e.code;
     }
@@ -82,7 +101,7 @@ class AuthService {
     try {
       UserCredential credential = await _auth.signInWithEmailAndPassword(email: email, password: password);
       User user = credential.user;
-      _user = _userFromFirebaseUser(user);
+      _user = _parentFromFirebaseUser(user);
     } catch (e) {
       print(e);
     }

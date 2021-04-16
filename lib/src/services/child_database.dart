@@ -5,13 +5,18 @@ class ChildDatabase{
   final String uid;
   ChildDatabase({this.uid});
 
-  final CollectionReference _parentCollection = FirebaseFirestore.instance.collection("childs");
+  final CollectionReference _childCollection = FirebaseFirestore.instance.collection("childs");
 
-  Future updateParentData(String name, int gender, String phone_number) async {
-    return await _parentCollection.doc(uid).set({
-      'name' : name,
-      'gender' : gender,
-      'phone_number' : phone_number,
+  Future updateChildData(Map<String, dynamic> data) async {
+    return await _childCollection.doc(uid).set({
+      'name' : data["name"],
+      'gender' : data["gender"],
+      'phone_number' : data["phone_number"],
+      'income' : data["income"],
+      'outcome' : data["outcome"],
+      'total_point' : data["total_point"],
+      'is_profile_filled' : data["is_profile_filled"],
+      'parent_id' : data["parent_id"],
     });
   }
 }

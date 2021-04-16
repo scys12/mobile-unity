@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/pages/auth/authenticate.dart';
 import 'package:mobile_unity/src/pages/auth/sign_phone.dart';
+import 'package:mobile_unity/src/pages/kid/dashboard.dart';
 import 'package:mobile_unity/src/pages/parent/wrapper.dart';
+import 'package:mobile_unity/src/services/auth.dart';
 import 'package:provider/provider.dart';
 
 class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final Parent parent = Provider.of<Parent>(context);
+    final Child child = Provider.of<Child>(context);
+    if (parent != null) {
+      return WrapperParent();
+    }
+    else if (child != null) {
+      return DashboardKid();
+    }
+    else return Scaffold(
       body: ListView(
         children: [
           Image(image: AssetImage("assets/images/splash.png"),),

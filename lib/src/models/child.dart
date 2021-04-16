@@ -1,9 +1,13 @@
-class Parent{
+class Child{
   final String uid;
   final String name;
   final int gender;
-  final String phone_number;
+  final String phoneNumber;
+  final int income;
+  final int outcome;
+  final int totalPoint;
   final bool isProfileFilled;
+  final String parentId;
 
-  Parent({this.uid, this.name, this.gender, this.phone_number, this.isProfileFilled});
+  Child({this.uid, this.name, this.gender, this.phoneNumber, this.income, this.outcome, this.totalPoint, this.isProfileFilled, this.parentId});
 }

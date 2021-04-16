@@ -112,7 +112,7 @@ class _SignInState extends State<SignIn> {
                             Navigator.pop(context);
                           }
                         }else{
-                          Navigator.pushNamedAndRemoveUntil(context, '/parent/dashboard', (route)=> false);
+                          Navigator.pushNamedAndRemoveUntil(context, '/parent/wrapper', (route)=> false);
                         }
                       }
                     },

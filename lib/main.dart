@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/models/tab_index.dart';
 import 'package:mobile_unity/src/models/task.dart';
@@ -16,6 +17,7 @@ import 'package:mobile_unity/src/pages/parent/list_all_educations.dart';
 import 'package:mobile_unity/src/pages/parent/list_all_tasks.dart';
 import 'package:mobile_unity/src/pages/parent/new_education.dart';
 import 'package:mobile_unity/src/pages/parent/new_task.dart';
+import 'package:mobile_unity/src/pages/parent/wrapper.dart';
 import 'package:mobile_unity/src/pages/wrapper.dart';
 import 'package:mobile_unity/src/services/auth.dart';
 import 'package:mobile_unity/src/services/task_database.dart';
@@ -41,8 +43,12 @@ class MyApp extends StatelessWidget {
           return MultiProvider(
               providers: [
                 StreamProvider<Parent>.value(
-                  value: AuthService().user,
-                  initialData: Parent(name: '', uid: ''),
+                  value: AuthService().parent,
+                  initialData: Parent(),
+                ),
+                StreamProvider<Child>.value(
+                  value: AuthService().child,
+                  initialData: Child(),
                 ),
                 StreamProvider<List<Task>>.value(
                   value: TaskDatabase().getTasks(2),
@@ -54,10 +60,9 @@ class MyApp extends StatelessWidget {
                 home: Wrapper(),
                 routes: {
                   '/authenticate': (context) => Authenticate(),
-                  '/parent/dashboard': (context) => DashboardParent(),
-                  '/parent/task': (context) => ChildTask(),
                   '/parent/add_child': (context) => AddChildScreen(),
                   '/parent/new_task': (context) => NewTaskChild(),
+                  '/parent/wrapper': (context) => WrapperParent(),
                   '/parent/new_education': (context) => NewEducationChild(),
                   '/parent/all_tasks': (context) => ListChildTasks(),
                   '/parent/all_educations': (context) =>

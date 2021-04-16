@@ -5,6 +5,7 @@ import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/pages/parent/child_task.dart';
 import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/services/auth.dart';
+import 'file:///D:/FlutterProject/mobile_unity/lib/src/widgets/child_tile.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:provider/provider.dart';
 
@@ -168,10 +169,10 @@ class _DashboardParentState extends State<DashboardParent> {
               borderRadius: BorderRadius.circular(10),
               color: secondaryColor,
             ),
-            padding: EdgeInsets.symmetric(vertical:25.0, horizontal: 35.0),
+            padding: EdgeInsets.symmetric(vertical:25.0, horizontal: 25.0),
 
             margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-            child: Text(
+            child: _childProvider.selectedChild == null ?Text(
               "Anda belum menambahkan si kecil",
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -179,7 +180,111 @@ class _DashboardParentState extends State<DashboardParent> {
                 fontSize: 15.0,
                 fontFamily: 'Poppins',
               ),
-            ),
+            ) : Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Column(
+                  children: [
+                    Text(
+                      "Total Uang",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18.0,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w600
+                      ),
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Rp ",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15.0,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w700
+                          ),
+                        ),
+                        Text(
+                          "${_childProvider.selectedChild.income-_childProvider.selectedChild.income}",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 25.0,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w700
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    TextButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          Colors.white
+                        ),
+                        padding: MaterialStateProperty.all(
+                          EdgeInsets.symmetric(horizontal: 10.0)
+                        ),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          )
+                        ),
+                      ),
+                      onPressed: (){},
+                      child: Row(
+                        children: [
+                          Text(
+                            "Histori Keuangan",
+                            style: TextStyle(
+                              color: secondaryColor,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward,
+                            color: secondaryColor,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Total Point",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.0,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w600
+                            ),
+                          ),
+                          SizedBox(width: 10.0,),
+                          Text(
+                            "${_childProvider.selectedChild.totalPoint}pts",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 23.0,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w700
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                )
+              ],
+            )
           ),
           Padding(
             padding: EdgeInsets.only(right: 20.0, left: 20.0, top: 20.0),
@@ -303,7 +408,7 @@ class _DashboardParentState extends State<DashboardParent> {
                   ? Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    ...children.asMap().map((idx, val) => MapEntry(idx, _buildChildTile(idx, val, child))).values.toList()
+                    ...children.asMap().map((idx, val) => MapEntry(idx, ChildTile(childIndex: val, idx: idx,))).values.toList()
                   ],
                 ) : ListTile(
                   title: Text(
@@ -367,41 +472,40 @@ class _DashboardParentState extends State<DashboardParent> {
     });
   }
 
-  Widget _buildChildTile(int idx, Child childIndex, Child currentChild){
-
-    List<Color> colors = [
-      primaryColor,
-      Colors.black
-    ];
-    List<IconData> icons = [
-      Icons.check_box,
-      Icons.check_box_outline_blank,
-    ];
-    Color color = children[_currentIndex].uid == childIndex.uid ? colors[0] : colors[1];
-    return ListTile(
-      leading: Icon(Icons.account_circle),
-      title: Text(
-        childIndex.name,
-        style: TextStyle(
-          fontFamily: "Poppins",
-          fontWeight: FontWeight.w600,
-          fontSize: 18.0,
-        ),
-      ),
-      trailing: Icon(
-        children[_currentIndex].uid == childIndex.uid ? icons[0] : icons[1],
-        color: color,
-      ),
-      onTap: () {
-        print("1 ${currentChild.name}");
-        print("11 ${childIndex.name}");
-        setState((){
-          _currentIndex = idx;
-        });
-        _childProvider.updateCurrentChild(child: childIndex);
-        print("2 ${currentChild.name}");
-        print("22 ${childIndex.name}");
-      },
-    );
-  }
+  // Widget _buildChildTile(int idx, Child childIndex){
+  //
+  //   List<Color> colors = [
+  //     primaryColor,
+  //     Colors.black
+  //   ];
+  //   List<IconData> icons = [
+  //     Icons.check_box,
+  //     Icons.check_box_outline_blank,
+  //   ];
+  //   print("Now ${_currentIndex}");
+  //   Color color = childIndex.uid == _childProvider.selectedChild.uid ? colors[0] : colors[1];
+  //   return ListTile(
+  //     leading: Icon(Icons.account_circle),
+  //     title: Text(
+  //       childIndex.name,
+  //       style: TextStyle(
+  //         fontFamily: "Poppins",
+  //         fontWeight: FontWeight.w600,
+  //         fontSize: 18.0,
+  //       ),
+  //     ),
+  //     trailing: Icon(
+  //       childIndex.uid == _childProvider.selectedChild.uid ? icons[0] : icons[1],
+  //       color: color,
+  //     ),
+  //     onTap: () {
+  //       setState((){
+  //         print(_currentIndex);
+  //         _currentIndex = idx;
+  //         _childProvider.updateCurrentChild(child: childIndex);
+  //       });
+  //       print(_currentIndex);
+  //     },
+  //   );
+  // }
 }

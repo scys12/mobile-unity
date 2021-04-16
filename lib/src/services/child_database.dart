@@ -25,6 +25,7 @@ class ChildDatabase{
   Stream<List<Child>> getChildrenFromParent(String parentId) {
     return  _childCollection
         .where('parent_id', isEqualTo:  parentId)
+        // .orderBy('created_at', descending: false)
         .snapshots()
         .map(_childListFromSnapshot);
   }

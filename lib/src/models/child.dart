@@ -1,7 +1,7 @@
 class Child{
   final String uid;
   final String name;
-  final int gender;
+  final String gender;
   final String phoneNumber;
   final int income;
   final int outcome;

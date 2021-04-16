@@ -9,9 +9,7 @@ import 'package:mobile_unity/src/pages/auth/otp.dart';
 import 'package:mobile_unity/src/pages/auth/sign_phone.dart';
 import 'package:mobile_unity/src/pages/kid/dashboard.dart';
 import 'package:mobile_unity/src/pages/parent/add_child.dart';
-import 'package:mobile_unity/src/pages/parent/child_achievement.dart';
-import 'package:mobile_unity/src/pages/parent/child_task.dart';
-import 'package:mobile_unity/src/pages/parent/dashboard.dart';
+import 'package:mobile_unity/src/pages/parent/change_profile.dart';
 import 'package:mobile_unity/src/pages/parent/detail_task.dart';
 import 'package:mobile_unity/src/pages/parent/list_all_educations.dart';
 import 'package:mobile_unity/src/pages/parent/list_all_tasks.dart';
@@ -44,11 +42,11 @@ class MyApp extends StatelessWidget {
               providers: [
                 StreamProvider<Parent>.value(
                   value: AuthService().parent,
-                  initialData: Parent(),
+                  initialData: null,
                 ),
                 StreamProvider<Child>.value(
                   value: AuthService().child,
-                  initialData: Child(),
+                  initialData: null,
                 ),
                 StreamProvider<List<Task>>.value(
                   value: TaskDatabase().getTasks(2),
@@ -60,6 +58,7 @@ class MyApp extends StatelessWidget {
                 home: Wrapper(),
                 routes: {
                   '/authenticate': (context) => Authenticate(),
+                  '/welcome': (context) => WrapperParent(),
                   '/parent/add_child': (context) => AddChildScreen(),
                   '/parent/new_task': (context) => NewTaskChild(),
                   '/parent/wrapper': (context) => WrapperParent(),
@@ -70,6 +69,7 @@ class MyApp extends StatelessWidget {
                   '/parent/detail_task': (context) => DetailTaskChild(),
                   '/child/dashboard': (context) => DashboardKid(),
                   '/auth/sign_phone': (context) => SignPhone(),
+                  '/parent/change_profile': (context) => ChangeProfileScreen(),
                 },
               ));
         } else {

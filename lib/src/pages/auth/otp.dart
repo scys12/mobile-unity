@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_unity/src/pages/kid/dashboard.dart';
 import 'package:mobile_unity/src/services/auth.dart';
+import 'package:mobile_unity/src/services/child_database.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/loading.dart';
@@ -151,12 +152,26 @@ class _OTPScreenState extends State<OTPScreen> {
                         }
                         var resp = await _authService.signInWithPhoneNumber(v);
                         if(resp != null) {
+                          var isExist = await ChildDatabase(uid: resp.uid).checkUser();
+                          if(!isExist) {
+                            var data = {
+                              'name' : "",
+                              'gender' : "",
+                              'phone_number' : resp.phoneNumber,
+                              'income' : 0,
+                              'outcome' : 0,
+                              'total_point' : 0,
+                              'is_profile_filled' : false,
+                              'parent_id' : "",
+                            };
+                            ChildDatabase(uid: resp.uid).updateChildData(data);
+                          }
                           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => DashboardKid()), (route) => false);
                         }
                         else {
                           Navigator.pop(context);
                           setState(() => hasError = true);
-                        };
+                        }
                       },
                       onChanged: (value) {
                         setState(() {

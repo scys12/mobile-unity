@@ -59,7 +59,16 @@ class _DashboardParentState extends State<DashboardParent> {
                                   color: Colors.white,
                                 ),
                               ),
-                              TextButton(
+                              user.isProfileFilled
+                              ? Text(
+                                user.name,
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 18.0,
+                                  color: Colors.white,
+                                ),
+                              ) : TextButton(
                                 child: Text(
                                   'Lengkapi Profile',
                                   style: TextStyle(
@@ -72,9 +81,10 @@ class _DashboardParentState extends State<DashboardParent> {
                                     primary: primaryColor,
                                     padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0)
                                 ),
-                                onPressed: () async {
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/parent/change_profile');
                                 },
-                              )
+                              ),
                             ],
                           ),
                         ],

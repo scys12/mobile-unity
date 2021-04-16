@@ -18,11 +18,10 @@ class _SignPhoneState extends State<SignPhone> {
   final _formKey = GlobalKey<FormState>();
   final _phoneController = TextEditingController();
   String _error = '';
-  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
-    return loading ? Loading() : SafeArea(
+    return SafeArea(
       child: Scaffold(
         backgroundColor: thirdColor,
         body: Container(
@@ -85,9 +84,8 @@ class _SignPhoneState extends State<SignPhone> {
                         primaryColor
                     ),
                   ),
-                  onPressed: () async {
+                  onPressed: () {
                     if (_formKey.currentState.validate()) {
-                      setState(() => loading = true);
                       var phoneNumber = "+62${_phoneController.text}";
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => OTPScreen(phoneNumber:phoneNumber)));

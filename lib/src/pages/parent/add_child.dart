@@ -34,18 +34,15 @@ class _AddChildScreenState extends State<AddChildScreen> {
           Form(
             key: _formKey,
             child: Column(
+              mainAxisSize: MainAxisSize.max,
               children: [
                 _buildChildName(),
                 SizedBox(height: 15.0,),
                 _buildPhoneNumber(),
                 SizedBox(height: 15.0,),
-                Row(
-                  children: [
-                    _buildBornDate(),
-                    SizedBox(width: 15.0,),
-                    _buildGender(),
-                  ],
-                ),
+                _buildBornDate(),
+                SizedBox(height: 15.0,),
+                _buildGender(),
                 SizedBox(height: 15.0,),
                 _buildSubmitButton(),
               ],
@@ -61,87 +58,81 @@ class _AddChildScreenState extends State<AddChildScreen> {
       'Laki-laki',
       'Perempuan'
     ];
-    return Expanded(
-      child: DropdownButtonHideUnderline(
-        child: DropdownButtonFormField(
-          decoration: InputDecoration(
-            alignLabelWithHint: true,
-            enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: shadowColor, width: 2.0),
-                borderRadius: BorderRadius.circular(20.0)
-            ),
-            focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: secondaryColor, width: 2.0),
-                borderRadius: BorderRadius.circular(20.0)
-            ),
+    return DropdownButtonHideUnderline(
+      child: DropdownButtonFormField(
+        decoration: InputDecoration(
+          alignLabelWithHint: true,
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: shadowColor, width: 2.0),
+              borderRadius: BorderRadius.circular(20.0)
           ),
-          items: genders.map((e) => DropdownMenuItem(
-            child: Text(e),
-            value: e,
-          )).toList(),
-          onChanged: (value){
-            setState(() {
-              _selectedGender = value;
-            });
-          },
-          hint: Text(
-            'Pilih Jenis Kelamin',
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                color: shadowColor
-            ),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: secondaryColor, width: 2.0),
+              borderRadius: BorderRadius.circular(20.0)
           ),
-          value:  _selectedGender,
-          validator: (value) => value.isEmpty || value == null ? 'Harap memilih salah satu' : null,
+          labelText: "Pilih Jenis Kelamin",
+          labelStyle: TextStyle(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              color: shadowColor
+          ),
         ),
+        items: genders.map((e) => DropdownMenuItem(
+          child: Text(e),
+          value: e,
+        )).toList(),
+        onChanged: (value){
+          setState(() {
+            _selectedGender = value;
+          });
+        },
+        value:  _selectedGender,
+        validator: (value) => value.isEmpty || value == null ? 'Harap memilih salah satu' : null,
       ),
     );
   }
 
-  Widget _buildBornDate() => Expanded(
-    child: TextFormField(
-      onTap: (){
-        DatePicker.showPicker(context, showTitleActions: true, onChanged: (date) {
-          setState(() {
-            _date = date;
-            _dateController.text = DateFormat("dd-MM-yyyy").format(_date).toString();
-          });
-        }, onConfirm: (date) {
-          setState(() {
-            _date = date;
-            _dateController.text = DateFormat("dd-MM-yyyy").format(_date).toString();
-          });
-        }, pickerModel: CustomPicker(currentTime: DateTime.now()), locale: LocaleType.en);
-      },
-      readOnly: true,
-      style: TextStyle(
-        fontWeight: FontWeight.w500,
+  Widget _buildBornDate() => TextFormField(
+    onTap: (){
+      DatePicker.showPicker(context, showTitleActions: true, onChanged: (date) {
+        setState(() {
+          _date = date;
+          _dateController.text = DateFormat("dd-MM-yyyy").format(_date).toString();
+        });
+      }, onConfirm: (date) {
+        setState(() {
+          _date = date;
+          _dateController.text = DateFormat("dd-MM-yyyy").format(_date).toString();
+        });
+      }, pickerModel: CustomPicker(currentTime: DateTime.now()), locale: LocaleType.en);
+    },
+    readOnly: true,
+    style: TextStyle(
+      fontWeight: FontWeight.w500,
+      fontFamily: 'Poppins',
+    ),
+    cursorColor: secondaryColor,
+    decoration: InputDecoration(
+      alignLabelWithHint: true,
+      enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: shadowColor, width: 2.0),
+          borderRadius: BorderRadius.circular(20.0)
+      ),
+      focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: secondaryColor, width: 2.0),
+          borderRadius: BorderRadius.circular(20.0)
+      ),
+      hintText: 'Tanggal Lahir',
+      hintStyle: TextStyle(
+        fontWeight: FontWeight.w600,
+        color: shadowColor,
         fontFamily: 'Poppins',
       ),
-      cursorColor: secondaryColor,
-      decoration: InputDecoration(
-        alignLabelWithHint: true,
-        enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: shadowColor, width: 2.0),
-            borderRadius: BorderRadius.circular(20.0)
-        ),
-        focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: secondaryColor, width: 2.0),
-            borderRadius: BorderRadius.circular(20.0)
-        ),
-        hintText: 'Tanggal Lahir',
-        hintStyle: TextStyle(
-          fontWeight: FontWeight.w600,
-          color: shadowColor,
-          fontFamily: 'Poppins',
-        ),
-        prefixIcon: Icon(Icons.date_range, color: shadowColor,),
-        suffixIcon: Icon(Icons.arrow_drop_down, color: shadowColor,),
-      ),
-      validator: (value) => value.isEmpty || value == null ? 'Deadline masih kosong' : null,
-      controller: _dateController,
+      prefixIcon: Icon(Icons.date_range, color: shadowColor,),
+      suffixIcon: Icon(Icons.arrow_drop_down, color: shadowColor,),
     ),
+    validator: (value) => value.isEmpty || value == null ? 'Deadline masih kosong' : null,
+    controller: _dateController,
   );
 
   Widget _buildPhoneNumber() => TextFormField(
@@ -208,6 +199,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
           borderSide: BorderSide(color: secondaryColor, width: 2.0),
           borderRadius: BorderRadius.circular(20.0)
       ),
+      prefixIcon: Icon(Icons.face, color: shadowColor,)
     ),
     controller: _nameController,
     validator: (value) {

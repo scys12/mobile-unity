@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
                 home: Wrapper(),
                 routes: {
                   '/authenticate': (context) => Authenticate(),
-                  '/welcome': (context) => WrapperParent(),
+                  '/welcome': (context) => Wrapper(),
                   '/parent/add_child': (context) => AddChildScreen(),
                   '/parent/new_task': (context) => NewTaskChild(),
                   '/parent/wrapper': (context) => WrapperParent(),

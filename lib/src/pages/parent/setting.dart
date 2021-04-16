@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_unity/src/models/parent.dart';
+import 'package:mobile_unity/src/pages/wrapper.dart';
 import 'package:mobile_unity/src/services/auth.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
+import 'package:mobile_unity/src/widgets/loading.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +17,7 @@ class _ParentSettingState extends State<ParentSetting> {
   @override
   Widget build(BuildContext context) {
     final Parent user = Provider.of<Parent>(context);
-    return Scaffold(
+    return user == null ? Loading() :  Scaffold(
       appBar: CustomAppBar(false, "Akun"),
       body: ListView(
         padding: EdgeInsets.all(20.0),
@@ -192,8 +194,9 @@ class _ParentSettingState extends State<ParentSetting> {
   Widget _buildSignOutButton(){
     return ElevatedButton(
       onPressed: () async{
-        Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
+        Navigator.of(context).pushNamedAndRemoveUntil('/welcome', (Route<dynamic> route) => false);
         await AuthService().signOut();
+
       },
       style: ButtonStyle(
         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(

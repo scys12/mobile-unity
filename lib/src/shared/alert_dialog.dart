@@ -144,17 +144,14 @@ Future createAlertDialog(BuildContext context){
                   Icons.add,
                 ),
                 SizedBox(width: 15.0,),
-                Material(
-                  child: Text(
-                    "Tugas Baru",
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 17.0,
-                      decoration: TextDecoration.none
-                    ),
+                Text(
+                  "Tugas Baru",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 17.0,
                   ),
-                )
+                ),
               ],
             ),
           ),

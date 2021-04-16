@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/pages/parent/child_task.dart';
+import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/services/auth.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:provider/provider.dart';
@@ -17,11 +18,13 @@ class _DashboardParentState extends State<DashboardParent> {
   List<Child> children;
   final AuthService _authService = AuthService();
   int _currentIndex = 0;
+  ChildProvider _childProvider;
 
   @override
   Widget build(BuildContext context) {
     final Parent user = Provider.of<Parent>(context);
     children = Provider.of<List<Child>>(context);
+    _childProvider = Provider.of<ChildProvider>(context);
     return Scaffold(
       body: ListView(
         physics: ClampingScrollPhysics(),
@@ -117,7 +120,7 @@ class _DashboardParentState extends State<DashboardParent> {
                       ),
                     ),
                     onPressed: (){
-                      _addChildButtonPressed();
+                      _addChildButtonPressed(_childProvider.selectedChild);
                     },
                     child:  Column(
                         children: [
@@ -133,7 +136,7 @@ class _DashboardParentState extends State<DashboardParent> {
                                     ),
                                     SizedBox(width: 10.0,),
                                     Text(
-                                      'Tambahkan Anak',
+                                      _childProvider.selectedChild.name,
                                       style: TextStyle(
                                         fontFamily: 'Poppins',
                                         fontWeight: FontWeight.w600,
@@ -279,7 +282,7 @@ class _DashboardParentState extends State<DashboardParent> {
     );
   }
 
-  void _addChildButtonPressed(){
+  void _addChildButtonPressed(Child child){
     showModalBottomSheet(context: context, builder: (context) {
       return Container(
         color: Color(0XFF737373),
@@ -297,9 +300,10 @@ class _DashboardParentState extends State<DashboardParent> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 children.length > 0
-                  ? Row(
+                  ? Column(
+                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    ...children.map((val) => _buildChildTile(val)).toList()
+                    ...children.asMap().map((idx, val) => MapEntry(idx, _buildChildTile(idx, val, child))).values.toList()
                   ],
                 ) : ListTile(
                   title: Text(
@@ -363,24 +367,41 @@ class _DashboardParentState extends State<DashboardParent> {
     });
   }
 
-  Widget _buildChildTile(Child child){
-    return Expanded(
-      child: ListTile(
-        leading: Icon(Icons.account_circle),
-        title: Text(
-          child.name,
-          style: TextStyle(
-            fontFamily: "Poppins",
-            fontWeight: FontWeight.w600,
-            fontSize: 18.0,
-          ),
+  Widget _buildChildTile(int idx, Child childIndex, Child currentChild){
+
+    List<Color> colors = [
+      primaryColor,
+      Colors.black
+    ];
+    List<IconData> icons = [
+      Icons.check_box,
+      Icons.check_box_outline_blank,
+    ];
+    Color color = children[_currentIndex].uid == childIndex.uid ? colors[0] : colors[1];
+    return ListTile(
+      leading: Icon(Icons.account_circle),
+      title: Text(
+        childIndex.name,
+        style: TextStyle(
+          fontFamily: "Poppins",
+          fontWeight: FontWeight.w600,
+          fontSize: 18.0,
         ),
-        trailing: Icon(
-          Icons.check_box,
-          color: primaryColor,
-        ),
-        onTap: () {},
       ),
+      trailing: Icon(
+        children[_currentIndex].uid == childIndex.uid ? icons[0] : icons[1],
+        color: color,
+      ),
+      onTap: () {
+        print("1 ${currentChild.name}");
+        print("11 ${childIndex.name}");
+        setState((){
+          _currentIndex = idx;
+        });
+        _childProvider.updateCurrentChild(child: childIndex);
+        print("2 ${currentChild.name}");
+        print("22 ${childIndex.name}");
+      },
     );
   }
 }

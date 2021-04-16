@@ -13,7 +13,7 @@ class TaskDatabase {
   }
 
   List<Task> _taskListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.docs.map((data) {
+    var resp =  snapshot.docs.map((data) {
       DateTime createdDate = data["created_at"].toDate();
       DateTime deadlineDate = data["deadline"].toDate();
       return Task(
@@ -24,8 +24,12 @@ class TaskDatabase {
         createdAt: createdDate,
         isDone: data["is_done"],
         point: data["point"],
+        parentId: data["parent_id"],
+        childId: data["child_id"]
       );
     }).toList();
+    print(resp.length);
+    return resp;
   }
 
   Stream<List<Task>> getTasks(int limit) {

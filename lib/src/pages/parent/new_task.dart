@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile_unity/src/models/parent.dart';
+import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/services/task_database.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
 import 'package:mobile_unity/src/widgets/custom_picker.dart';
+import 'package:provider/provider.dart';
 
 class NewTaskChild extends StatefulWidget {
   @override
@@ -22,9 +25,13 @@ class _NewTaskChildState extends State<NewTaskChild> {
   final _titleController = TextEditingController();
   final _deadlineController = TextEditingController();
   final _taskDatabase = TaskDatabase();
+  Parent _parent;
+  ChildProvider _childProvider;
 
   @override
   Widget build(BuildContext context) {
+    _parent = Provider.of<Parent>(context);
+    _childProvider = Provider.of<ChildProvider>(context);
     return Scaffold(
         appBar: CustomAppBar(true, "Tugas Baru"),
         body: ListView(
@@ -87,9 +94,11 @@ class _NewTaskChildState extends State<NewTaskChild> {
             'title' : _titleController.text,
             'point' : _value,
             'category' : _categoryController.text,
-            'deadline': _date,
+            'deadline': DateTime(_date.year, _date.month, _date.day, 23, 59, 59),
             'created_at' : DateTime.now(),
-            'is_done' : false
+            'is_done' : false,
+            'parent_id' : _parent.uid,
+            'child_id' : _childProvider.selectedChild.uid,
           };
           setState(() => _loading = true);
           print(answers);

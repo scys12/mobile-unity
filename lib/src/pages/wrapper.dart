@@ -5,7 +5,9 @@ import 'package:mobile_unity/src/pages/auth/authenticate.dart';
 import 'package:mobile_unity/src/pages/auth/sign_phone.dart';
 import 'package:mobile_unity/src/pages/kid/dashboard.dart';
 import 'package:mobile_unity/src/pages/parent/wrapper.dart';
+import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/services/auth.dart';
+import 'package:mobile_unity/src/services/child_database.dart';
 import 'package:provider/provider.dart';
 
 class Wrapper extends StatelessWidget {
@@ -14,7 +16,15 @@ class Wrapper extends StatelessWidget {
     final Parent parent = Provider.of<Parent>(context);
     final Child child = Provider.of<Child>(context);
     if (parent != null) {
-      return WrapperParent();
+      return MultiProvider(
+        providers: [
+          StreamProvider<List<Child>>.value(
+            value: ChildDatabase().getChildrenFromParent(parent.uid),
+            initialData: [],
+          ),
+        ],
+        child: WrapperParent(),
+      );
     }
     else if (child != null) {
       return DashboardKid();

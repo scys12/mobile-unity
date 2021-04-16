@@ -17,8 +17,6 @@ class ChildTask extends StatefulWidget {
 class _ChildTaskState extends State<ChildTask> {
   List<Task> tasks = [];
 
-  get i => null;
-
   @override
   void initState() {
     super.initState();

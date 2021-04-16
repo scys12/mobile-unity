@@ -16,7 +16,7 @@ class ChildDatabase{
   Future<List<Child>> getOneChild(String parentId) async {
     var resp = await _childCollection
         .where('parent_id', isEqualTo:  parentId)
-        // .orderBy('created_at', descending: false)
+        .orderBy('created_at', descending: false)
         .limit(1)
         .get();
     return resp.docs.map(_childListFromQueryDocumentSnapshot).toList();
@@ -25,7 +25,7 @@ class ChildDatabase{
   Stream<List<Child>> getChildrenFromParent(String parentId) {
     return  _childCollection
         .where('parent_id', isEqualTo:  parentId)
-        // .orderBy('created_at', descending: false)
+        .orderBy('created_at', descending: false)
         .snapshots()
         .map(_childListFromSnapshot);
   }

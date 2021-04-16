@@ -18,6 +18,7 @@ import 'package:mobile_unity/src/pages/parent/new_task.dart';
 import 'package:mobile_unity/src/pages/parent/wrapper.dart';
 import 'package:mobile_unity/src/pages/wrapper.dart';
 import 'package:mobile_unity/src/provider/child_provider.dart';
+import 'package:mobile_unity/src/provider/task_provider.dart';
 import 'package:mobile_unity/src/services/auth.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
 import 'package:mobile_unity/src/services/task_database.dart';
@@ -50,13 +51,12 @@ class MyApp extends StatelessWidget {
                   value: AuthService().child,
                   initialData: null,
                 ),
-                StreamProvider<List<Task>>.value(
-                  value: TaskDatabase().getTasks(2),
-                  initialData: [],
-                ),
                 ChangeNotifierProvider(create: (e) => TabIndex()),
                 ChangeNotifierProvider(
                   create: (c) => ChildProvider(),
+                ),
+                ChangeNotifierProvider(
+                  create: (c) => TaskProvider(),
                 ),
               ],
               child: MaterialApp(

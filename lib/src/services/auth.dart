@@ -60,7 +60,6 @@ class AuthService {
   }
 
   Future<User> signInWithPhoneNumber(String pin) async{
-    Child _user;
     PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: pin);
     UserCredential userCredential = await _auth.signInWithCredential(phoneAuthCredential);
     User user = userCredential.user;

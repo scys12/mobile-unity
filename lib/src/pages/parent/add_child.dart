@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
+import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
 import 'package:mobile_unity/src/widgets/custom_picker.dart';
@@ -15,14 +16,15 @@ class AddChildScreen extends StatefulWidget {
 }
 
 class _AddChildScreenState extends State<AddChildScreen> {
+
   final _formKey = GlobalKey<FormState>();
   DateTime _date;
   final _dateController = TextEditingController();
   final _phoneController = TextEditingController();
   final _nameController = TextEditingController();
-  final _genderController = TextEditingController();
-  final _childDatabase = ChildDatabase();
   String _selectedGender;
+  String _error ='';
+  bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +32,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
       appBar: CustomAppBar(true, "Tambahkan Anak"),
       body: ListView(
         padding: EdgeInsets.all(16.0),
+        physics: ClampingScrollPhysics(),
         children: [
           Form(
             key: _formKey,
@@ -44,7 +47,14 @@ class _AddChildScreenState extends State<AddChildScreen> {
                 SizedBox(height: 15.0,),
                 _buildGender(),
                 SizedBox(height: 15.0,),
-                _buildSubmitButton(),
+                _buildSubmitButton(context),
+                SizedBox(height: 10.0,),
+                Text(
+                  _error,
+                  style: TextStyle(
+                    color: redColor
+                  ),
+                )
               ],
             ),
           ),
@@ -87,7 +97,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
           });
         },
         value:  _selectedGender,
-        validator: (value) => value.isEmpty || value == null ? 'Harap memilih salah satu' : null,
+        validator: (value) => value == null ? 'Harap memilih salah satu' : null,
       ),
     );
   }
@@ -136,6 +146,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
   );
 
   Widget _buildPhoneNumber() => TextFormField(
+    keyboardType: TextInputType.phone,
     decoration: InputDecoration(
       labelText: 'Nomor HP',
       labelStyle: TextStyle(
@@ -173,7 +184,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
       )
     ),
     validator: (value) {
-      if (value.length < 12) {
+      if (value.length < 10) {
         return 'Masukkan nomor hp yang valid';
       }else{
         return null;
@@ -211,23 +222,34 @@ class _AddChildScreenState extends State<AddChildScreen> {
     },
   );
 
-  Widget _buildSubmitButton() {
+  Widget _buildSubmitButton(BuildContext context) {
     final Parent user = Provider.of<Parent>(context);
-    final _childDatabase = ChildDatabase();
-
     return ElevatedButton(
-      onPressed: () {
+      onPressed: () async {
         if (_formKey.currentState.validate()) {
-          var answers = {
-            'name' : _nameController.text,
-            'phone_number' : _phoneController.text,
-            'born_date' : _date,
-            'created_at' : DateTime.now(),
-            'gender' : _genderController.text,
-            'parent_id' : user.uid
-          };
-          // var document = _childDatabase.createTask(answers);
-          Navigator.popUntil(context, (route) => route.isFirst);
+          var phoneNumber = "+62${_phoneController.text}";
+          setState(() => _loading = true);
+          if (_loading) {
+            createLoadingAlertDialog(context);
+          }
+          var children = await ChildDatabase().checkPhoneNumber(phoneNumber);
+          setState(() => _loading = false);
+          if (children.length == 0) {
+            Navigator.pop(context);
+            setState(() => _error = 'Periksa kembali nomor HP anak');
+          }else {
+            setState(() => _error = '');
+            var answers = {
+              'name' : _nameController.text,
+              'born_date' : _date,
+              'created_at' : DateTime.now(),
+              'gender' : _selectedGender,
+              'parent_id' : user.uid,
+              'is_profile_filled' : true,
+            };
+            var document = ChildDatabase(uid: children[0].uid).updateChildData(answers);
+            Navigator.popUntil(context, (route) => route.isFirst);
+          }
         }
       },
       child: Text('Simpan Profile Anak'),

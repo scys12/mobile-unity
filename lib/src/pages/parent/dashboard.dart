@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/pages/parent/child_task.dart';
 import 'package:mobile_unity/src/services/auth.dart';
@@ -13,13 +14,14 @@ class DashboardParent extends StatefulWidget {
 }
 
 class _DashboardParentState extends State<DashboardParent> {
+  List<Child> children;
   final AuthService _authService = AuthService();
   int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<Parent>(context);
-    var size = MediaQuery.of(context).size;
+    final Parent user = Provider.of<Parent>(context);
+    children = Provider.of<List<Child>>(context);
     return Scaffold(
       body: ListView(
         physics: ClampingScrollPhysics(),
@@ -114,7 +116,9 @@ class _DashboardParentState extends State<DashboardParent> {
                         EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0)
                       ),
                     ),
-                    onPressed: _addChildButtonPressed,
+                    onPressed: (){
+                      _addChildButtonPressed();
+                    },
                     child:  Column(
                         children: [
                           Row(
@@ -155,7 +159,7 @@ class _DashboardParentState extends State<DashboardParent> {
               )
             ],
           ),
-          SizedBox(height: 10.0,),
+          SizedBox(height: 15.0,),
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
@@ -168,7 +172,9 @@ class _DashboardParentState extends State<DashboardParent> {
               "Anda belum menambahkan si kecil",
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: Colors.white
+                color: Colors.white,
+                fontSize: 15.0,
+                fontFamily: 'Poppins',
               ),
             ),
           ),
@@ -290,10 +296,14 @@ class _DashboardParentState extends State<DashboardParent> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                ListTile(
-                  leading: Icon(Icons.account_circle),
+                children.length > 0
+                  ? Row(
+                  children: [
+                    ...children.map((val) => _buildChildTile(val)).toList()
+                  ],
+                ) : ListTile(
                   title: Text(
-                    'Nama anak',
+                    'Belum menambahkan si kecil',
                     style: TextStyle(
                       fontFamily: "Poppins",
                       fontWeight: FontWeight.w600,
@@ -301,7 +311,7 @@ class _DashboardParentState extends State<DashboardParent> {
                     ),
                   ),
                   trailing: Icon(
-                    Icons.check_box,
+                    Icons.indeterminate_check_box,
                     color: primaryColor,
                   ),
                   onTap: () {},
@@ -351,5 +361,26 @@ class _DashboardParentState extends State<DashboardParent> {
         ),
       );
     });
+  }
+
+  Widget _buildChildTile(Child child){
+    return Expanded(
+      child: ListTile(
+        leading: Icon(Icons.account_circle),
+        title: Text(
+          child.name,
+          style: TextStyle(
+            fontFamily: "Poppins",
+            fontWeight: FontWeight.w600,
+            fontSize: 18.0,
+          ),
+        ),
+        trailing: Icon(
+          Icons.check_box,
+          color: primaryColor,
+        ),
+        onTap: () {},
+      ),
+    );
   }
 }

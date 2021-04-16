@@ -8,6 +8,7 @@ class Child{
   final int totalPoint;
   final bool isProfileFilled;
   final String parentId;
+  final DateTime bornDate;
 
-  Child({this.uid, this.name, this.gender, this.phoneNumber, this.income, this.outcome, this.totalPoint, this.isProfileFilled, this.parentId});
+  Child({this.uid, this.name, this.gender, this.phoneNumber, this.income, this.outcome, this.totalPoint, this.isProfileFilled, this.parentId, this.bornDate});
 }

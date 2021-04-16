@@ -73,6 +73,7 @@ class _ParentSettingState extends State<ParentSetting> {
                   Icon(
                     Icons.email,
                     color: Colors.black,
+                    size: 20.0,
                   ),
                   SizedBox(width: 10.0,),
                   Text(
@@ -89,27 +90,46 @@ class _ParentSettingState extends State<ParentSetting> {
               user.isProfileFilled ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width:200,
-                    child: Text(
-                      user.name,
-                      style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15.0,
-                          color: Colors.black
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.face,
+                        color: Colors.black,
+                        size: 20.0,
                       ),
-                    ),
+                      SizedBox(width: 10.0,),
+                      Container(
+                        width:200,
+                        child: Text(
+                          user.name,
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15.0,
+                              color: Colors.black
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 5.0,),
-                  Text(
-                    user.phoneNumber,
-                    style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 15.0,
-                        color: Colors.white
-                    ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.phone,
+                        color: Colors.black,
+                        size: 20.0,
+                      ),
+                      Text(
+                        user.phoneNumber,
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15.0,
+                            color: Colors.black
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ) : TextButton(

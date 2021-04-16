@@ -49,7 +49,7 @@ class CustomPicker extends CommonPickerModel {
 
   @override
   String rightStringAtIndex(int index) {
-    if (index >= 2021 && index < 2025) {
+    if (index >= 1980 && index < 2025) {
       return this.digits(index, 2);
     } else {
       return null;

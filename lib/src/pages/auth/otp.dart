@@ -164,7 +164,7 @@ class _OTPScreenState extends State<OTPScreen> {
                               'is_profile_filled' : false,
                               'parent_id' : "",
                             };
-                            ChildDatabase(uid: resp.uid).updateChildData(data);
+                            ChildDatabase(uid: resp.uid).createChildData(data);
                           }
                           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => DashboardKid()), (route) => false);
                         }

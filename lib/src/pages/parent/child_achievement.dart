@@ -238,19 +238,6 @@ class _ChildAchievementState extends State<ChildAchievement> {
                   SizedBox(
                     height: 4,
                   ),
-                  Indicator(
-                    color: Color(0xff845bef),
-                    text: 'Third',
-                    isSquare: false,
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Indicator(
-                    color: Color(0xff13d38e),
-                    text: 'Fourth',
-                    isSquare: false,
-                  ),
                   SizedBox(
                     height: 18,
                   ),
@@ -316,7 +303,7 @@ class _ChildAchievementState extends State<ChildAchievement> {
         case 0:
           return PieChartSectionData(
             color: const Color(0xff0293ee),
-            value: 40,
+            value: 70,
             title: '40%',
             radius: radius,
             titleStyle: TextStyle(
@@ -334,7 +321,7 @@ class _ChildAchievementState extends State<ChildAchievement> {
         case 2:
           return PieChartSectionData(
             color: const Color(0xff845bef),
-            value: 15,
+            value: 10,
             title: '15%',
             radius: radius,
             titleStyle: TextStyle(
@@ -343,7 +330,7 @@ class _ChildAchievementState extends State<ChildAchievement> {
         case 3:
           return PieChartSectionData(
             color: const Color(0xff13d38e),
-            value: 15,
+            value: 10,
             title: '15%',
             radius: radius,
             titleStyle: TextStyle(

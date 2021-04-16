@@ -4,7 +4,8 @@ class Wish{
   final String title;
   final DateTime deadline;
   final bool isDone;
-  final String target;
+  final int target;
+  final childId;
 
-  Wish({this.uid, this.currentMoney, this.title, this.deadline, this.isDone, this.target});
+  Wish({this.uid, this.currentMoney, this.title, this.deadline, this.isDone, this.target, this.childId});
 }

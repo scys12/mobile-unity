@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/task.dart';
+import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/services/task_database.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
@@ -16,6 +17,7 @@ class ChildTask extends StatefulWidget {
 
 class _ChildTaskState extends State<ChildTask> {
   List<Task> tasks = [];
+  ChildProvider _childProvider;
 
   @override
   void initState() {
@@ -24,6 +26,7 @@ class _ChildTaskState extends State<ChildTask> {
   @override
   Widget build(BuildContext context) {
     tasks = Provider.of<List<Task>>(context);
+    _childProvider = Provider.of<ChildProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(false, "Tugas"),
       body: ListView(
@@ -250,7 +253,7 @@ class _ChildTaskState extends State<ChildTask> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Tugas Lumen",
+                  "Tugas ${_childProvider.selectedChild.name}",
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w600,

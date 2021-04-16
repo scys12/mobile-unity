@@ -75,7 +75,7 @@ class _NewTaskChildState extends State<NewTaskChild> {
         ),
         SizedBox(width: 10.0,),
         Text(
-          "Lumen",
+          _childProvider.selectedChild.name,
           style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 25.0,

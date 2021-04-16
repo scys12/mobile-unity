@@ -208,7 +208,7 @@ class _DashboardParentState extends State<DashboardParent> {
                           ),
                         ),
                         Text(
-                          "${_childProvider.selectedChild.income-_childProvider.selectedChild.income}",
+                          "${_childProvider.selectedChild.income-_childProvider.selectedChild.outcome}",
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 25.0,

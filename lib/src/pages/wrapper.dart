@@ -8,8 +8,34 @@ import 'package:provider/provider.dart';
 class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<Parent>(context);
-    return SignPhone();
+    return Scaffold(
+      body: ListView(
+        children: [
+          Image(image: AssetImage("assets/images/splash.png"),),
+          Text(
+            "Daftar Sebagai",
+            style: TextStyle(
+                color: Colors.black,
+                fontFamily: 'Poppins',
+                fontSize: 40.0,
+                fontWeight: FontWeight.w600,
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/auth/sign_phone');
+            },
+            child: Text("Anak"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/authenticate');
+            },
+            child: Text("Orang Tua"),
+          )
+        ],
+      ),
+    );
   }
 }
 

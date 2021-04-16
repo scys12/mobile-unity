@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_unity/src/pages/kid/dashboard.dart';
 import 'package:mobile_unity/src/services/auth.dart';
+import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/loading.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -146,7 +147,7 @@ class _OTPScreenState extends State<OTPScreen> {
                           _loading = true;
                         });
                         if(_loading) {
-                          _createAlertDialog(context);
+                          createLoadingAlertDialog(context);
                         }
                         var resp = await _authService.signInWithPhoneNumber(v);
                         if(resp.user != null) {
@@ -179,23 +180,5 @@ class _OTPScreenState extends State<OTPScreen> {
         ),
       ),
     );
-  }
-
-  Future _createAlertDialog(BuildContext context){
-    return showDialog(barrierDismissible: false,context: context, builder: (context) {
-      return Container(
-        child: Center(
-          child: Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10.0)
-            ),
-            child: Loading()
-          )
-        ),
-      );
-    });
   }
 }

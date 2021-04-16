@@ -165,7 +165,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
 
         children: [
           CircleAvatar(
-            backgroundImage: AssetImage("images/indonesia.png"),
+            backgroundImage: AssetImage("assets/images/indonesia.png"),
             radius: 10.0,
           ),
           SizedBox(width: 5.0,),

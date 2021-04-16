@@ -1,6 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_unity/src/widgets/loading.dart';
 
 import 'constants.dart';
+
+Future successMessage(BuildContext context, String message){
+  return showDialog(context: context, builder: (context) {
+    return AlertDialog(
+      backgroundColor: Colors.transparent,
+      elevation: 0.0,
+      content: Container(
+        margin: EdgeInsets.all(40.0),
+        
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0)
+        ),
+        padding: EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.check_box,
+              color: greenColor,
+            ),
+            SizedBox(height: 10.0,),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: "Poppins",
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  });
+}
+
+Future createLoadingAlertDialog(BuildContext context){
+  return showDialog(barrierDismissible: false,context: context, builder: (context) {
+    return Container(
+      child: Center(
+          child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10.0)
+              ),
+              child: Loading()
+          )
+      ),
+    );
+  });
+}
 
 Future createAlertDialog(BuildContext context){
   return showDialog(context: context, builder: (context) {
@@ -87,12 +144,15 @@ Future createAlertDialog(BuildContext context){
                   Icons.add,
                 ),
                 SizedBox(width: 15.0,),
-                Text(
-                  "Tugas Baru",
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 17.0,
+                Material(
+                  child: Text(
+                    "Tugas Baru",
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 17.0,
+                      decoration: TextDecoration.none
+                    ),
                   ),
                 )
               ],

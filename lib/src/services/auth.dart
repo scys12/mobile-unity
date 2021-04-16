@@ -1,16 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:mobile_unity/src/models/parent.dart' as Custom;
+import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/services/parent_database.dart';
 
 class AuthService {
   final FirebaseAuth _auth =  FirebaseAuth.instance;
   String verificationId;
 
-  Custom.Parent _userFromFirebaseUser(User user){
-    return user != null ? Custom.Parent(uid: user.uid, name: user.displayName) : null ;
+  Parent _userFromFirebaseUser(User user){
+    return user != null ? Parent(uid: user.uid, name: user.displayName) : null ;
   }
 
-  Stream<Custom.Parent> get user{
+  Stream<Parent> get user{
     return _auth.authStateChanges()
         .map(_userFromFirebaseUser);
   }
@@ -65,20 +65,20 @@ class AuthService {
 
   //register phone
   Future registerEmailAndPassword(String email, String password) async {
-    Custom.Parent _user;
+    Parent _user;
     try {
       UserCredential credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User user = credential.user;
       await ParentDatabase(uid: user.uid).updateParentData('', 0, '');
       _user = _userFromFirebaseUser(user);
-    } catch (e) {
-      print(e);
+    } on FirebaseAuthException catch (e) {
+      return e.code;
     }
     return _user;
   }
   //register email password
-  Future signInWithEmailAndPassword(String email, String password) async {
-    Custom.Parent _user;
+  Future<Parent> signInWithEmailAndPassword(String email, String password) async {
+    Parent _user;
     try {
       UserCredential credential = await _auth.signInWithEmailAndPassword(email: email, password: password);
       User user = credential.user;

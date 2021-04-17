@@ -240,7 +240,9 @@ class _DashboardParentState extends State<DashboardParent> {
                                   borderRadius: BorderRadius.circular(8.0),
                                 )),
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/parent/transactions');
+                              },
                               child: Row(
                                 children: [
                                   Text(

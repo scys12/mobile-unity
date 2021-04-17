@@ -8,6 +8,7 @@ import 'package:mobile_unity/src/services/task_database.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
+import 'package:mobile_unity/src/widgets/loading.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +24,7 @@ class _ChildTaskState extends State<ChildTask> {
   List<Task> tasks = [];
   ChildProvider _childProvider;
   List<Wish> _wishes;
+  bool _loading = true;
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +34,12 @@ class _ChildTaskState extends State<ChildTask> {
     var _newTasks = tasks.where((e) => e.category != 'Edukasi Finansial').take(2).toList();
     _wishes =  Provider.of<List<Wish>>(context);
     var _newWish = _wishes.where((element) => !element.isDone).take(1).toList();
-
-    return Scaffold(
+    if (tasks != null) {
+      setState(() {
+        _loading = false;
+      });
+    }
+    return _loading ? Loading() : Scaffold(
       appBar: CustomAppBar(false, "Tugas"),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: 20.0),

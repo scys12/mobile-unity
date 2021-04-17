@@ -31,8 +31,8 @@ class _ChildTaskState extends State<ChildTask> {
   Widget build(BuildContext context) {
     tasks = Provider.of<List<Task>>(context);
     _childProvider = Provider.of<ChildProvider>(context);
-    var _newTasks = tasks.where((e) => e.category == 'Edukasi Finansial').take(2).toList();
-    var _newEducations = tasks.where((e) => e.category != 'Edukasi Finansial').take(2).toList();
+    var _newEducations = tasks.where((e) => e.category == 'Edukasi Finansial').take(2).toList();
+    var _newTasks = tasks.where((e) => e.category != 'Edukasi Finansial').take(2).toList();
     _wishes =  Provider.of<List<Wish>>(context);
     var _newWish = _wishes.where((element) => !element.isDone).take(1).toList();
 
@@ -47,10 +47,10 @@ class _ChildTaskState extends State<ChildTask> {
           SizedBox(height: 25.0,),
           SubHeader(title: 'Tugas', isLihatSemua: _newTasks.length > 0 ? true : false, path: '/parent/all_tasks'),
           SizedBox(height: 25.0,),
-          _newEducations.length > 0 ? Row(
+          _newTasks.length > 0 ? Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ..._newEducations.asMap().map((idx, element) =>
+              ..._newTasks.asMap().map((idx, element) =>
                 MapEntry(idx, Expanded(
                   child: _buildCard(idx, element),
                 )
@@ -67,10 +67,10 @@ class _ChildTaskState extends State<ChildTask> {
           SizedBox(height: 25.0,),
           SubHeader(title: 'Edukasi Finansial', isLihatSemua: _newEducations.length > 0 ? true : false, path: '/parent/all_educations'),
           SizedBox(height: 25.0,),
-          _newTasks.length > 0 ? Row(
+          _newEducations.length > 0 ? Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ..._newTasks.asMap().map((idx, element) =>
+              ..._newEducations.asMap().map((idx, element) =>
                   MapEntry(idx, Expanded(
                     child: _buildCard(idx, element),
                   )

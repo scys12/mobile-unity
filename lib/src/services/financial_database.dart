@@ -29,12 +29,10 @@ class FinancialDatabase {
     return resp;
   }
 
-  Stream<List<Financial>> getTasks(int limit) {
+  Stream<List<Financial>> getFinancials(String childId) {
     return _financialCollection
-        .where('is_done', isEqualTo: false)
-        .where('deadline', isGreaterThanOrEqualTo: DateTime.now())
-        .limit(limit)
-        .snapshots()
-        .map(_financialListFromSnapshot);
+      .where('child_id', isEqualTo: childId)
+      .snapshots()
+      .map(_financialListFromSnapshot);
   }
 }

@@ -1,17 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_unity/src/models/child.dart';
-import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/models/tab_index.dart';
 import 'package:mobile_unity/src/pages/kid/dashboard.dart';
-import 'package:mobile_unity/src/pages/kid/pengeluaran.dart';
-import 'package:mobile_unity/src/pages/parent/child_achievement.dart';
-import 'package:mobile_unity/src/pages/parent/child_task.dart';
-import 'package:mobile_unity/src/pages/parent/dashboard.dart';
-import 'package:mobile_unity/src/pages/parent/setting.dart';
-import 'package:mobile_unity/src/provider/child_provider.dart';
-import 'package:mobile_unity/src/services/child_database.dart';
+import 'package:mobile_unity/src/pages/kid/inner_income.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
-import 'package:mobile_unity/src/widgets/loading.dart';
 import 'package:provider/provider.dart';
 
 class WrapperChildren extends StatefulWidget {
@@ -21,7 +12,7 @@ class WrapperChildren extends StatefulWidget {
 
 class _State extends State<WrapperChildren> {
   final tabs = [
-    PengeluaranKid(),
+    InnerIncome(),
     DashboardKid(),
   ];
 

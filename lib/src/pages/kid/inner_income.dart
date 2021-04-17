@@ -3,14 +3,14 @@ import 'package:flutter/widgets.dart';
 import 'package:mobile_unity/src/pages/kid/components/bubble.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 
-class PengeluaranKid extends StatefulWidget {
+class InnerIncome extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return _State();
   }
 }
 
-class _State extends State<PengeluaranKid> {
+class _State extends State<InnerIncome> {
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
 
@@ -29,7 +29,7 @@ class _State extends State<PengeluaranKid> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Bubble(
-                message: "Berapa uang yang kamu keluarkan hari ini?",
+                message: "Berapa uang yang kamu dapat hari ini?",
               ),
               Container(
                 margin: EdgeInsets.fromLTRB(3, 15, 3, 15),

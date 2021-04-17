@@ -8,6 +8,8 @@ import 'package:mobile_unity/src/pages/auth/authenticate.dart';
 import 'package:mobile_unity/src/pages/auth/otp.dart';
 import 'package:mobile_unity/src/pages/auth/sign_phone.dart';
 import 'package:mobile_unity/src/pages/kid/dashboard.dart';
+import 'package:mobile_unity/src/pages/kid/kid_task.dart';
+import 'package:mobile_unity/src/pages/kid/wrapper.dart';
 import 'package:mobile_unity/src/pages/parent/add_child.dart';
 import 'package:mobile_unity/src/pages/parent/change_profile.dart';
 import 'package:mobile_unity/src/pages/parent/detail_task.dart';
@@ -60,7 +62,7 @@ class MyApp extends StatelessWidget {
                 ),
               ],
               child: MaterialApp(
-                home: Wrapper(),
+                home: WrapperChildren(),
                 routes: {
                   '/authenticate': (context) => Authenticate(),
                   '/welcome': (context) => Wrapper(),
@@ -69,8 +71,7 @@ class MyApp extends StatelessWidget {
                   '/parent/wrapper': (context) => WrapperParent(),
                   '/parent/new_education': (context) => NewEducationChild(),
                   '/parent/all_tasks': (context) => ListChildTasks(),
-                  '/parent/all_educations': (context) =>
-                      ListChildEducations(),
+                  '/parent/all_educations': (context) => ListChildEducations(),
                   '/parent/detail_task': (context) => DetailTaskChild(),
                   '/child/dashboard': (context) => DashboardKid(),
                   '/auth/sign_phone': (context) => SignPhone(),

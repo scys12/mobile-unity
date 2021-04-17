@@ -1,14 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:intl/intl.dart';
-import 'package:mobile_unity/src/models/child.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mobile_unity/src/models/parent.dart';
-import 'package:mobile_unity/src/services/child_database.dart';
 import 'package:mobile_unity/src/services/parent_database.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
-import 'package:mobile_unity/src/widgets/custom_picker.dart';
 import 'package:provider/provider.dart';
 
 class ChangeProfileScreen extends StatefulWidget {
@@ -17,6 +14,9 @@ class ChangeProfileScreen extends StatefulWidget {
 }
 
 class _ChangeProfileScreenState extends State<ChangeProfileScreen> {
+
+  File _image;
+  final ImagePicker _picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
   bool _loading = false;
   final _phoneController = TextEditingController();
@@ -36,6 +36,11 @@ class _ChangeProfileScreenState extends State<ChangeProfileScreen> {
             key: _formKey,
             child: Column(
               children: [
+                SizedBox(height: 15.0,),
+                _buildUploadImage(),
+                SizedBox(height: 15.0,),
+                _buildUploadButton(),
+                SizedBox(height: 15.0,),
                 _buildName(user.name),
                 SizedBox(height: 15.0,),
                 _buildPhoneNumber(user.phoneNumber),
@@ -193,6 +198,162 @@ class _ChangeProfileScreenState extends State<ChangeProfileScreen> {
               secondaryColor
           )
       ),
+    );
+  }
+
+  Widget _buildUploadImage(){
+    return Container(
+      height: 200.0,
+      width: 200.0,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        color: shadowColor,
+        border: Border.all(
+          color: secondaryColor,
+          width: 2.0,
+        )
+      ),
+      child: Center(
+        child: Icon(
+          Icons.image,
+          color: secondaryColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUploadButton(){
+    return TextButton.icon(
+      label: Text(
+        'Unggah Foto Anak',
+        style: TextStyle(
+          color: secondaryColor
+        ),
+      ),
+      onPressed: (){
+        _showModalBottom();
+      },
+      icon: Icon(
+        Icons.camera_alt,
+        color: secondaryColor,
+      ),
+      style: ButtonStyle(
+        overlayColor: MaterialStateProperty.all(thirdColor),
+        side: MaterialStateProperty.all(
+          BorderSide(
+            color: secondaryColor,
+          ),
+        ),
+
+      ),
+    );
+  }
+
+  Future _getImageFromCamera() async{
+    final pickedFile = await _picker.getImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future _getImageFromGallery() async{
+    final pickedFile = await _picker.getImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
+
+  void _showModalBottom(){
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            color: Color(0XFF737373),
+            child: Container(
+              decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(20),
+                  topRight: const Radius.circular(20)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20.0),
+                      child: Text(
+                        'Unggah foto melalui',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w500
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          TextButton.icon(
+                            label: Text(
+                              'Camera',
+                              style: TextStyle(
+                                color: secondaryColor
+                              ),
+                            ),
+                            icon: Icon(Icons.camera,color: secondaryColor),
+                            onPressed: (){
+                              _getImageFromCamera();
+                            },
+                            style: ButtonStyle(
+                              overlayColor: MaterialStateProperty.all(thirdColor),
+                              side: MaterialStateProperty.all(
+                                BorderSide(
+                                  color: secondaryColor,
+                                ),
+                              ),
+
+                            ),
+                          ),
+                          TextButton.icon(
+                            label: Text(
+                              'Gallery',
+                              style: TextStyle(
+                                  color: secondaryColor
+                              ),
+                            ),
+                            icon: Icon(Icons.image,color: secondaryColor),
+                            onPressed: (){
+                              _getImageFromGallery();
+                            },
+                            style: ButtonStyle(
+                              overlayColor: MaterialStateProperty.all(thirdColor),
+                              side: MaterialStateProperty.all(
+                                BorderSide(
+                                  color: secondaryColor,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            )
+          );
+        }
     );
   }
 }

@@ -1,31 +1,51 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:mobile_unity/src/provider/child_provider.dart';
+import 'package:mobile_unity/src/provider/task_provider.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
+import 'package:mobile_unity/src/widgets/loading.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
+import 'package:provider/provider.dart';
 
 class DetailTaskChild extends StatefulWidget {
+  final String taskId;
+  DetailTaskChild({this.taskId});
   @override
   _DetailTaskChildState createState() => _DetailTaskChildState();
 }
 
 class _DetailTaskChildState extends State<DetailTaskChild> {
-  String _title;
-  String _deadline;
-  String _category;
-  int _points;
+  TaskProvider _taskProvider;
+  ChildProvider _childProvider;
+  bool _loading = true;
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    super.initState();
+    _taskProvider = Provider.of(context, listen: false);
+    _taskProvider.getTask(taskId: widget.taskId);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(true, "Tugas Baru"),
+    String title;
+    _childProvider = Provider.of<ChildProvider>(context);
+    _taskProvider =  Provider.of<TaskProvider>(context);
+    if (_taskProvider.selectedTask != null && _taskProvider.selectedTask.uid == widget.taskId) {
+      setState(() {
+        _loading = false;
+      });
+      title = _taskProvider.selectedTask.category == 'Edukasi Finansial' ? 'Edukasi Finansial' : 'Tugas';
+    }
+    return _loading ? Loading() : Scaffold(
+      appBar: CustomAppBar(true, "Detail ${title}"),
       body: ListView(
         physics: ClampingScrollPhysics(),
         padding: EdgeInsets.all(30.0),
         children: [
           Form(
-            key: _formKey,
             child: Column(
               children: [
                 _buildChildProfile(),
@@ -148,7 +168,7 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
         ),
         SizedBox(width: 10.0,),
         Text(
-          "Lumen",
+          _childProvider.selectedChild.name,
           style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 25.0,
@@ -172,66 +192,50 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
   }
 
   Widget _buildPointField(){
-    return TextFormField(
-      textInputAction: TextInputAction.search,
-      style: TextStyle(
-        fontSize: 18.0,
-        fontWeight: FontWeight.w600,
-        fontFamily: 'Poppins',
+    return Container(
+      padding: EdgeInsets.all(15.0),
+      child: Row(
+        children: [
+          Icon(Icons.card_giftcard, color: shadowColor,),
+          SizedBox(width: 10.0,),
+          Text(
+            "${_taskProvider.selectedTask.point}pts",
+            style: TextStyle(
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w600,
+                fontSize: 17.0
+            ),
+          ),
+        ],
       ),
-      cursorColor: secondaryColor,
-      decoration: InputDecoration(
-        enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-                color: shadowColor,
-                width: 2.0
-            )
-        ),
-        focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-                color: secondaryColor,
-                width: 2.0
-            )
-        ),
-        floatingLabelBehavior: FloatingLabelBehavior.never,
-        prefixIcon: Icon(Icons.card_giftcard, color: shadowColor,),
-      ),
-      enabled: false,
-      initialValue: "5pts",
-      validator: (value) => value.isEmpty ? 'Name is required' : '',
-      onSaved: (value) => setState(() => _title = value),
     );
   }
 
   Widget _buildCategoryField(){
-    return TextFormField(
-      textInputAction: TextInputAction.search,
-      style: TextStyle(
-        fontSize: 18.0,
-        fontWeight: FontWeight.w600,
-        fontFamily: 'Poppins',
+    return Container(
+      padding: EdgeInsets.all(15.0),
+      child: Row(
+        children: [
+          Icon(Icons.category, color: shadowColor,),
+          SizedBox(width: 10.0,),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
+            decoration: BoxDecoration(
+              color: secondaryColor,
+              borderRadius: BorderRadius.circular(5.0)
+            ),
+            child: Text(
+              _taskProvider.selectedTask.category,
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w600,
+                fontSize: 17.0,
+                color: Colors.white
+              ),
+            ),
+          ),
+        ],
       ),
-      cursorColor: secondaryColor,
-      decoration: InputDecoration(
-        enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-                color: shadowColor,
-                width: 2.0
-            )
-        ),
-        focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-                color: secondaryColor,
-                width: 2.0
-            )
-        ),
-        floatingLabelBehavior: FloatingLabelBehavior.never,
-        prefixIcon: Icon(Icons.category, color: shadowColor,),
-      ),
-      enabled: false,
-      initialValue: "Pendidikan",
-      validator: (value) => value.isEmpty ? 'Name is required' : '',
-      onSaved: (value) => setState(() => _title = value),
     );
   }
 
@@ -259,41 +263,28 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
           floatingLabelBehavior: FloatingLabelBehavior.never
       ),
       enabled: false,
-      initialValue: "Berhasil",
+      initialValue: _taskProvider.selectedTask.title,
       validator: (value) => value.isEmpty ? 'Name is required' : '',
-      onSaved: (value) => setState(() => _title = value),
     );
   }
 
   Widget _buildDeadlineField() {
-    return TextFormField(
-      textInputAction: TextInputAction.search,
-      style: TextStyle(
-        fontSize: 18.0,
-        fontWeight: FontWeight.w600,
-        fontFamily: 'Poppins',
+    return Container(
+      padding: EdgeInsets.all(15.0),
+      child: Row(
+        children: [
+          Icon(Icons.schedule, color: shadowColor,),
+          SizedBox(width: 10.0,),
+          Text(
+            DateFormat("dd-MM-yyyy").format(_taskProvider.selectedTask.deadline).toString(),
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              fontSize: 17.0
+            ),
+          ),
+        ],
       ),
-      cursorColor: secondaryColor,
-      decoration: InputDecoration(
-        enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-                color: shadowColor,
-                width: 2.0
-            )
-        ),
-        focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-                color: secondaryColor,
-                width: 2.0
-            )
-        ),
-        floatingLabelBehavior: FloatingLabelBehavior.never,
-        prefixIcon: Icon(Icons.schedule, color: shadowColor,),
-      ),
-      enabled: false,
-      initialValue: "24-04-2021",
-      validator: (value) => value.isEmpty ? 'Name is required' : '',
-      onSaved: (value) => setState(() => _title = value),
     );
   }
 }

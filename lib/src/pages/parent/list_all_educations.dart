@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
+import 'package:mobile_unity/src/pages/parent/detail_task.dart';
+import 'package:mobile_unity/src/provider/child_provider.dart';
+import 'package:mobile_unity/src/provider/task_provider.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
+import 'package:mobile_unity/src/widgets/loading.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
+import 'package:provider/provider.dart';
 
 class ListChildEducations extends StatefulWidget {
   @override
@@ -11,9 +17,29 @@ class ListChildEducations extends StatefulWidget {
 }
 
 class _ListChildEducationsState extends State<ListChildEducations> {
+
+  TaskProvider _taskProvider;
+  ChildProvider _childProvider;
+  bool _loading = true;
+
+  @override
+  void initState() {
+
+    super.initState();
+    _childProvider = Provider.of<ChildProvider>(context, listen: false);
+    _taskProvider = Provider.of(context, listen: false);
+    _taskProvider.getChildEducationFromParent(childId: _childProvider.selectedChild.uid, parentId: _childProvider.selectedChild.parentId);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    _taskProvider =  Provider.of<TaskProvider>(context);
+    if (_taskProvider.educations != null) {
+      setState(() {
+        _loading = false;
+      });
+    }
+    return _loading ? Loading() : Scaffold(
       appBar: CustomAppBar(true, "Semua Edukasi Finansial"),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 25.0),
@@ -25,12 +51,16 @@ class _ListChildEducationsState extends State<ListChildEducations> {
             SubHeader(title: 'Edukasi Finansial',isLihatSemua: false,),
             SizedBox(height: 15.0,),
             ListView.builder(
-              itemCount: 9,
+              itemCount: _taskProvider.educations.length,
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index){
                 return InkWell(
-                  onTap: ()=>Navigator.pushNamed(context, '/parent/detail_task'),
+                  onTap: ()=>Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DetailTaskChild(taskId: _taskProvider.educations[index].uid,)),
+                  ),
+
                   splashFactory: InkRipple.splashFactory,
                   child: Card(
                     elevation: 7.0,
@@ -45,7 +75,7 @@ class _ListChildEducationsState extends State<ListChildEducations> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            'Berhasil menyelesaikan tugas',
+                            _taskProvider.educations[index].title,
                             style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontWeight: FontWeight.w600,
@@ -64,7 +94,7 @@ class _ListChildEducationsState extends State<ListChildEducations> {
                               contentPadding: EdgeInsets.zero,
                               minLeadingWidth: 0.0,
                               title: Text(
-                                '25-05-2021',
+                                DateFormat("dd-MM-yyyy").format(_taskProvider.educations[index].deadline).toString(),
                                 style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontWeight: FontWeight.w600,
@@ -75,11 +105,11 @@ class _ListChildEducationsState extends State<ListChildEducations> {
                               trailing: Container(
                                 padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
                                 decoration: BoxDecoration(
-                                    color: redColor,
+                                    color: _taskProvider.educations[index].isDone ? greenColor : redColor,
                                     borderRadius: BorderRadius.circular(10.0)
                                 ),
                                 child: Text(
-                                  "Sedang Berjuang",
+                                  DateTime.now().difference(_taskProvider.educations[index].deadline).inDays <= 0 ? "Sedang Berjuang" : "Sudah selesai",
                                   style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontWeight: FontWeight.w400,
@@ -100,11 +130,34 @@ class _ListChildEducationsState extends State<ListChildEducations> {
                               contentPadding: EdgeInsets.zero,
                               minLeadingWidth: 0.0,
                               title: Text(
-                                '10pts',
+                                '${_taskProvider.educations[index].point}pts',
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
                                   fontWeight: FontWeight.w600,
                                   fontSize: 20.0,
+                                ),
+                              ),
+                              trailing: Container(
+                                padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
+                                decoration: BoxDecoration(
+                                    color: secondaryColor,
+                                    borderRadius: BorderRadius.circular(10.0)
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.category, color: Colors.white, size: 15.0,),
+                                    SizedBox(width: 5.0,),
+                                    Text(
+                                      _taskProvider.educations[index].category,
+                                      style: TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 15.0,
+                                          color: Colors.white
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               )
                           )
@@ -130,7 +183,7 @@ class _ListChildEducationsState extends State<ListChildEducations> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Tugas Lumen",
+                  "Tugas ${_childProvider.selectedChild.name}",
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w600,

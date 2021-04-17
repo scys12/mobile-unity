@@ -43,7 +43,7 @@ class _ParentSettingState extends State<ParentSetting> {
 
   Widget _buildProfile(Parent user){
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10.0),

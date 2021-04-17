@@ -160,3 +160,93 @@ Future createAlertDialog(BuildContext context){
     );
   });
 }
+
+void showModalUploadImageBottom(BuildContext context, Function getImageFromCamera, getImageFromGallery){
+  showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+            color: Color(0XFF737373),
+            child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: const Radius.circular(20),
+                      topRight: const Radius.circular(20)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20.0),
+                        child: Text(
+                          'Unggah foto melalui',
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w500
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            TextButton.icon(
+                              label: Text(
+                                'Camera',
+                                style: TextStyle(
+                                    color: secondaryColor
+                                ),
+                              ),
+                              icon: Icon(Icons.camera,color: secondaryColor),
+                              onPressed: (){
+                                getImageFromCamera();
+                              },
+                              style: ButtonStyle(
+                                overlayColor: MaterialStateProperty.all(thirdColor),
+                                side: MaterialStateProperty.all(
+                                  BorderSide(
+                                    color: secondaryColor,
+                                  ),
+                                ),
+
+                              ),
+                            ),
+                            TextButton.icon(
+                              label: Text(
+                                'Gallery',
+                                style: TextStyle(
+                                    color: secondaryColor
+                                ),
+                              ),
+                              icon: Icon(Icons.image,color: secondaryColor),
+                              onPressed: (){
+                                getImageFromGallery();
+                              },
+                              style: ButtonStyle(
+                                overlayColor: MaterialStateProperty.all(thirdColor),
+                                side: MaterialStateProperty.all(
+                                  BorderSide(
+                                    color: secondaryColor,
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+            )
+        );
+      }
+  );
+}

@@ -70,9 +70,17 @@ class _NewEducationChildState extends State<NewEducationChild> {
   Widget _buildChildProfile(){
     return Row(
       children: [
-        Icon(
+        _childProvider.selectedChild.imageUrl.length > 0
+            ? ClipRRect(
+          child: Image.network(
+            _childProvider.selectedChild.imageUrl,
+            fit: BoxFit.fill,
+            height: 40,
+            width: 40,
+          ),borderRadius: BorderRadius.circular(20.0),) : Icon(
           Icons.account_circle,
           size: 30.0,
+          color: Colors.white,
         ),
         SizedBox(width: 10.0,),
         Text(

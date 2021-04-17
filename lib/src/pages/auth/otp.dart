@@ -163,6 +163,7 @@ class _OTPScreenState extends State<OTPScreen> {
                               'total_point' : 0,
                               'is_profile_filled' : false,
                               'parent_id' : "",
+                              "image_url" : "",
                             };
                             ChildDatabase(uid: resp.uid).createChildData(data);
                           }

@@ -87,6 +87,7 @@ class AuthService {
         "phone_number" : "",
         "is_profile_filled" : false,
         "email" : user.email,
+        "image_url" : "",
       };
       await ParentDatabase(uid: user.uid).createParentData(data);
       _user = await _parentFromFirebaseUser(user);

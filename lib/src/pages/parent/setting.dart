@@ -58,10 +58,17 @@ class _ParentSettingState extends State<ParentSetting> {
       ),
       child: Row(
         children: [
-          Icon(
+          user.imageUrl.length > 0
+              ? ClipRRect(
+            child: Image.network(
+              user.imageUrl,
+              fit: BoxFit.fill,
+              height: 50,
+              width: 50,
+            ),borderRadius: BorderRadius.circular(30.0),) : Icon(
             Icons.account_circle,
-            color: shadowColor,
             size: 60.0,
+            color: Colors.white,
           ),
           SizedBox(width: 10,),
           Column(

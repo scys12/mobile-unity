@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/parent.dart';
@@ -17,6 +20,8 @@ class AddChildScreen extends StatefulWidget {
 
 class _AddChildScreenState extends State<AddChildScreen> {
 
+  File _image;
+  final ImagePicker _picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
   DateTime _date;
   final _dateController = TextEditingController();
@@ -25,6 +30,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
   String _selectedGender;
   String _error ='';
   bool _loading = false;
+  String _fileError = '';
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +45,10 @@ class _AddChildScreenState extends State<AddChildScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
+                SizedBox(height: 15.0,),
+                _buildUploadImage(),
+                SizedBox(height: 15.0,),
+                _buildUploadButton(),
                 _buildChildName(),
                 SizedBox(height: 15.0,),
                 _buildPhoneNumber(),
@@ -259,5 +269,73 @@ class _AddChildScreenState extends State<AddChildScreen> {
         )
       ),
     );
+  }
+
+  Widget _buildUploadImage(){
+    return CircleAvatar(
+      radius: 50,
+      backgroundColor: shadowColor,
+      child: ClipOval(
+        child: SizedBox(
+          width: 150,
+          height: 150,
+          child: _image != null
+              ? Image.file(_image, fit: BoxFit.fill,)
+              : Center(
+            child: Icon(
+              Icons.image,
+              color: secondaryColor,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUploadButton(){
+    return TextButton.icon(
+      label: Text(
+        'Unggah Foto Anak',
+        style: TextStyle(
+            color: secondaryColor
+        ),
+      ),
+      onPressed: (){
+        showModalUploadImageBottom(context, _getImageFromCamera, _getImageFromGallery);
+      },
+      icon: Icon(
+        Icons.camera_alt,
+        color: secondaryColor,
+      ),
+      style: ButtonStyle(
+        overlayColor: MaterialStateProperty.all(thirdColor),
+        side: MaterialStateProperty.all(
+          BorderSide(
+            color: secondaryColor,
+          ),
+        ),
+
+      ),
+    );
+  }
+
+  Future _getImageFromCamera() async{
+    final pickedFile = await _picker.getImage(source: ImageSource.camera, imageQuality: 50);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+        Navigator.pop(context);
+      });
+    }
+  }
+
+  Future _getImageFromGallery() async{
+    final pickedFile = await _picker.getImage(source: ImageSource.gallery, imageQuality: 50);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+        Navigator.pop(context);
+      });
+    }
   }
 }

@@ -18,6 +18,7 @@ class ParentDatabase{
       gender: data["gender"],
       email: data["email"],
       name: data["name"],
+      imageUrl: data["image_url"]
     );
   }
 

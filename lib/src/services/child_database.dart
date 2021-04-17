@@ -59,7 +59,9 @@ class ChildDatabase{
         income: data["income"],
         outcome: data["outcome"],
         parentId: data["parent_id"],
-        totalPoint: data["total_point"]
+        totalPoint: data["total_point"],
+        bornDate: data["born_date"],
+        imageUrl: data["image_url"]
     );
   }
 
@@ -84,6 +86,8 @@ class ChildDatabase{
       parentId: data["parent_id"],
       totalPoint: data["total_point"],
       name: data["name"],
+      bornDate: data["born_date"],
+      imageUrl: data["image_url"]
     );
   }
 

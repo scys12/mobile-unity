@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/services/parent_database.dart';
+import 'package:mobile_unity/src/services/storage.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
@@ -22,6 +23,7 @@ class _ChangeProfileScreenState extends State<ChangeProfileScreen> {
   final _phoneController = TextEditingController();
   final _nameController = TextEditingController();
   String _selectedGender;
+  String _fileError = '';
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +39,15 @@ class _ChangeProfileScreenState extends State<ChangeProfileScreen> {
             child: Column(
               children: [
                 SizedBox(height: 15.0,),
-                _buildUploadImage(),
+                _buildUploadImage(user.imageUrl),
                 SizedBox(height: 15.0,),
                 _buildUploadButton(),
+                Text(
+                  _fileError,
+                  style: TextStyle(
+                    color: redColor
+                  ),
+                ),
                 SizedBox(height: 15.0,),
                 _buildName(user.name),
                 SizedBox(height: 15.0,),
@@ -176,17 +184,23 @@ class _ChangeProfileScreenState extends State<ChangeProfileScreen> {
   Widget _buildSubmitButton(String uid) {
     return ElevatedButton(
       onPressed: () async {
-        if (_formKey.currentState.validate()) {
+        if (_image == null) {
+          setState(() => _fileError = 'Harap mengupload foto');
+        }else
+          setState(() => _fileError = '');
+        if (_formKey.currentState.validate() && _image != null) {
+          setState(() => _loading = true);
+          if (_loading) {
+            createLoadingAlertDialog(context);
+          }
+          var imageUrl = await Storage(image: _image, filename: uid, folderName: "parent").uploadPicture();
           var answers = {
             'name' : _nameController.text,
             'phone_number' : "+62${_phoneController.text}",
             'gender' : _selectedGender,
             'is_profile_filled' : true,
+            'image_url' : imageUrl
           };
-          setState(() => _loading = true);
-          if (_loading) {
-            createLoadingAlertDialog(context);
-          }
           var resp = await ParentDatabase(uid: uid).updateParentData(answers);
           Navigator.pop(context);
           Navigator.popUntil(context, (route) => route.isFirst);
@@ -201,22 +215,29 @@ class _ChangeProfileScreenState extends State<ChangeProfileScreen> {
     );
   }
 
-  Widget _buildUploadImage(){
-    return Container(
-      height: 200.0,
-      width: 200.0,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        color: shadowColor,
-        border: Border.all(
-          color: secondaryColor,
-          width: 2.0,
-        )
-      ),
-      child: Center(
-        child: Icon(
-          Icons.image,
-          color: secondaryColor,
+  Widget _buildUploadImage(String imageUrl){
+    return CircleAvatar(
+      radius: 50,
+      backgroundColor: shadowColor,
+      child: ClipOval(
+        child: SizedBox(
+          width: 150,
+          height: 150,
+          child: (_image != null)
+              ? Image.file(_image, fit: BoxFit.fill,)
+              : imageUrl.length > 0
+              ? ClipRRect(
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.fill,
+                height: 50,
+                width: 50,
+              )) : Center(
+            child: Icon(
+              Icons.image,
+              color: secondaryColor,
+            ),
+          ),
         ),
       ),
     );
@@ -231,7 +252,7 @@ class _ChangeProfileScreenState extends State<ChangeProfileScreen> {
         ),
       ),
       onPressed: (){
-        _showModalBottom();
+        showModalUploadImageBottom(context, _getImageFromCamera, _getImageFromGallery);
       },
       icon: Icon(
         Icons.camera_alt,
@@ -250,110 +271,24 @@ class _ChangeProfileScreenState extends State<ChangeProfileScreen> {
   }
 
   Future _getImageFromCamera() async{
-    final pickedFile = await _picker.getImage(source: ImageSource.camera);
+    final pickedFile = await _picker.getImage(source: ImageSource.camera, imageQuality: 50);
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
+        Navigator.pop(context);
       });
     }
   }
 
   Future _getImageFromGallery() async{
-    final pickedFile = await _picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await _picker.getImage(source: ImageSource.gallery, imageQuality: 50);
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
+        Navigator.pop(context);
       });
     }
   }
 
-  void _showModalBottom(){
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return Container(
-            color: Color(0XFF737373),
-            child: Container(
-              decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(20),
-                  topRight: const Radius.circular(20)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20.0),
-                      child: Text(
-                        'Unggah foto melalui',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w500
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          TextButton.icon(
-                            label: Text(
-                              'Camera',
-                              style: TextStyle(
-                                color: secondaryColor
-                              ),
-                            ),
-                            icon: Icon(Icons.camera,color: secondaryColor),
-                            onPressed: (){
-                              _getImageFromCamera();
-                            },
-                            style: ButtonStyle(
-                              overlayColor: MaterialStateProperty.all(thirdColor),
-                              side: MaterialStateProperty.all(
-                                BorderSide(
-                                  color: secondaryColor,
-                                ),
-                              ),
 
-                            ),
-                          ),
-                          TextButton.icon(
-                            label: Text(
-                              'Gallery',
-                              style: TextStyle(
-                                  color: secondaryColor
-                              ),
-                            ),
-                            icon: Icon(Icons.image,color: secondaryColor),
-                            onPressed: (){
-                              _getImageFromGallery();
-                            },
-                            style: ButtonStyle(
-                              overlayColor: MaterialStateProperty.all(thirdColor),
-                              side: MaterialStateProperty.all(
-                                BorderSide(
-                                  color: secondaryColor,
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            )
-          );
-        }
-    );
-  }
 }

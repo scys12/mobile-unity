@@ -51,7 +51,6 @@ class _DetailWishChildState extends State<DetailWishChild> {
                 SizedBox(height: 20.0,),
                 _buildTitleField(),
                 _buildDeadlineField(),
-                _buildCategoryField(),
                 _buildPointField(),
                 SizedBox(height: 20.0,),
                 ClipRRect(
@@ -93,99 +92,6 @@ class _DetailWishChildState extends State<DetailWishChild> {
     );
   }
 
-  Widget _buildProgress(){
-    return Card(
-      elevation: 5.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Lumen sudah menyelesaikan tugas ",
-              style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15.0
-              ),
-            ),
-            SizedBox(height: 10.0,),
-            Row(
-              children: [
-                Icon(
-                  Icons.schedule,
-                  color: shadowColor,
-                ),
-                SizedBox(width: 10.0,),
-                Text(
-                  "20-01-2021",
-                  style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w700,
-                      color: shadowColor
-                  ),
-                )
-              ],
-            ),
-            SizedBox(height: 10.0,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        shadowColor
-                    ),
-                  ),
-                  onPressed: () {  },
-                  child: Text(
-                    "Lihat Bukti",
-                    style: TextStyle(
-                        color: Colors.white
-                    ),
-                  ),
-                ),
-                TextButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        primaryColor
-                    ),
-                  ),
-
-                  child: Text(
-                    "Lihat Setuju",
-                    style: TextStyle(
-                        color: Colors.white
-                    ),
-                  ),
-                ),
-                OutlinedButton(
-                  style: ButtonStyle(
-                      side: MaterialStateProperty.all<BorderSide>(
-                          BorderSide(
-                              color: primaryColor
-                          )
-                      )
-                  ),
-                  onPressed: () {  },
-                  child: Text(
-                    "Tolak",
-                    style: TextStyle(
-                        color: primaryColor
-                    ),
-                  ),
-                )
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildChildProfile(){
     return Row(
       children: [
@@ -206,18 +112,6 @@ class _DetailWishChildState extends State<DetailWishChild> {
     );
   }
 
-  Widget _buildSubmitButton(){
-    return ElevatedButton(
-      onPressed: () {},
-      child: Text('Buat Tugas'),
-      style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(
-              secondaryColor
-          )
-      ),
-    );
-  }
-
   Widget _buildPointField(){
     return Container(
       padding: EdgeInsets.all(15.0),
@@ -231,34 +125,6 @@ class _DetailWishChildState extends State<DetailWishChild> {
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w600,
                 fontSize: 17.0
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryField(){
-    return Container(
-      padding: EdgeInsets.all(15.0),
-      child: Row(
-        children: [
-          Icon(Icons.category, color: shadowColor,),
-          SizedBox(width: 10.0,),
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
-            decoration: BoxDecoration(
-                color: secondaryColor,
-                borderRadius: BorderRadius.circular(5.0)
-            ),
-            child: Text(
-              _wishProvider.selectedWish.title,
-              style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 17.0,
-                  color: Colors.white
-              ),
             ),
           ),
         ],

@@ -15,18 +15,34 @@ class FinancialDatabase {
 
   List<Financial> _financialListFromSnapshot(QuerySnapshot snapshot) {
     var resp =  snapshot.docs.map((data) {
-      DateTime createdDate = data["created_at"].toDate();
-      return Financial(
-          uid: data.id,
-          title: data["title"],
-          createdAt: createdDate,
-          type: data["type"],
-          description: data["description"],
-          money: data["money"],
-          childId: data["child_id"]
-      );
+      return _mapDataFromDynamic(data.id, data.data());
     }).toList();
     return resp;
+  }
+
+  Financial _mapDataFromDynamic(String id, Map<String, dynamic> data){
+    DateTime createdDate = data["created_at"].toDate();
+    return Financial(
+        uid: id,
+        title: data["title"],
+        createdAt: createdDate,
+        type: data["type"],
+        description: data["description"],
+        money: data["money"],
+        childId: data["child_id"]
+    );
+  }
+
+  Financial _financialListFromQueryDocumentSnapshot(QueryDocumentSnapshot snapshot) {
+    var data =snapshot.data();
+    return _mapDataFromDynamic(snapshot.id, data);
+  }
+
+  Future<List<Financial>> getFinancialsBasesChildId(String childId) async{
+    var resp =  await _financialCollection
+        .where('child_id', isEqualTo: childId)
+        .get();
+    return resp.docs.map(_financialListFromQueryDocumentSnapshot).toList();
   }
 
   Stream<List<Financial>> getFinancials(String childId) {

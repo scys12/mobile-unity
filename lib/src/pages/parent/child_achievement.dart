@@ -85,90 +85,6 @@ class _ChildAchievementState extends State<ChildAchievement> {
     );
   }
 
-  Widget _buildImpian(){
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
-          boxShadow: [
-            BoxShadow(
-                color: shadowColor,
-                blurRadius: 8,
-                spreadRadius: 0,
-                offset: Offset(1.0, 3.0)
-            )
-          ]
-      ),
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.nights_stay_rounded,
-                color: primaryColor,
-                size: 30.0,
-              ),
-              SizedBox(width: 10,),
-              Expanded(
-                child: Text(
-                  'Berhasil menyelesaikan tugas abcdeffsdfasdfaskl',
-                  style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 15.0,
-                      color: Colors.black
-                  ),
-                ),
-              ),
-              Text(
-                "30 tahun lagi",
-                style: TextStyle(
-                    color: shadowColor,
-                    fontFamily: "Poppins",
-                    fontWeight: FontWeight.w600
-                ),
-              )
-            ],
-          ),
-          SizedBox(height: 12.0,),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10.0),
-            child: LinearProgressIndicator(
-              minHeight: 5.0,
-              backgroundColor: thirdColor,
-              valueColor: AlwaysStoppedAnimation<Color>(secondaryColor),
-              value: .5,
-            ),
-          ),
-          SizedBox(height: 8.0,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Rp 40000",
-                style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Poppins',
-                    fontSize: 13.0
-                ),
-              ),
-              Text(
-                "Rp 100000",
-                style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Poppins',
-                    fontSize: 13.0
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildCard(int income, int outcome){
     return Container(
       padding: EdgeInsets.all(15.0),
@@ -219,9 +135,13 @@ class _ChildAchievementState extends State<ChildAchievement> {
               ),
               PopupMenuButton(
                 onSelected: (val) {
-                  setState(() {
-                    _currentType = val;
-                  });
+                  if (val == 'Histori Keuangan') {
+                    Navigator.pushNamed(context, '/parent/transactions');
+                  }else {
+                    setState(() {
+                      _currentType = val;
+                    });
+                  }
                 },
                 initialValue: _currentType,
                 icon: Icon(
@@ -411,15 +331,10 @@ class _ChildAchievementState extends State<ChildAchievement> {
                 )
               ],
             ),
-            IconButton(
-              icon: Icon(
-                Icons.account_circle,
-              ),
-              color: secondaryColor,
-              splashRadius: 30.0,
-              iconSize: 50.0,
-              onPressed: () => createAlertDialog(context),
-            )
+            Icon(
+              Icons.account_circle,
+              size: 50.0,
+            ),
           ],
         )
     );

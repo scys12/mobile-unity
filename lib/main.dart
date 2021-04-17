@@ -18,9 +18,11 @@ import 'package:mobile_unity/src/pages/parent/list_all_tasks.dart';
 import 'package:mobile_unity/src/pages/parent/list_all_wishes.dart';
 import 'package:mobile_unity/src/pages/parent/new_education.dart';
 import 'package:mobile_unity/src/pages/parent/new_task.dart';
+import 'package:mobile_unity/src/pages/parent/transactions.dart';
 import 'package:mobile_unity/src/pages/parent/wrapper.dart';
 import 'package:mobile_unity/src/pages/wrapper.dart';
 import 'package:mobile_unity/src/provider/child_provider.dart';
+import 'package:mobile_unity/src/provider/finance_provider.dart';
 import 'package:mobile_unity/src/provider/task_provider.dart';
 import 'package:mobile_unity/src/provider/wish_provider.dart';
 import 'package:mobile_unity/src/services/auth.dart';
@@ -65,6 +67,9 @@ class MyApp extends StatelessWidget {
                 ChangeNotifierProvider(
                   create: (c) => WishProvider(),
                 ),
+                ChangeNotifierProvider(
+                  create: (c) => FinancialProvider(),
+                ),
               ],
               child: MaterialApp(
                 home: Wrapper(),
@@ -82,6 +87,7 @@ class MyApp extends StatelessWidget {
                   '/auth/sign_phone': (context) => SignPhone(),
                   '/parent/change_profile': (context) => ChangeProfileScreen(),
                   '/parent/all_wishes': (context) => ListChildWishes(),
+                  '/parent/transactions': (context) => ChildTransactions(),
                 },
               ));
         } else {

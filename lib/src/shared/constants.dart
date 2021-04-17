@@ -18,3 +18,5 @@ const redColor = Color.fromRGBO(223, 111, 111, 1.0);
 const greenColor = Color.fromRGBO(126, 223, 111, 1.0);
 const shadowColor = Color.fromRGBO(0, 0, 0, 0.2);
 const whiteOpColor = Color.fromRGBO(244, 248, 255, 0.13);
+const blueOpColor = Color.fromRGBO(247, 247, 249, 0.19);
+const orangeOpColor = Color.fromRGBO(255, 253, 251, 0.28);

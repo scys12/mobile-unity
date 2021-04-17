@@ -23,10 +23,7 @@ class _ChildTaskState extends State<ChildTask> {
   List<Task> tasks = [];
   ChildProvider _childProvider;
   List<Wish> _wishes;
-  @override
-  void initState() {
-    super.initState();
-  }
+
   @override
   Widget build(BuildContext context) {
     tasks = Provider.of<List<Task>>(context);

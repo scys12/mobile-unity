@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_unity/src/models/tab_index.dart';
 import 'package:mobile_unity/src/pages/kid/dashboard.dart';
-import 'package:mobile_unity/src/pages/kid/pengeluaran.dart';
+import 'package:mobile_unity/src/pages/kid/inner_income.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +12,7 @@ class WrapperChildren extends StatefulWidget {
 
 class _State extends State<WrapperChildren> {
   final tabs = [
-    PengeluaranKid(),
+    InnerIncome(),
     DashboardKid(),
   ];
 

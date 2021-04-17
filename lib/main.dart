@@ -8,8 +8,7 @@ import 'package:mobile_unity/src/pages/auth/authenticate.dart';
 import 'package:mobile_unity/src/pages/auth/otp.dart';
 import 'package:mobile_unity/src/pages/auth/sign_phone.dart';
 import 'package:mobile_unity/src/pages/kid/dashboard.dart';
-import 'package:mobile_unity/src/pages/kid/kid_task.dart';
-import 'package:mobile_unity/src/pages/kid/wrapper.dart';
+import 'package:mobile_unity/src/pages/kid/dream.dart';
 import 'package:mobile_unity/src/pages/parent/add_child.dart';
 import 'package:mobile_unity/src/pages/parent/change_profile.dart';
 import 'package:mobile_unity/src/pages/parent/detail_task.dart';
@@ -26,8 +25,6 @@ import 'package:mobile_unity/src/provider/finance_provider.dart';
 import 'package:mobile_unity/src/provider/task_provider.dart';
 import 'package:mobile_unity/src/provider/wish_provider.dart';
 import 'package:mobile_unity/src/services/auth.dart';
-import 'package:mobile_unity/src/services/child_database.dart';
-import 'package:mobile_unity/src/services/task_database.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -72,7 +69,11 @@ class MyApp extends StatelessWidget {
                 ),
               ],
               child: MaterialApp(
+<<<<<<< HEAD
+                home: Dream(),
+=======
                 home: Wrapper(),
+>>>>>>> 209b009c2636ea39fb98fc2e5d26d0c2af63ccc9
                 routes: {
                   '/authenticate': (context) => Authenticate(),
                   '/welcome': (context) => Wrapper(),

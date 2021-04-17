@@ -2,11 +2,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
 import 'package:mobile_unity/src/widgets/indicator.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
+import 'package:provider/provider.dart';
 
 class ChildAchievement extends StatefulWidget {
   @override
@@ -15,8 +17,10 @@ class ChildAchievement extends StatefulWidget {
 
 class _ChildAchievementState extends State<ChildAchievement> {
   int touchedIndex;
+  ChildProvider _childProvider;
   @override
   Widget build(BuildContext context) {
+    _childProvider = Provider.of<ChildProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(false, "Prestasi"),
       body: ListView(
@@ -223,16 +227,16 @@ class _ChildAchievementState extends State<ChildAchievement> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const <Widget>[
                   Indicator(
-                    color: Color(0xff0293ee),
-                    text: 'First',
+                    color: primaryColor,
+                    text: 'Pemasukan',
                     isSquare: false,
                   ),
                   SizedBox(
                     height: 4,
                   ),
                   Indicator(
-                    color: Color(0xfff8b250),
-                    text: 'Second',
+                    color: secondaryColor,
+                    text: 'Pengeluaran',
                     isSquare: false,
                   ),
                   SizedBox(
@@ -295,14 +299,14 @@ class _ChildAchievementState extends State<ChildAchievement> {
   }
 
   List<PieChartSectionData> showingSections() {
-    return List.generate(4, (i) {
+    return List.generate(2, (i) {
       final isTouched = i == touchedIndex;
       final double fontSize = isTouched ? 25 : 16;
       final double radius = isTouched ? 60 : 50;
       switch (i) {
         case 0:
           return PieChartSectionData(
-            color: const Color(0xff0293ee),
+            color: primaryColor,
             value: 70,
             title: '40%',
             radius: radius,
@@ -311,27 +315,9 @@ class _ChildAchievementState extends State<ChildAchievement> {
           );
         case 1:
           return PieChartSectionData(
-            color: const Color(0xfff8b250),
+            color: secondaryColor,
             value: 30,
             title: '30%',
-            radius: radius,
-            titleStyle: TextStyle(
-                fontSize: fontSize, fontWeight: FontWeight.bold, color: const Color(0xffffffff)),
-          );
-        case 2:
-          return PieChartSectionData(
-            color: const Color(0xff845bef),
-            value: 10,
-            title: '15%',
-            radius: radius,
-            titleStyle: TextStyle(
-                fontSize: fontSize, fontWeight: FontWeight.bold, color: const Color(0xffffffff)),
-          );
-        case 3:
-          return PieChartSectionData(
-            color: const Color(0xff13d38e),
-            value: 10,
-            title: '15%',
             radius: radius,
             titleStyle: TextStyle(
                 fontSize: fontSize, fontWeight: FontWeight.bold, color: const Color(0xffffffff)),

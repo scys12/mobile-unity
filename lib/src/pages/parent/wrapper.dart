@@ -3,6 +3,7 @@ import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/models/tab_index.dart';
 import 'package:mobile_unity/src/models/task.dart';
+import 'package:mobile_unity/src/models/wish.dart';
 import 'package:mobile_unity/src/pages/parent/child_achievement.dart';
 import 'package:mobile_unity/src/pages/parent/child_task.dart';
 import 'package:mobile_unity/src/pages/parent/dashboard.dart';
@@ -10,6 +11,7 @@ import 'package:mobile_unity/src/pages/parent/setting.dart';
 import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
 import 'package:mobile_unity/src/services/task_database.dart';
+import 'package:mobile_unity/src/services/wish_database.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/loading.dart';
 import 'package:provider/provider.dart';
@@ -57,6 +59,10 @@ class _WrapperParentState extends State<WrapperParent> {
         ),
         StreamProvider<List<Task>>.value(
           value: TaskDatabase().getTasks(parent.uid, childProvider.selectedChild.uid),
+          initialData: [],
+        ),
+        StreamProvider<List<Wish>>.value(
+          value: WishDatabase().getWish(childProvider.selectedChild.uid),
           initialData: [],
         ),
       ],

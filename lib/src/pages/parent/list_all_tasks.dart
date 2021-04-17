@@ -134,6 +134,29 @@ class _ListChildTasksState extends State<ListChildTasks> {
                                   fontWeight: FontWeight.w600,
                                   fontSize: 20.0,
                                 ),
+                              ),
+                              trailing: Container(
+                                padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
+                                decoration: BoxDecoration(
+                                    color: secondaryColor,
+                                    borderRadius: BorderRadius.circular(10.0)
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.category, color: Colors.white, size: 15.0,),
+                                    SizedBox(width: 5.0,),
+                                    Text(
+                                      _taskProvider.tasks[index].category,
+                                      style: TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 15.0,
+                                          color: Colors.white
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               )
                           )
                         ],

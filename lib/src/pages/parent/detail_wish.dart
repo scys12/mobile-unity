@@ -3,44 +3,43 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/provider/task_provider.dart';
+import 'package:mobile_unity/src/provider/wish_provider.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
 import 'package:mobile_unity/src/widgets/loading.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
 import 'package:provider/provider.dart';
 
-class DetailTaskChild extends StatefulWidget {
-  final String taskId;
-  DetailTaskChild({this.taskId});
+class DetailWishChild extends StatefulWidget {
+  final String wishId;
+  DetailWishChild({this.wishId});
   @override
-  _DetailTaskChildState createState() => _DetailTaskChildState();
+  _DetailWishChildState createState() => _DetailWishChildState();
 }
 
-class _DetailTaskChildState extends State<DetailTaskChild> {
-  TaskProvider _taskProvider;
+class _DetailWishChildState extends State<DetailWishChild> {
+  WishProvider _wishProvider;
   ChildProvider _childProvider;
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _taskProvider = Provider.of(context, listen: false);
-    _taskProvider.getTask(taskId: widget.taskId);
+    _wishProvider = Provider.of(context, listen: false);
+    _wishProvider.getWish(wishId: widget.wishId);
   }
 
   @override
   Widget build(BuildContext context) {
-    String title;
     _childProvider = Provider.of<ChildProvider>(context);
-    _taskProvider =  Provider.of<TaskProvider>(context);
-    if (_taskProvider.selectedTask != null && _taskProvider.selectedTask.uid == widget.taskId) {
+    _wishProvider =  Provider.of<WishProvider>(context);
+    if (_wishProvider.selectedWish != null && _wishProvider.selectedWish.uid == widget.wishId) {
       setState(() {
         _loading = false;
       });
-      title = _taskProvider.selectedTask.category == 'Edukasi Finansial' ? 'Edukasi Finansial' : 'Tugas';
     }
     return _loading ? Loading() : Scaffold(
-      appBar: CustomAppBar(true, "Detail ${title}"),
+      appBar: CustomAppBar(true, "Detail Impian"),
       body: ListView(
         physics: ClampingScrollPhysics(),
         padding: EdgeInsets.all(30.0),
@@ -55,9 +54,37 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
                 _buildCategoryField(),
                 _buildPointField(),
                 SizedBox(height: 20.0,),
-                SubHeader(title: "Progress", isLihatSemua: false,),
-                SizedBox(height: 10.0,),
-                _buildProgress()
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: LinearProgressIndicator(
+                    minHeight: 5.0,
+                    backgroundColor: thirdColor,
+                    valueColor: AlwaysStoppedAnimation<Color>(secondaryColor),
+                    value: _wishProvider.selectedWish.currentMoney/_wishProvider.selectedWish.target,
+                  ),
+                ),
+                SizedBox(height: 8.0,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Rp ${_wishProvider.selectedWish.currentMoney}",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Poppins',
+                          fontSize: 13.0
+                      ),
+                    ),
+                    Text(
+                      "Rp ${_wishProvider.selectedWish.target}",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Poppins',
+                          fontSize: 13.0
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -137,17 +164,17 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
                 ),
                 OutlinedButton(
                   style: ButtonStyle(
-                    side: MaterialStateProperty.all<BorderSide>(
-                      BorderSide(
-                        color: primaryColor
+                      side: MaterialStateProperty.all<BorderSide>(
+                          BorderSide(
+                              color: primaryColor
+                          )
                       )
-                    )
                   ),
                   onPressed: () {  },
                   child: Text(
                     "Tolak",
                     style: TextStyle(
-                      color: primaryColor
+                        color: primaryColor
                     ),
                   ),
                 )
@@ -199,7 +226,7 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
           Icon(Icons.card_giftcard, color: shadowColor,),
           SizedBox(width: 10.0,),
           Text(
-            "${_taskProvider.selectedTask.point}pts",
+            "${_wishProvider.selectedWish.point}pts",
             style: TextStyle(
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w600,
@@ -221,16 +248,16 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
           Container(
             padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
             decoration: BoxDecoration(
-              color: secondaryColor,
-              borderRadius: BorderRadius.circular(5.0)
+                color: secondaryColor,
+                borderRadius: BorderRadius.circular(5.0)
             ),
             child: Text(
-              _taskProvider.selectedTask.category,
+              _wishProvider.selectedWish.title,
               style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                fontSize: 17.0,
-                color: Colors.white
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 17.0,
+                  color: Colors.white
               ),
             ),
           ),
@@ -263,7 +290,7 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
           floatingLabelBehavior: FloatingLabelBehavior.never
       ),
       enabled: false,
-      initialValue: _taskProvider.selectedTask.title,
+      initialValue: _wishProvider.selectedWish.title,
       validator: (value) => value.isEmpty ? 'Name is required' : '',
     );
   }
@@ -276,11 +303,11 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
           Icon(Icons.schedule, color: shadowColor,),
           SizedBox(width: 10.0,),
           Text(
-            DateFormat("dd-MM-yyyy").format(_taskProvider.selectedTask.deadline).toString(),
+            DateFormat("dd MMMM yyyy").format(_wishProvider.selectedWish.deadline).toString(),
             style: TextStyle(
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w600,
-              fontSize: 17.0
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w600,
+                fontSize: 17.0
             ),
           ),
         ],

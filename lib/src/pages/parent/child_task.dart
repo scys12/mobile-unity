@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/task.dart';
+import 'package:mobile_unity/src/models/wish.dart';
 import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/services/task_database.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
@@ -11,6 +12,7 @@ import 'package:mobile_unity/src/widgets/sub_header.dart';
 import 'package:provider/provider.dart';
 
 import 'detail_task.dart';
+import 'detail_wish.dart';
 
 class ChildTask extends StatefulWidget {
   @override
@@ -20,7 +22,7 @@ class ChildTask extends StatefulWidget {
 class _ChildTaskState extends State<ChildTask> {
   List<Task> tasks = [];
   ChildProvider _childProvider;
-
+  List<Wish> _wishes;
   @override
   void initState() {
     super.initState();
@@ -31,6 +33,8 @@ class _ChildTaskState extends State<ChildTask> {
     _childProvider = Provider.of<ChildProvider>(context);
     var _newTasks = tasks.where((e) => e.category == 'Edukasi Finansial').take(2).toList();
     var _newEducations = tasks.where((e) => e.category != 'Edukasi Finansial').take(2).toList();
+    _wishes =  Provider.of<List<Wish>>(context);
+    var _newWish = _wishes.where((element) => !element.isDone).take(1).toList();
 
     return Scaffold(
       appBar: CustomAppBar(false, "Tugas"),
@@ -81,95 +85,109 @@ class _ChildTaskState extends State<ChildTask> {
             ),
           ),
           SizedBox(height: 25.0,),
-          SubHeader(title: 'Impian', isLihatSemua: true,),
+          SubHeader(title: 'Impian', isLihatSemua: _wishes.length > 0 ? true : false, path: '/parent/all_wishes'),
           SizedBox(height: 25.0,),
-          _buildImpian(),
+          _buildImpian(_newWish),
           SizedBox(height: 15.0,),
         ],
       ),
     );
   }
 
-  Widget _buildImpian(){
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
-          boxShadow: [
-            BoxShadow(
-                color: shadowColor,
-                blurRadius: 8,
-                spreadRadius: 0,
-                offset: Offset(1.0, 3.0)
-            )
-          ]
+  Widget _buildImpian(List<Wish> wish){
+    return wish.length > 0 ? InkWell(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => DetailWishChild(wishId: _wishes[0].uid,)),
       ),
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.nights_stay_rounded,
-                color: primaryColor,
-                size: 30.0,
-              ),
-              SizedBox(width: 10,),
-              Expanded(
-                child: Text(
-                  'Berhasil menyelesaikan tugas abcdeffsdfasdfaskl',
-                  style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 15.0,
-                      color: Colors.black
+      splashFactory: InkRipple.splashFactory,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10.0),
+            boxShadow: [
+              BoxShadow(
+                  color: shadowColor,
+                  blurRadius: 8,
+                  spreadRadius: 0,
+                  offset: Offset(1.0, 3.0)
+              )
+            ]
+        ),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.nights_stay_rounded,
+                  color: primaryColor,
+                  size: 30.0,
+                ),
+                SizedBox(width: 10,),
+                Expanded(
+                  child: Text(
+                    _wishes[0].title,
+                    style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15.0,
+                        color: Colors.black
+                    ),
                   ),
                 ),
-              ),
-              Text(
-                "30 tahun lagi",
-                style: TextStyle(
-                    color: shadowColor,
-                    fontFamily: "Poppins",
-                    fontWeight: FontWeight.w600
-                ),
-              )
-            ],
-          ),
-          SizedBox(height: 12.0,),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10.0),
-            child: LinearProgressIndicator(
-              minHeight: 5.0,
-              backgroundColor: thirdColor,
-              valueColor: AlwaysStoppedAnimation<Color>(secondaryColor),
-              value: .5,
+                Text(
+                  DateFormat("dd MMMM yyyy").format(_wishes[0].deadline).toString(),
+                  style: TextStyle(
+                      color: shadowColor,
+                      fontFamily: "Poppins",
+                      fontWeight: FontWeight.w600
+                  ),
+                )
+              ],
             ),
-          ),
-          SizedBox(height: 8.0,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Rp 40000",
-                style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Poppins',
-                    fontSize: 13.0
-                ),
+            SizedBox(height: 12.0,),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: LinearProgressIndicator(
+                minHeight: 5.0,
+                backgroundColor: thirdColor,
+                valueColor: AlwaysStoppedAnimation<Color>(secondaryColor),
+                value: _wishes[0].currentMoney/_wishes[0].target,
               ),
-              Text(
-                "Rp 100000",
-                style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Poppins',
-                    fontSize: 13.0
+            ),
+            SizedBox(height: 8.0,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Rp ${_wishes[0].currentMoney}",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Poppins',
+                      fontSize: 13.0
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+                Text(
+                  "Rp ${_wishes[0].target}",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Poppins',
+                      fontSize: 13.0
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ) : Text(
+      'Belum ada yang diimpikan si kecil',
+      style: TextStyle(
+          fontSize: 15.0,
+          fontFamily: 'Poppins',
+          fontWeight: FontWeight.w500
       ),
     );
   }

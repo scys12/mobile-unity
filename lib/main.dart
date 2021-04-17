@@ -64,7 +64,11 @@ class MyApp extends StatelessWidget {
                 ),
               ],
               child: MaterialApp(
+<<<<<<< HEAD
                 home: Dream(),
+=======
+                home: Wrapper(),
+>>>>>>> 209b009c2636ea39fb98fc2e5d26d0c2af63ccc9
                 routes: {
                   '/authenticate': (context) => Authenticate(),
                   '/welcome': (context) => Wrapper(),

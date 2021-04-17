@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_unity/src/models/child.dart';
+import 'package:mobile_unity/src/models/financial.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/models/tab_index.dart';
 import 'package:mobile_unity/src/models/task.dart';
@@ -10,6 +11,7 @@ import 'package:mobile_unity/src/pages/parent/dashboard.dart';
 import 'package:mobile_unity/src/pages/parent/setting.dart';
 import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
+import 'package:mobile_unity/src/services/financial_database.dart';
 import 'package:mobile_unity/src/services/task_database.dart';
 import 'package:mobile_unity/src/services/wish_database.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
@@ -63,6 +65,10 @@ class _WrapperParentState extends State<WrapperParent> {
         ),
         StreamProvider<List<Wish>>.value(
           value: WishDatabase().getWish(childProvider.selectedChild.uid),
+          initialData: [],
+        ),
+        StreamProvider<List<Financial>>.value(
+          value: FinancialDatabase().getFinancials(childProvider.selectedChild.uid),
           initialData: [],
         ),
       ],

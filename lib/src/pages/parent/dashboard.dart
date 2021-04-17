@@ -141,8 +141,15 @@ class _DashboardParentState extends State<DashboardParent> {
                           Container(
                             child: Row(
                               children: [
-                                Icon(
-                                  Icons.account_box_outlined,
+                                _childProvider.selectedChild.imageUrl.length > 0
+                                    ? ClipRRect(
+                                  child: Image.network(
+                                    _childProvider.selectedChild.imageUrl,
+                                    fit: BoxFit.fill,
+                                    height: 30,
+                                    width: 30,
+                                  ),borderRadius: BorderRadius.circular(20.0),) : Icon(
+                                  Icons.account_circle,
                                   color: Colors.black,
                                 ),
                                 SizedBox(

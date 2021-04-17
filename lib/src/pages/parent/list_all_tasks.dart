@@ -181,7 +181,7 @@ class _ListChildTasksState extends State<ListChildTasks> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Tugas Lumen",
+                  "Tugas ${_childProvider.selectedChild.name}",
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w600,

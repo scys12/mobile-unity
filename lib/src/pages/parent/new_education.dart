@@ -80,7 +80,6 @@ class _NewEducationChildState extends State<NewEducationChild> {
           ),borderRadius: BorderRadius.circular(20.0),) : Icon(
           Icons.account_circle,
           size: 30.0,
-          color: Colors.white,
         ),
         SizedBox(width: 10.0,),
         Text(

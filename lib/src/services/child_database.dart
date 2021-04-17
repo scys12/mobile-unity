@@ -32,35 +32,28 @@ class ChildDatabase{
 
   List<Child> _childListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((data) {
-      DateTime bornDate = data["born_date"].toDate();
-      return Child(
-        uid: data.id,
-        name: data["name"],
-        gender: data["gender"],
-        isProfileFilled: data["is_profile_filled"],
-        phoneNumber: data["phone_number"],
-        income: data["income"],
-        outcome: data["outcome"],
-        parentId: data["parent_id"],
-        totalPoint: data["total_point"],
-        bornDate: bornDate,
-      );
+      return _mapDataFromDynamic(data.id, data.data());
     }).toList();
   }
 
   Child _childListFromQueryDocumentSnapshot(QueryDocumentSnapshot snapshot) {
     var data =snapshot.data();
+    return _mapDataFromDynamic(snapshot.id, data);
+  }
+
+  Child _mapDataFromDynamic(String uid, Map<String, dynamic> data){
+    DateTime bornDate = data["born_date"].toDate();
     return Child(
-        uid: snapshot.id,
-        name: data["name"],
-        gender: data["gender"],
-        isProfileFilled: data["is_profile_filled"],
+        uid: uid,
         phoneNumber: data["phone_number"],
+        isProfileFilled: data["is_profile_filled"],
+        gender: data["gender"],
         income: data["income"],
         outcome: data["outcome"],
         parentId: data["parent_id"],
         totalPoint: data["total_point"],
-        bornDate: data["born_date"],
+        name: data["name"],
+        bornDate: bornDate,
         imageUrl: data["image_url"]
     );
   }
@@ -76,19 +69,7 @@ class ChildDatabase{
   Future<Child> get users async{
     var resp =  await _childCollection.doc(uid).get();
     var data = resp.data();
-    return Child(
-      uid: uid,
-      phoneNumber: data["phone_number"],
-      isProfileFilled: data["is_profile_filled"],
-      gender: data["gender"],
-      income: data["income"],
-      outcome: data["outcome"],
-      parentId: data["parent_id"],
-      totalPoint: data["total_point"],
-      name: data["name"],
-      bornDate: data["born_date"],
-      imageUrl: data["image_url"]
-    );
+    return _mapDataFromDynamic(resp.id, data);
   }
 
   Future updateChildData(Map<String, dynamic> data) async {

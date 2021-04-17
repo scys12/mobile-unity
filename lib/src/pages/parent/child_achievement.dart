@@ -331,7 +331,14 @@ class _ChildAchievementState extends State<ChildAchievement> {
                 )
               ],
             ),
-            Icon(
+            _childProvider.selectedChild.imageUrl.length > 0
+                ? ClipRRect(
+              child: Image.network(
+                _childProvider.selectedChild.imageUrl,
+                fit: BoxFit.fill,
+                height: 40,
+                width: 40,
+              ),borderRadius: BorderRadius.circular(20.0),) : Icon(
               Icons.account_circle,
               size: 50.0,
             ),

@@ -30,7 +30,19 @@ class _ChildTileState extends State<ChildTile> {
     _childProvider = Provider.of<ChildProvider>(context);
     Color color = _childProvider.selectedChild.uid == widget.childIndex.uid ? colors[0] : colors[1];
     return ListTile(
-      leading: Icon(Icons.account_circle),
+      leading: widget.childIndex.imageUrl.length > 0
+          ? ClipRRect(
+              child: Image.network(
+                widget.childIndex.imageUrl,
+                fit: BoxFit.fill,
+                height: 30,
+                width: 30,
+              ),borderRadius: BorderRadius.circular(20.0),
+            )
+          : Icon(
+        Icons.account_circle,
+        size: 30.0,
+      ),
       title: Text(
         widget.childIndex.name,
         style: TextStyle(

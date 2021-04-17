@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
+import 'package:mobile_unity/src/services/storage.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
@@ -236,7 +237,11 @@ class _AddChildScreenState extends State<AddChildScreen> {
     final Parent user = Provider.of<Parent>(context);
     return ElevatedButton(
       onPressed: () async {
-        if (_formKey.currentState.validate()) {
+        if (_image == null) {
+          setState(() => _fileError = 'Harap mengupload foto');
+        }else
+          setState(() => _fileError = '');
+        if (_formKey.currentState.validate() && _image != null) {
           var phoneNumber = "+62${_phoneController.text}";
           setState(() => _loading = true);
           if (_loading) {
@@ -248,6 +253,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
             Navigator.pop(context);
             setState(() => _error = 'Periksa kembali nomor HP anak');
           }else {
+            var imageUrl = await Storage(image: _image, filename: children[0].uid, folderName: "child").uploadPicture();
             setState(() => _error = '');
             var answers = {
               'name' : _nameController.text,
@@ -256,6 +262,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
               'gender' : _selectedGender,
               'parent_id' : user.uid,
               'is_profile_filled' : true,
+              "image_url" : imageUrl,
             };
             var document = ChildDatabase(uid: children[0].uid).updateChildData(answers);
             Navigator.popUntil(context, (route) => route.isFirst);

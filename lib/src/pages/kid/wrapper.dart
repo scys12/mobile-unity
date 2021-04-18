@@ -7,6 +7,7 @@ import 'package:mobile_unity/src/pages/kid/achievement.dart';
 import 'package:mobile_unity/src/pages/kid/dashboard.dart';
 import 'package:mobile_unity/src/pages/kid/inner_income.dart';
 import 'package:mobile_unity/src/pages/kid/kid_task.dart';
+import 'package:mobile_unity/src/pages/kid/setting.dart';
 import 'package:mobile_unity/src/services/task_database.dart';
 import 'package:mobile_unity/src/services/wish_database.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
@@ -19,9 +20,9 @@ class WrapperChildren extends StatefulWidget {
 
 class _State extends State<WrapperChildren> {
   final tabs = [
-    KidTask(),
-    DashboardKid(),
     KidAchievement(),
+    DashboardKid(),
+    KidSetting()
   ];
 
   TabIndex _tabIndex;

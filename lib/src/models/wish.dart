@@ -8,7 +8,10 @@ class Wish{
   final String childId;
   final DateTime createdAt;
   final int point;
-  Wish({this.uid, this.currentMoney, this.title, this.deadline, this.isDone, this.target, this.childId, this.createdAt, this.point});
+  final int frekuensi;
+  final int expectedMoney;
+
+  Wish({this.uid, this.expectedMoney,this.currentMoney, this.title, this.deadline, this.isDone, this.target, this.childId, this.createdAt, this.point, this.frekuensi});
 
   @override
   bool operator ==(Object other) =>

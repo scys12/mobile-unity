@@ -11,6 +11,9 @@ class TaskDatabase {
   Future createTask(Map<String, dynamic> answers) async {
     var response = await _tasksCollection.add(answers);
   }
+  Future<void > updateTask(Map<String, dynamic> answers) async {
+    return await _tasksCollection.doc(uid).update(answers);
+  }
 
   Future<List<Task>> getFinishedTasks(String childId, String parentId) async{
     var resp = await _tasksCollection
@@ -30,6 +33,7 @@ class TaskDatabase {
   Task _mapDataFromDynamic(String id, dynamic data){
     DateTime createdDate = data["created_at"].toDate();
     DateTime deadlineDate = data["deadline"].toDate();
+    DateTime submitTaskDate = data["submit_task_date"] != null ? data["submit_task_date"].toDate() : null;
     return Task(
       uid: id,
       parentId: data["parent_id"],
@@ -39,7 +43,10 @@ class TaskDatabase {
       deadline: deadlineDate,
       category: data["category"],
       title: data["title"],
+      submitTaskDate: submitTaskDate,
+      status: data["status"],
       createdAt: createdDate,
+      imageUrl: data["image_url"]
     );
   }
 
@@ -91,7 +98,8 @@ class TaskDatabase {
         isDone: data["is_done"],
         point: data["point"],
         parentId: data["parent_id"],
-        childId: data["child_id"]
+        childId: data["child_id"],
+        imageUrl: data["image_url"]
       );
     }).toList();
     return resp;

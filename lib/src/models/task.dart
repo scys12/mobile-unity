@@ -8,8 +8,11 @@ class Task{
   final int point;
   final String parentId;
   final String childId;
+  final String imageUrl;
+  final DateTime submitTaskDate;
+  final int status;
 
-  Task({this.uid, this.title, this.category, this.createdAt, this.isDone, this.point, this.deadline, this.childId, this.parentId});
+  Task({this.uid, this.title, this.category, this.createdAt, this.isDone, this.point, this.deadline, this.childId, this.parentId, this.imageUrl, this.submitTaskDate, this.status});
 
   @override
   bool operator ==(Object other) =>

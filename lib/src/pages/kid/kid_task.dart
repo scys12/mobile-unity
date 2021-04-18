@@ -107,7 +107,7 @@ class _KidTaskState extends State<KidTask> {
                   ),
                 ],
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(20.0)
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20))
             ),
             child: SingleChildScrollView(
               controller: scrollController,

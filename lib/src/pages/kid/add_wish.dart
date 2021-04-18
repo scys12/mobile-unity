@@ -293,7 +293,9 @@ class _State extends State<AddWish> {
                         _loading = true;
                       });
                       if(_loading) createLoadingAlertDialog(context);
+                      var frekuensi = _dropDownState == "hari" ? 0 : _dropDownState == "bulan" ? 1 : 2;
                       var data = {
+                        "frekuensi" : frekuensi,
                         "child_id" : user.uid,
                         "created_at" : DateTime.now(),
                         "current_money" : 0,

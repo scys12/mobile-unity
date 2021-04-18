@@ -457,7 +457,7 @@ class _ChildTransactionsState extends State<ChildTransactions> with TickerProvid
                   ),
                 ],
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(20.0)
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20))
             ),
             child: SingleChildScrollView(
               controller: scrollController,

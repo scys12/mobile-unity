@@ -52,6 +52,8 @@ class WishDatabase {
       createdAt: createdDate,
       currentMoney: data["current_money"],
       target: data["target"],
+      frekuensi: data["frekuensi"],
+      expectedMoney: data["expected_money"],
     );
   }
 

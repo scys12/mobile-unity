@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/models/task.dart';
+import 'package:mobile_unity/src/pages/kid/detail_task.dart';
 import 'package:mobile_unity/src/services/auth.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
@@ -457,117 +458,125 @@ class _DashboardKidState extends State<DashboardKid> {
   }
 
   Widget _buildCard(int idx, Task task) {
-    return Container(
-      padding: EdgeInsets.all(15.0),
-      margin: (idx < tasks.length-1) ? EdgeInsets.only(right: 10.0) : EdgeInsets.only(left: 10.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(
-          Radius.circular(15),
+    return InkWell(
+      onTap: (){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DetailTaskKid(taskId: task.uid,)),
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.all(15.0),
+        margin: (idx < tasks.length-1) ? EdgeInsets.only(right: 10.0) : EdgeInsets.only(left: 10.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(
+            Radius.circular(15),
+          ),
+          border: Border.all(color: Colors.white),
+          boxShadow: [
+            BoxShadow(
+              color: shadowColor,
+              offset: Offset(1, 2),
+              spreadRadius: 1,
+              blurRadius: 3,
+            ),
+          ],
         ),
-        border: Border.all(color: Colors.white),
-        boxShadow: [
-          BoxShadow(
-            color: shadowColor,
-            offset: Offset(1, 2),
-            spreadRadius: 1,
-            blurRadius: 3,
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Container(
-              //   padding: EdgeInsets.all(8.0),
-              //   decoration: BoxDecoration(
-              //     borderRadius: BorderRadius.all(Radius.circular(7)),
-              //     color: redColor,
-              //   ),
-              //   child: Text(
-              //     DateFormat("dd MMMM yyyy").format(task.deadline).toString(),
-              //     style: TextStyle(
-              //         color: Colors.white,
-              //         fontFamily: 'Poppins',
-              //         fontSize: 15.0,
-              //         fontWeight: FontWeight.w600),
-              //   ),
-              // ),
-              Container(
-                padding: EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(7)),
-                  color: redColor,
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '+${task.point}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        fontFamily: 'Poppins',
-                        fontSize: 15.0,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Container(
+                //   padding: EdgeInsets.all(8.0),
+                //   decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.all(Radius.circular(7)),
+                //     color: redColor,
+                //   ),
+                //   child: Text(
+                //     DateFormat("dd MMMM yyyy").format(task.deadline).toString(),
+                //     style: TextStyle(
+                //         color: Colors.white,
+                //         fontFamily: 'Poppins',
+                //         fontSize: 15.0,
+                //         fontWeight: FontWeight.w600),
+                //   ),
+                // ),
+                Container(
+                  padding: EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(7)),
+                    color: redColor,
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        '+${task.point}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                          fontSize: 15.0,
+                        ),
                       ),
-                    ),
-                    Text(
-                      'pts',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        fontFamily: 'Poppins',
-                        fontSize: 10.0,
-                      ),
-                    )
-                  ],
+                      Text(
+                        'pts',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                          fontSize: 10.0,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          Text(
-            task.title,
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w700,
-                fontSize: 15.0),
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          Text(
-              DateFormat("dd MMMM yyyy").format(task.deadline).toString(),
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                color: thirdColor,
-                fontSize: 15.0),
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          Container(
-            padding: EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(7)),
-              color: greenColor,
+              ],
             ),
-            child: Text(
-              task.category,
+            SizedBox(
+              height: 10.0,
+            ),
+            Text(
+              task.title,
               style: TextStyle(
-                  color: Colors.white,
                   fontFamily: 'Poppins',
-                  fontSize: 15.0,
-                  fontWeight: FontWeight.w600),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15.0),
             ),
-          ),
-        ],
+            SizedBox(
+              height: 10.0,
+            ),
+            Text(
+                DateFormat("dd MMMM yyyy").format(task.deadline).toString(),
+              style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  color: thirdColor,
+                  fontSize: 15.0),
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            Container(
+              padding: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(7)),
+                color: greenColor,
+              ),
+              child: Text(
+                task.category,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Poppins',
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/task.dart';
 import 'package:mobile_unity/src/models/wish.dart';
+import 'package:mobile_unity/src/pages/kid/detail_wish.dart';
 import 'package:mobile_unity/src/provider/task_provider.dart';
 import 'package:mobile_unity/src/provider/wish_provider.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
@@ -247,6 +248,12 @@ class _KidAchievementState extends State<KidAchievement> with TickerProviderStat
   Widget _buildImpian(){
     return _wish != null ? InkWell(
       splashFactory: InkRipple.splashFactory,
+      onTap: (){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DetailWishKid(wishId: _wish.uid))
+        );
+      },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
         decoration: BoxDecoration(

@@ -422,7 +422,7 @@ class _KidTransactionsState extends State<KidTransactions> with TickerProviderSt
           ...tabItems.map((e) => Tab(
             child: Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 5.0),
+              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
               decoration: e == tabItems[_tabIndex] ? BoxDecoration(
                 color: orangeOpColor,
                 borderRadius: BorderRadius.circular(30.0),
@@ -432,7 +432,7 @@ class _KidTransactionsState extends State<KidTransactions> with TickerProviderSt
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Poppins',
-                  fontSize: 18.0,
+                  fontSize: 15.0,
                 ),
               ),
             ),

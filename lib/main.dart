@@ -9,6 +9,7 @@ import 'package:mobile_unity/src/pages/auth/sign_phone.dart';
 import 'file:///D:/FlutterProject/mobile_unity/lib/src/pages/kid/transactions.dart';
 import 'package:mobile_unity/src/pages/kid/dashboard.dart';
 import 'package:mobile_unity/src/pages/kid/add_wish.dart';
+import 'package:mobile_unity/src/pages/kid/detail_task.dart';
 import 'package:mobile_unity/src/pages/kid/inner_income.dart';
 import 'package:mobile_unity/src/pages/kid/inner_outcome.dart';
 import 'package:mobile_unity/src/pages/kid/kid_task.dart';
@@ -95,7 +96,7 @@ class MyApp extends StatelessWidget {
                   '/child/transactions': (context) => KidTransactions(),
                   '/child/all_wishes': (context) => AllKidWishes(),
                   '/child/add_wish': (context) => AddWish(),
-
+                  '/child/detail_task': (context) => DetailTaskKid(),
                 },
               ));
         } else {

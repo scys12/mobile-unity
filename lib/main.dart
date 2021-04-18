@@ -4,16 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/models/tab_index.dart';
-import 'package:mobile_unity/src/models/task.dart';
 import 'package:mobile_unity/src/pages/auth/authenticate.dart';
-import 'package:mobile_unity/src/pages/auth/otp.dart';
 import 'package:mobile_unity/src/pages/auth/sign_phone.dart';
-import 'package:mobile_unity/src/pages/auth/transactions.dart';
+import 'file:///D:/FlutterProject/mobile_unity/lib/src/pages/kid/transactions.dart';
 import 'package:mobile_unity/src/pages/kid/dashboard.dart';
+import 'package:mobile_unity/src/pages/kid/add_wish.dart';
 import 'package:mobile_unity/src/pages/kid/inner_income.dart';
 import 'package:mobile_unity/src/pages/kid/inner_outcome.dart';
 import 'package:mobile_unity/src/pages/kid/kid_task.dart';
-import 'package:mobile_unity/src/pages/kid/wrapper.dart';
+import 'package:mobile_unity/src/pages/kid/kid_wishes.dart';
 import 'package:mobile_unity/src/pages/parent/add_child.dart';
 import 'package:mobile_unity/src/pages/parent/change_profile.dart';
 import 'package:mobile_unity/src/pages/parent/detail_task.dart';
@@ -30,8 +29,6 @@ import 'package:mobile_unity/src/provider/finance_provider.dart';
 import 'package:mobile_unity/src/provider/task_provider.dart';
 import 'package:mobile_unity/src/provider/wish_provider.dart';
 import 'package:mobile_unity/src/services/auth.dart';
-import 'package:mobile_unity/src/services/child_database.dart';
-import 'package:mobile_unity/src/services/task_database.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -87,15 +84,18 @@ class MyApp extends StatelessWidget {
                   '/parent/all_tasks': (context) => ListChildTasks(),
                   '/parent/all_educations': (context) => ListChildEducations(),
                   '/parent/detail_task': (context) => DetailTaskChild(),
+                  '/auth/sign_phone': (context) => SignPhone(),
+                  '/parent/change_profile': (context) => ChangeProfileScreen(),
+                  '/parent/all_wishes': (context) => ListChildWishes(),
+                  '/parent/transactions': (context) => ChildTransactions(),
                   '/child/dashboard': (context) => DashboardKid(),
                   '/child/tasks': (context) => KidTask(),
                   '/child/new_income': (context) => InnerIncome(),
                   '/child/new_outcome': (context) => InnerOutcome(),
                   '/child/transactions': (context) => KidTransactions(),
-                  '/auth/sign_phone': (context) => SignPhone(),
-                  '/parent/change_profile': (context) => ChangeProfileScreen(),
-                  '/parent/all_wishes': (context) => ListChildWishes(),
-                  '/parent/transactions': (context) => ChildTransactions(),
+                  '/child/all_wishes': (context) => AllKidWishes(),
+                  '/child/add_wish': (context) => AddWish(),
+
                 },
               ));
         } else {

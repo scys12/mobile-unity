@@ -36,7 +36,7 @@ class _KidTransactionsState extends State<KidTransactions> with TickerProviderSt
     'Bulan Ini',
   ];
   final List<String> tabItems = [
-    'Pendapatan',
+    'Pemasukan',
     'Pengeluaran',
   ];
   String _currentType = 'Hari Ini';
@@ -421,13 +421,15 @@ class _KidTransactionsState extends State<KidTransactions> with TickerProviderSt
         tabs: [
           ...tabItems.map((e) => Tab(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 5.0),
               decoration: e == tabItems[_tabIndex] ? BoxDecoration(
                 color: orangeOpColor,
                 borderRadius: BorderRadius.circular(30.0),
               ) : BoxDecoration(),
               child: Text(
                 e,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 18.0,

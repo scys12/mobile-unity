@@ -35,7 +35,7 @@ class _ChildTransactionsState extends State<ChildTransactions> with TickerProvid
     'Bulan Ini',
   ];
   final List<String> tabItems = [
-    'Pendapatan',
+    'Pemasukan',
     'Pengeluaran',
   ];
   String _currentType = 'Hari Ini';

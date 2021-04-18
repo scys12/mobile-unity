@@ -2,7 +2,6 @@ import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile_unity/src/models/child.dart';
-import 'package:mobile_unity/src/pages/kid/components/bubble.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
 import 'package:mobile_unity/src/services/financial_database.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';

@@ -26,7 +26,7 @@ class _KidTaskState extends State<KidTask> {
     _child = Provider.of<Child>(context, listen: false);
     _taskProvider = Provider.of(context, listen: false);
     _taskProvider.getChildTaskNearDeadline(childId: _child.uid, parentId: _child.parentId);
-    _taskProvider.getTasks(childId: _child.uid, parentId: _child.parentId);
+    _taskProvider.getTasksNearDeadlineAndNotDone(childId: _child.uid, parentId: _child.parentId);
   }
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class _KidTaskState extends State<KidTask> {
                 SizedBox(height: 25.0,),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20.0),
-                  child: _buildHeader(context),
+                  child: _buildHeader(),
                 ),
                 SizedBox(height: 25.0,),
                 Padding(
@@ -438,7 +438,7 @@ class _KidTaskState extends State<KidTask> {
     );
   }
 
-  Widget _buildHeader(BuildContext context){
+  Widget _buildHeader(){
     return Container(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

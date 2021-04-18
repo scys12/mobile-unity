@@ -9,7 +9,7 @@ class WishDatabase {
   final CollectionReference _wishesCollection =
   FirebaseFirestore.instance.collection("wishes");
 
-  Future createTask(Map<String, dynamic> answers) async {
+  Future createWish(Map<String, dynamic> answers) async {
     var response = await _wishesCollection.add(answers);
   }
 
@@ -58,8 +58,22 @@ class WishDatabase {
   Stream<List<Wish>> getWish(String childId) {
     return _wishesCollection
       .where('child_id', isEqualTo: childId)
+      .where('is_done', isEqualTo: false)
       .orderBy('created_at', descending: true)
       .snapshots()
       .map(_wishListFromSnapshot);
+  }
+
+  Stream<Wish> getActiveWish(String childId) {
+    var wish = _wishesCollection
+        .where('child_id', isEqualTo: childId)
+        .where('is_done', isEqualTo: false)
+        .where('deadline', isGreaterThanOrEqualTo: DateTime.now())
+        .snapshots();
+    var oneWish =  wish.map(_wishListFromSnapshot);
+    return oneWish.map((event){
+      return event.length > 0? event.first : null;
+    });
+
   }
 }

@@ -23,8 +23,14 @@ class TaskProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  Future<void> getTasks({childId: String, parentId: String}) async{
-    var tasks = await TaskDatabase().getChildTaskFromParent(childId, parentId);
+  Future<void> getFinishTasks({childId: String, parentId: String}) async{
+    var tasks = await TaskDatabase().getFinishedTasks(childId, parentId);
+    this.tasks = tasks;
+    notifyListeners();
+  }
+
+  Future<void> getTasksNearDeadlineAndNotDone({childId: String, parentId: String}) async{
+    var tasks = await TaskDatabase().getChildTaskNearDeadline(childId, parentId);
     this.tasks = tasks;
     notifyListeners();
   }

@@ -12,6 +12,16 @@ class TaskDatabase {
     var response = await _tasksCollection.add(answers);
   }
 
+  Future<List<Task>> getFinishedTasks(String childId, String parentId) async{
+    var resp = await _tasksCollection
+        .where('is_done', isEqualTo: true)
+        .where('child_id', isEqualTo: childId)
+        .where('parent_id', isEqualTo: parentId)
+        .orderBy('deadline', descending: false)
+        .get();
+    return resp.docs.map(_taskListFromQueryDocumentSnapshot).toList();
+  }
+
   Task _taskListFromQueryDocumentSnapshot(QueryDocumentSnapshot snapshot) {
     var data =snapshot.data();
     return _mapDataFromDynamic(snapshot.id, data);

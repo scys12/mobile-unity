@@ -194,7 +194,7 @@ class _ParentSettingState extends State<ParentSetting> {
           Row(
             children: [
               Icon(
-                Icons.add,
+                Icons.account_circle,
                 color: shadowColor
               ),
               SizedBox(width: 20.0,),

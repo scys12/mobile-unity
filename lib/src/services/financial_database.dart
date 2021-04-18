@@ -9,7 +9,7 @@ class FinancialDatabase {
   final CollectionReference _financialCollection =
   FirebaseFirestore.instance.collection("financials");
 
-  Future createFinancial(Map<String, dynamic> data) async {
+  Future<void> createFinancial(Map<String, dynamic> data) async {
     var response = await _financialCollection.add(data);
   }
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 
-class Bubble extends StatelessWidget {
-  Bubble({this.message});
+class BubbleD extends StatelessWidget {
+  BubbleD({this.message});
 
   final String message;
 

@@ -4,6 +4,7 @@ import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/pages/auth/authenticate.dart';
 import 'package:mobile_unity/src/pages/auth/sign_phone.dart';
 import 'package:mobile_unity/src/pages/kid/dashboard.dart';
+import 'package:mobile_unity/src/pages/kid/wrapper.dart';
 import 'package:mobile_unity/src/pages/parent/wrapper.dart';
 import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/services/auth.dart';
@@ -27,7 +28,7 @@ class Wrapper extends StatelessWidget {
       );
     }
     else if (child != null) {
-      return DashboardKid();
+      return WrapperChildren();
     }
     else return Scaffold(
       body: ListView(

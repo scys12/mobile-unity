@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/parent.dart';
+import 'package:mobile_unity/src/models/task.dart';
 import 'package:mobile_unity/src/services/auth.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
@@ -12,12 +15,13 @@ class DashboardKid extends StatefulWidget {
 }
 
 class _DashboardKidState extends State<DashboardKid> {
-  final AuthService _authService = AuthService();
-  int _currentIndex = 0;
-
+  Child user;
+  List<Task> tasks;
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
+    user = Provider.of<Child>(context);
+    tasks = Provider.of<List<Task>>(context);
+    tasks = tasks.take(2).toList();
     return Scaffold(
       body: ListView(
         physics: ClampingScrollPhysics(),
@@ -45,17 +49,22 @@ class _DashboardKidState extends State<DashboardKid> {
                 SizedBox(
                   height: 15.0,
                 ),
-                Row(
+                tasks.length > 0 ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(child: _buildCard()),
-                    SizedBox(
-                      width: 15.0,
-                    ),
-                    Expanded(
-                      child: _buildCard(),
-                    ),
+                    ...tasks.asMap().map((idx, element) =>
+                        MapEntry(idx, Expanded(
+                          child: _buildCard(idx, element),
+                        )
+                        )).values.toList(),
                   ],
+                ) : Text(
+                  'Tidak ada tugas',
+                  style: TextStyle(
+                      fontSize: 15.0,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500
+                  ),
                 ),
                 SizedBox(
                   height: 25.0,
@@ -81,7 +90,7 @@ class _DashboardKidState extends State<DashboardKid> {
   Widget _buildButtonAllTask() {
     return ElevatedButton(
       onPressed: () {
-        Navigator.pushNamed(context, '/parent/add_child');
+        Navigator.pushNamed(context, '/child/tasks');
       },
       style: ButtonStyle(
         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
@@ -133,7 +142,14 @@ class _DashboardKidState extends State<DashboardKid> {
           children: [
             Row(
               children: [
-                Icon(
+                user.imageUrl.length > 0
+                    ? ClipRRect(
+                  child: Image.network(
+                    user.imageUrl,
+                    fit: BoxFit.fill,
+                    height: 40,
+                    width: 40,
+                  ),borderRadius: BorderRadius.circular(20.0),) : Icon(
                   Icons.account_circle,
                   size: 50.0,
                   color: Colors.white,
@@ -146,7 +162,7 @@ class _DashboardKidState extends State<DashboardKid> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Halo Lumen,',
+                      'Halo ${user.name},',
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w500,
@@ -220,7 +236,7 @@ class _DashboardKidState extends State<DashboardKid> {
                         width: 3.0,
                       ),
                       Text(
-                        "15000",
+                        "${user.income - user.outcome}",
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w700,
@@ -251,7 +267,7 @@ class _DashboardKidState extends State<DashboardKid> {
                         width: 15.0,
                       ),
                       Text(
-                        "500 pts",
+                        "${user.totalPoint} pts",
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w700,
@@ -268,7 +284,9 @@ class _DashboardKidState extends State<DashboardKid> {
                       padding: MaterialStateProperty.all(
                           EdgeInsets.symmetric(horizontal: 10.0)),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/child/transactions');
+                    },
                     child: Row(
                       children: [
                         Icon(
@@ -392,26 +410,29 @@ class _DashboardKidState extends State<DashboardKid> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildCatatanIcon(Icons.add_circle_outline, greenColor, "Pemasukan"),
+          _buildCatatanIcon(Icons.add_circle_outline, greenColor, "Pemasukan", '/child/new_income'),
           Divider(
             thickness: 1.0,
             color: shadowColor,
           ),
           _buildCatatanIcon(
-              Icons.remove_circle_outline, redColor, "Pengeluaran"),
+              Icons.remove_circle_outline, redColor, "Pengeluaran", '/child/new_outcome'),
           VerticalDivider(
             thickness: 1.0,
             color: shadowColor,
           ),
           _buildCatatanIcon(
-              Icons.analytics_outlined, secondaryColor, "Ringkasan"),
+              Icons.analytics_outlined, secondaryColor, "Ringkasan", '/child/transactions'),
         ],
       ),
     );
   }
 
-  Widget _buildCatatanIcon(IconData iconData, Color iconColor, String content) {
-    return Container(
+  Widget _buildCatatanIcon(IconData iconData, Color iconColor, String content, String path) {
+    return InkWell(
+      onTap: (){
+        Navigator.pushNamed(context, path);
+      },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -435,9 +456,10 @@ class _DashboardKidState extends State<DashboardKid> {
     );
   }
 
-  Widget _buildCard() {
+  Widget _buildCard(int idx, Task task) {
     return Container(
       padding: EdgeInsets.all(15.0),
+      margin: (idx < tasks.length-1) ? EdgeInsets.only(right: 10.0) : EdgeInsets.only(left: 10.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.all(
@@ -459,21 +481,21 @@ class _DashboardKidState extends State<DashboardKid> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                padding: EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(7)),
-                  color: redColor,
-                ),
-                child: Text(
-                  "1 hari lagi",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Poppins',
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.w600),
-                ),
-              ),
+              // Container(
+              //   padding: EdgeInsets.all(8.0),
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.all(Radius.circular(7)),
+              //     color: redColor,
+              //   ),
+              //   child: Text(
+              //     DateFormat("dd MMMM yyyy").format(task.deadline).toString(),
+              //     style: TextStyle(
+              //         color: Colors.white,
+              //         fontFamily: 'Poppins',
+              //         fontSize: 15.0,
+              //         fontWeight: FontWeight.w600),
+              //   ),
+              // ),
               Container(
                 padding: EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
@@ -484,7 +506,7 @@ class _DashboardKidState extends State<DashboardKid> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '+10',
+                      '+${task.point}',
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
@@ -510,7 +532,7 @@ class _DashboardKidState extends State<DashboardKid> {
             height: 10.0,
           ),
           Text(
-            "Berhasil menyelesaikan 1 tugas",
+            task.title,
             style: TextStyle(
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w700,
@@ -520,7 +542,7 @@ class _DashboardKidState extends State<DashboardKid> {
             height: 10.0,
           ),
           Text(
-            '05-04-2021',
+              DateFormat("dd MMMM yyyy").format(task.deadline).toString(),
             style: TextStyle(
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w600,
@@ -537,7 +559,7 @@ class _DashboardKidState extends State<DashboardKid> {
               color: greenColor,
             ),
             child: Text(
-              "Pendidikan",
+              task.category,
               style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'Poppins',

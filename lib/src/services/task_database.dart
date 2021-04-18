@@ -48,6 +48,16 @@ class TaskDatabase {
     return resp.docs.map(_taskListFromQueryDocumentSnapshot).toList();
   }
 
+  Future<List<Task>> getChildTaskNearDeadline(String childId, String parentId) async{
+    var resp = await _tasksCollection
+        .where('is_done', isEqualTo: false)
+        .where('deadline', isGreaterThanOrEqualTo: DateTime.now())
+        .where('parent_id', isEqualTo: parentId)
+        .where('child_id', isEqualTo: childId)
+        .get();
+    return resp.docs.map(_taskListFromQueryDocumentSnapshot).toList();
+  }
+
   Future<List<Task>> getChildEducationFromParent(String childId, String parentId) async{
     var resp = await _tasksCollection
       .where('child_id', isEqualTo: childId)
@@ -78,7 +88,6 @@ class TaskDatabase {
   }
 
   Stream<List<Task>> getTasks(String parentId, String childId) {
-    print("Parent ${parentId}, Child ${childId}");
     return _tasksCollection
       .where('is_done', isEqualTo: false)
       .where('deadline', isGreaterThanOrEqualTo: DateTime.now())

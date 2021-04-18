@@ -4,6 +4,8 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_unity/src/pages/kid/dashboard.dart';
+import 'package:mobile_unity/src/pages/kid/wrapper.dart';
+import 'package:mobile_unity/src/pages/wrapper.dart';
 import 'package:mobile_unity/src/services/auth.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
@@ -167,7 +169,7 @@ class _OTPScreenState extends State<OTPScreen> {
                             };
                             ChildDatabase(uid: resp.uid).createChildData(data);
                           }
-                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => DashboardKid()), (route) => false);
+                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => Wrapper()), (route) => false);
                         }
                         else {
                           Navigator.pop(context);

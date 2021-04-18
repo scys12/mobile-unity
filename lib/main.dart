@@ -8,7 +8,10 @@ import 'package:mobile_unity/src/models/task.dart';
 import 'package:mobile_unity/src/pages/auth/authenticate.dart';
 import 'package:mobile_unity/src/pages/auth/otp.dart';
 import 'package:mobile_unity/src/pages/auth/sign_phone.dart';
+import 'package:mobile_unity/src/pages/auth/transactions.dart';
 import 'package:mobile_unity/src/pages/kid/dashboard.dart';
+import 'package:mobile_unity/src/pages/kid/inner_income.dart';
+import 'package:mobile_unity/src/pages/kid/inner_outcome.dart';
 import 'package:mobile_unity/src/pages/kid/kid_task.dart';
 import 'package:mobile_unity/src/pages/kid/wrapper.dart';
 import 'package:mobile_unity/src/pages/parent/add_child.dart';
@@ -85,6 +88,10 @@ class MyApp extends StatelessWidget {
                   '/parent/all_educations': (context) => ListChildEducations(),
                   '/parent/detail_task': (context) => DetailTaskChild(),
                   '/child/dashboard': (context) => DashboardKid(),
+                  '/child/tasks': (context) => KidTask(),
+                  '/child/new_income': (context) => InnerIncome(),
+                  '/child/new_outcome': (context) => InnerOutcome(),
+                  '/child/transactions': (context) => KidTransactions(),
                   '/auth/sign_phone': (context) => SignPhone(),
                   '/parent/change_profile': (context) => ChangeProfileScreen(),
                   '/parent/all_wishes': (context) => ListChildWishes(),

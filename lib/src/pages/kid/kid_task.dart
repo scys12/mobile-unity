@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:mobile_unity/src/models/child.dart';
+import 'package:mobile_unity/src/models/task.dart';
+import 'package:mobile_unity/src/provider/task_provider.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
+import 'package:mobile_unity/src/widgets/loading.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
+import 'package:provider/provider.dart';
 
 class KidTask extends StatefulWidget {
   @override
@@ -9,47 +15,209 @@ class KidTask extends StatefulWidget {
 }
 
 class _KidTaskState extends State<KidTask> {
+  TaskProvider _taskProvider;
+  Child _child;
+  bool _loading = true;
+  int _tabIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _child = Provider.of<Child>(context, listen: false);
+    _taskProvider = Provider.of(context, listen: false);
+    _taskProvider.getChildTaskNearDeadline(childId: _child.uid, parentId: _child.parentId);
+    _taskProvider.getTasks(childId: _child.uid, parentId: _child.parentId);
+  }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(false, "Tugas"),
-      body: ListView(
-        physics: ClampingScrollPhysics(),
-        children: [
-          SizedBox(height: 25.0,),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: _buildHeader(context),
-          ),
-          SizedBox(height: 25.0,),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: SubHeader(title: 'Segera diselesaikan',isLihatSemua: false),
-          ),
-          SizedBox(height: 25.0,),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    List<Task> reducedTask;
+    _taskProvider = Provider.of<TaskProvider>(context);
+    if (_taskProvider.twoTasks != null && _taskProvider.tasks != null ) {
+      setState(() {
+        _loading = false;
+      });
+      var setTwoTasks = Set.from(_taskProvider.twoTasks);
+      var setTasks = Set.from(_taskProvider.tasks);
+      reducedTask = List.from(_taskProvider.tasks.where((element) => !_taskProvider.twoTasks.contains(element)));
+    }
+    return _loading ? Loading() : Scaffold(
+      appBar: CustomAppBar(true, "Tugas"),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        child: Stack(
+          children: [
+            Column(
               children: [
-                Expanded(
-                    child: _buildCard()
+                SizedBox(height: 25.0,),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  child: _buildHeader(context),
                 ),
-                SizedBox(width: 15.0,),
-                Expanded(
-                  child: _buildCard(),
+                SizedBox(height: 25.0,),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  child: SubHeader(title: 'Segera diselesaikan',isLihatSemua: false),
                 ),
+                SizedBox(height: 25.0,),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  child: _taskProvider.twoTasks.length > 0 ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ..._taskProvider.twoTasks.asMap().map((idx, element) =>
+                          MapEntry(idx, Expanded(
+                            child: _buildCard(idx, element),
+                          )
+                          )).values.toList(),
+                    ],
+                  ) : Text(
+                    'Tidak ada tugas',
+                    style: TextStyle(
+                        fontSize: 15.0,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500
+                    ),
+                  ),
+                ),
+                SizedBox(height: 35.0,),
               ],
             ),
-          ),
-          SizedBox(height: 35.0,),
-          _buildAnotherTask(),
-        ],
+            _buildAnotherTask(reducedTask),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildAnotherTask(){
+  Widget _buildAnotherTask(List<Task> tasks){
+    return DraggableScrollableSheet(
+      expand: true,
+      initialChildSize: 0.4,
+      minChildSize: 0.4,
+      maxChildSize: 0.5,
+      builder: (BuildContext context, ScrollController scrollController) {
+        return Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: shadowColor,
+                    spreadRadius: 2.0,
+                    blurRadius: 2.0,
+                  ),
+                ],
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20.0)
+            ),
+            child: SingleChildScrollView(
+              controller: scrollController,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                    child: SubHeader(title: "Tugas Lain",isLihatSemua: false,),
+                  ),
+                  Divider(thickness: 2.0,color: shadowColor,),
+                  tasks.length <= 0 ? Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20.0),
+                    child: Text(
+                      "Tidak ada tugas lain",
+                      style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18.0
+                      ),
+                    ),
+                  ) : ListView.builder(
+                    itemCount: tasks.length,
+                    shrinkWrap: true,
+                    controller: ScrollController(keepScrollOffset: false),
+                    itemBuilder: (context, index){
+                      return InkWell(
+                        onTap: ()=>Navigator.pushNamed(context, '/parent/detail_task'),
+                        splashFactory: InkRipple.splashFactory,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: shadowColor,
+                                  spreadRadius: 3.0,
+                                  blurRadius: 2.0,
+                                ),
+                              ],
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10.0)
+                          ),
+                          margin: EdgeInsets.symmetric(vertical: 10.0),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  tasks[index].title,
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16.0,
+                                      color: Colors.black
+                                  ),
+                                ),
+                                SizedBox(height: 10.0,),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
+                                      decoration: BoxDecoration(
+                                          color: redColor,
+                                          borderRadius: BorderRadius.circular(10.0)
+                                      ),
+                                      child: Text(
+                                        DateFormat("dd MMMM yyyy").format(tasks[index].deadline).toString(),
+                                        style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 15.0,
+                                            color: Colors.white
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
+                                      decoration: BoxDecoration(
+                                          color: primaryColor,
+                                          borderRadius: BorderRadius.circular(10.0)
+                                      ),
+                                      child: Text(
+                                        "+${tasks[index].point}pts",
+                                        style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 15.0,
+                                            color: Colors.white
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            )
+        );
+      },
+    );
+  }
+
+  Widget _buildAnother(){
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -154,9 +322,10 @@ class _KidTaskState extends State<KidTask> {
     );
   }
 
-  Widget _buildCard(){
+  Widget _buildCard(int idx, Task task) {
     return Container(
       padding: EdgeInsets.all(15.0),
+      margin: (idx < _taskProvider.twoTasks.length-1) ? EdgeInsets.only(right: 10.0) : EdgeInsets.only(left: 10.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.all(
@@ -166,7 +335,7 @@ class _KidTaskState extends State<KidTask> {
         boxShadow: [
           BoxShadow(
             color: shadowColor,
-            offset: Offset(1,2),
+            offset: Offset(1, 2),
             spreadRadius: 1,
             blurRadius: 3,
           ),
@@ -178,22 +347,21 @@ class _KidTaskState extends State<KidTask> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                padding: EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(7)),
-                  color: redColor,
-                ),
-                child: Text(
-                  "1 hari lagi",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Poppins',
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.w600
-                  ),
-                ),
-              ),
+              // Container(
+              //   padding: EdgeInsets.all(8.0),
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.all(Radius.circular(7)),
+              //     color: redColor,
+              //   ),
+              //   child: Text(
+              //     DateFormat("dd MMMM yyyy").format(task.deadline).toString(),
+              //     style: TextStyle(
+              //         color: Colors.white,
+              //         fontFamily: 'Poppins',
+              //         fontSize: 15.0,
+              //         fontWeight: FontWeight.w600),
+              //   ),
+              // ),
               Container(
                 padding: EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
@@ -204,7 +372,7 @@ class _KidTaskState extends State<KidTask> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '+10',
+                      '+${task.point}',
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
@@ -226,26 +394,30 @@ class _KidTaskState extends State<KidTask> {
               ),
             ],
           ),
-          SizedBox(height: 10.0,),
+          SizedBox(
+            height: 10.0,
+          ),
           Text(
-            "Berhasil menyelesaikan 1 tugas",
+            task.title,
             style: TextStyle(
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w700,
-                fontSize: 15.0
-            ),
+                fontSize: 15.0),
           ),
-          SizedBox(height: 10.0,),
+          SizedBox(
+            height: 10.0,
+          ),
           Text(
-            '05-04-2021',
+            DateFormat("dd MMMM yyyy").format(task.deadline).toString(),
             style: TextStyle(
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w600,
                 color: thirdColor,
-                fontSize: 15.0
-            ),
+                fontSize: 15.0),
           ),
-          SizedBox(height: 10.0,),
+          SizedBox(
+            height: 10.0,
+          ),
           Container(
             padding: EdgeInsets.all(8.0),
             decoration: BoxDecoration(
@@ -253,13 +425,12 @@ class _KidTaskState extends State<KidTask> {
               color: greenColor,
             ),
             child: Text(
-              "Pendidikan",
+              task.category,
               style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'Poppins',
                   fontSize: 15.0,
-                  fontWeight: FontWeight.w600
-              ),
+                  fontWeight: FontWeight.w600),
             ),
           ),
         ],

@@ -1,3 +1,4 @@
+import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile_unity/src/pages/kid/components/bubble.dart';
@@ -31,7 +32,11 @@ class _State extends State<Dream> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Bubble(
-                message: "Impian apa yang kamu inginkan sekarang?",
+                margin: BubbleEdges.only(top: 10),
+                alignment: Alignment.topLeft,
+                nip: BubbleNip.leftTop,
+                child: Text('Impian apa yang kamu inginkan sekarang?'),
+                color: secondaryColor,
               ),
               Container(
                 margin: EdgeInsets.fromLTRB(3, 15, 3, 15),
@@ -61,7 +66,11 @@ class _State extends State<Dream> {
               ),
               (_amount != "")
                   ? Bubble(
-                      message: "Berapa harga impianmu?",
+                      margin: BubbleEdges.only(top: 10),
+                      alignment: Alignment.topLeft,
+                      nip: BubbleNip.leftTop,
+                      child: Text('Berapa harga impianmu?'),
+                      color: secondaryColor,
                     )
                   : Container(),
               (_amount != "")
@@ -94,7 +103,11 @@ class _State extends State<Dream> {
                   : Container(),
               (_hargaImpian != "")
                   ? Bubble(
-                      message: "Sesering apa kamu ingin menabung?",
+                      margin: BubbleEdges.only(top: 10),
+                      alignment: Alignment.topLeft,
+                      nip: BubbleNip.leftTop,
+                      child: Text('Sesering apa kamu ingin menabung'),
+                      color: secondaryColor,
                     )
                   : Container(),
               (_hargaImpian != "")
@@ -127,8 +140,11 @@ class _State extends State<Dream> {
                   : Container(),
               (_dropDownState != "")
                   ? Bubble(
-                      message:
-                          "Berapa yang yang akan kamu tabung setiap (pilihan)?",
+                      margin: BubbleEdges.only(top: 10),
+                      alignment: Alignment.topLeft,
+                      nip: BubbleNip.leftTop,
+                      child: Text('Berapa yang akan kamu tabung setiap '),
+                      color: secondaryColor,
                     )
                   : Container(),
               (_dropDownState != "")

@@ -9,6 +9,7 @@ class TaskProvider extends ChangeNotifier{
   Task selectedTask;
   List<Task> tasks;
   List<Task> educations;
+  List<Task> twoTasks;
 
   Future<void> getTask({taskId: String}) async{
     var task = await TaskDatabase(uid: taskId).getTask();
@@ -19,6 +20,18 @@ class TaskProvider extends ChangeNotifier{
   Future<void> getChildTaskFromParent({childId: String, parentId: String}) async{
     var tasks = await TaskDatabase().getChildTaskFromParent(childId, parentId);
     this.tasks = tasks.where((element) => element.category != 'Edukasi Finansial').toList();
+    notifyListeners();
+  }
+
+  Future<void> getTasks({childId: String, parentId: String}) async{
+    var tasks = await TaskDatabase().getChildTaskFromParent(childId, parentId);
+    this.tasks = tasks;
+    notifyListeners();
+  }
+
+  Future<void> getChildTaskNearDeadline({childId: String, parentId: String}) async{
+    var tasks = await TaskDatabase().getChildTaskNearDeadline(childId, parentId);
+    this.twoTasks = tasks.take(2).toList();
     notifyListeners();
   }
 

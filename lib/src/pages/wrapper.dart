@@ -4,11 +4,14 @@ import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/pages/auth/authenticate.dart';
 import 'package:mobile_unity/src/pages/auth/sign_phone.dart';
 import 'package:mobile_unity/src/pages/kid/dashboard.dart';
+import 'package:mobile_unity/src/pages/kid/not_assigned.dart';
 import 'package:mobile_unity/src/pages/kid/wrapper.dart';
 import 'package:mobile_unity/src/pages/parent/wrapper.dart';
+import 'package:mobile_unity/src/pages/welcome.dart';
 import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/services/auth.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
+import 'package:mobile_unity/src/widgets/loading.dart';
 import 'package:provider/provider.dart';
 
 class Wrapper extends StatelessWidget {
@@ -17,47 +20,28 @@ class Wrapper extends StatelessWidget {
     final Parent parent = Provider.of<Parent>(context);
     final Child child = Provider.of<Child>(context);
     if (parent != null) {
-      return MultiProvider(
-        providers: [
-          StreamProvider<List<Child>>.value(
-            value: ChildDatabase().getChildrenFromParent(parent.uid),
-            initialData: [],
-          ),
-        ],
-        child: WrapperParent(),
-      );
-    }
-    else if (child != null) {
-      return WrapperChildren();
-    }
-    else return Scaffold(
-      body: ListView(
-        children: [
-          Image(image: AssetImage("assets/images/splash.png"),),
-          Text(
-            "Daftar Sebagai",
-            style: TextStyle(
-                color: Colors.black,
-                fontFamily: 'Poppins',
-                fontSize: 40.0,
-                fontWeight: FontWeight.w600,
+      if (parent.uid != null) {
+        return MultiProvider(
+          providers: [
+            StreamProvider<List<Child>>.value(
+              value: ChildDatabase().getChildrenFromParent(parent.uid),
+              initialData: [],
             ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/auth/sign_phone');
-            },
-            child: Text("Anak"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/authenticate');
-            },
-            child: Text("Orang Tua"),
-          )
-        ],
-      ),
-    );
+          ],
+          child: WrapperParent(),
+        );
+      }
+    }
+    if (child != null) {
+      if(child.uid != null) {
+        if (child.parentId == "") return NotAssigned();
+        else return WrapperChildren();
+      }
+    }
+    if(child == null && parent == null)
+      return Welcome();
+    else
+      return Loading();
   }
 }
 

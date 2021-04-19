@@ -35,8 +35,8 @@ class TaskProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  Future<void> getChildTaskNearDeadline({childId: String, parentId: String}) async{
-    var tasks = await TaskDatabase().getChildTaskNearDeadline(childId, parentId);
+  Future<void> getTwoChildTasksNearDeadline({childId: String, parentId: String}) async{
+    var tasks = await TaskDatabase().getTwoTasksNotFinished(childId, parentId);
     this.twoTasks = tasks.take(2).toList();
     notifyListeners();
   }

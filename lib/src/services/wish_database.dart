@@ -13,6 +13,10 @@ class WishDatabase {
     var response = await _wishesCollection.add(answers);
   }
 
+  Future updateWish(Map<String, dynamic> answers) async {
+    var response = await _wishesCollection.doc(uid).update(answers);
+  }
+
   List<Wish> _wishListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((data) {
       return _mapDataFromDynamic(data.id, data.data());

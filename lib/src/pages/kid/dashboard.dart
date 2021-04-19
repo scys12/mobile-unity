@@ -6,6 +6,7 @@ import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/models/task.dart';
 import 'package:mobile_unity/src/pages/kid/detail_task.dart';
 import 'package:mobile_unity/src/services/auth.dart';
+import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
 import 'package:provider/provider.dart';
@@ -411,29 +412,34 @@ class _DashboardKidState extends State<DashboardKid> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildCatatanIcon(Icons.add_circle_outline, greenColor, "Pemasukan", '/child/new_income'),
+          _buildCatatanIcon(Icons.add_circle_outline, greenColor, "Pemasukan", () async{
+            final result = await Navigator.pushNamed(context, '/child/new_income');
+            if (result != null) successMessage(context, result);
+            }),
           Divider(
             thickness: 1.0,
             color: shadowColor,
           ),
           _buildCatatanIcon(
-              Icons.remove_circle_outline, redColor, "Pengeluaran", '/child/new_outcome'),
+              Icons.remove_circle_outline, redColor, "Pengeluaran", () async {
+                Navigator.pushNamed(context, '/child/new_outcome');
+          }),
           VerticalDivider(
             thickness: 1.0,
             color: shadowColor,
           ),
           _buildCatatanIcon(
-              Icons.analytics_outlined, secondaryColor, "Ringkasan", '/child/transactions'),
+              Icons.analytics_outlined, secondaryColor, "Ringkasan", () async {
+            Navigator.pushNamed(context, '/child/transactions');
+          }),
         ],
       ),
     );
   }
 
-  Widget _buildCatatanIcon(IconData iconData, Color iconColor, String content, String path) {
+  Widget _buildCatatanIcon(IconData iconData, Color iconColor, String content, Function onTap) {
     return InkWell(
-      onTap: (){
-        Navigator.pushNamed(context, path);
-      },
+      onTap: onTap,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/wish.dart';
+import 'package:mobile_unity/src/pages/kid/detail_wish.dart';
 import 'package:mobile_unity/src/provider/wish_provider.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
@@ -39,8 +40,7 @@ class _AllKidWishesState extends State<AllKidWishes> {
       });
       var _activeWish = _wishProvider.wishes.where((element) => !element.isDone && element.deadline.difference(DateTime.now()).inDays >= 0).toList();
       _wish = _activeWish.length > 0 ? _activeWish[0] : null;
-      _pastWish = _wishProvider.wishes.where((element) => element.deadline.difference(DateTime.now()).inDays < 0).toList();
-      print(_wishProvider.wishes.where((element) => element.deadline.difference(DateTime.now()).inDays < 0).toList());
+      _pastWish = _wishProvider.wishes.where((element) => element.deadline.difference(DateTime.now()).inDays < 0 || element.isDone).toList();
     }
     return _loading ? Loading() : Scaffold(
       appBar: CustomAppBar(true, "Semua Impianku"),
@@ -105,6 +105,9 @@ class _AllKidWishesState extends State<AllKidWishes> {
   Widget _buildImpian(){
     return _wish != null ? InkWell(
       splashFactory: InkRipple.splashFactory,
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => DetailWishKid(wishId: _wish.uid,)));
+      },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
         decoration: BoxDecoration(
@@ -202,9 +205,13 @@ class _AllKidWishesState extends State<AllKidWishes> {
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) => InkWell(
+        onTap: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context) => DetailWishKid(wishId: pastWish[index].uid,)));
+        },
         splashFactory: InkRipple.splashFactory,
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+          margin: EdgeInsets.only(bottom: 10.0),
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10.0),
@@ -248,7 +255,7 @@ class _AllKidWishesState extends State<AllKidWishes> {
                           borderRadius: BorderRadius.circular(10.0)
                       ),
                       child: Text(
-                        pastWish[index].isDone ? "Sudah selesai" : "Tidak berhasil",
+                        pastWish[index].isDone ? "Sudah Terkabul" : "Belum Terkabul",
                         style: TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w400,

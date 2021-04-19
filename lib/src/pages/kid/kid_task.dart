@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/task.dart';
+import 'package:mobile_unity/src/pages/kid/detail_task.dart';
 import 'package:mobile_unity/src/provider/task_provider.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
@@ -25,7 +26,7 @@ class _KidTaskState extends State<KidTask> {
     super.initState();
     _child = Provider.of<Child>(context, listen: false);
     _taskProvider = Provider.of(context, listen: false);
-    _taskProvider.getChildTaskNearDeadline(childId: _child.uid, parentId: _child.parentId);
+    _taskProvider.getTwoChildTasksNearDeadline(childId: _child.uid, parentId: _child.parentId);
     _taskProvider.getTasksNearDeadlineAndNotDone(childId: _child.uid, parentId: _child.parentId);
   }
   @override
@@ -134,7 +135,9 @@ class _KidTaskState extends State<KidTask> {
                     controller: ScrollController(keepScrollOffset: false),
                     itemBuilder: (context, index){
                       return InkWell(
-                        onTap: ()=>Navigator.pushNamed(context, '/parent/detail_task'),
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => DetailTaskKid(taskId: tasks[index].uid,)));
+                        },
                         splashFactory: InkRipple.splashFactory,
                         child: Container(
                           decoration: BoxDecoration(
@@ -323,117 +326,122 @@ class _KidTaskState extends State<KidTask> {
   }
 
   Widget _buildCard(int idx, Task task) {
-    return Container(
-      padding: EdgeInsets.all(15.0),
-      margin: (idx < _taskProvider.twoTasks.length-1) ? EdgeInsets.only(right: 10.0) : EdgeInsets.only(left: 10.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(
-          Radius.circular(15),
+    return InkWell(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => DetailTaskKid(taskId: task.uid,)));
+      },
+      child: Container(
+        padding: EdgeInsets.all(15.0),
+        margin: (idx < _taskProvider.twoTasks.length-1) ? EdgeInsets.only(right: 10.0) : EdgeInsets.only(left: 10.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(
+            Radius.circular(15),
+          ),
+          border: Border.all(color: Colors.white),
+          boxShadow: [
+            BoxShadow(
+              color: shadowColor,
+              offset: Offset(1, 2),
+              spreadRadius: 1,
+              blurRadius: 3,
+            ),
+          ],
         ),
-        border: Border.all(color: Colors.white),
-        boxShadow: [
-          BoxShadow(
-            color: shadowColor,
-            offset: Offset(1, 2),
-            spreadRadius: 1,
-            blurRadius: 3,
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Container(
-              //   padding: EdgeInsets.all(8.0),
-              //   decoration: BoxDecoration(
-              //     borderRadius: BorderRadius.all(Radius.circular(7)),
-              //     color: redColor,
-              //   ),
-              //   child: Text(
-              //     DateFormat("dd MMMM yyyy").format(task.deadline).toString(),
-              //     style: TextStyle(
-              //         color: Colors.white,
-              //         fontFamily: 'Poppins',
-              //         fontSize: 15.0,
-              //         fontWeight: FontWeight.w600),
-              //   ),
-              // ),
-              Container(
-                padding: EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(7)),
-                  color: redColor,
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '+${task.point}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        fontFamily: 'Poppins',
-                        fontSize: 15.0,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Container(
+                //   padding: EdgeInsets.all(8.0),
+                //   decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.all(Radius.circular(7)),
+                //     color: redColor,
+                //   ),
+                //   child: Text(
+                //     DateFormat("dd MMMM yyyy").format(task.deadline).toString(),
+                //     style: TextStyle(
+                //         color: Colors.white,
+                //         fontFamily: 'Poppins',
+                //         fontSize: 15.0,
+                //         fontWeight: FontWeight.w600),
+                //   ),
+                // ),
+                Container(
+                  padding: EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(7)),
+                    color: redColor,
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        '+${task.point}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                          fontSize: 15.0,
+                        ),
                       ),
-                    ),
-                    Text(
-                      'pts',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        fontFamily: 'Poppins',
-                        fontSize: 10.0,
-                      ),
-                    )
-                  ],
+                      Text(
+                        'pts',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                          fontSize: 10.0,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          Text(
-            task.title,
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w700,
-                fontSize: 15.0),
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          Text(
-            DateFormat("dd MMMM yyyy").format(task.deadline).toString(),
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                color: thirdColor,
-                fontSize: 15.0),
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          Container(
-            padding: EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(7)),
-              color: greenColor,
+              ],
             ),
-            child: Text(
-              task.category,
+            SizedBox(
+              height: 10.0,
+            ),
+            Text(
+              task.title,
               style: TextStyle(
-                  color: Colors.white,
                   fontFamily: 'Poppins',
-                  fontSize: 15.0,
-                  fontWeight: FontWeight.w600),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15.0),
             ),
-          ),
-        ],
+            SizedBox(
+              height: 10.0,
+            ),
+            Text(
+              DateFormat("dd MMMM yyyy").format(task.deadline).toString(),
+              style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  color: thirdColor,
+                  fontSize: 15.0),
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            Container(
+              padding: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(7)),
+                color: greenColor,
+              ),
+              child: Text(
+                task.category,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Poppins',
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

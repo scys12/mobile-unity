@@ -2,11 +2,14 @@ import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile_unity/src/models/child.dart';
+import 'package:mobile_unity/src/provider/wish_provider.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
 import 'package:mobile_unity/src/services/financial_database.dart';
+import 'package:mobile_unity/src/services/wish_database.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
+import 'package:mobile_unity/src/widgets/loading.dart';
 import 'package:provider/provider.dart';
 
 class InnerOutcome extends StatefulWidget {
@@ -20,7 +23,9 @@ class _State extends State<InnerOutcome> {
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _lainnyaController = TextEditingController();
-
+  WishProvider _wishProvider;
+  Child _user;
+  bool _loadingWish = true;
   var _amount = "";
   var _dropDownValue;
   var _dropDownState = "";
@@ -36,9 +41,18 @@ class _State extends State<InnerOutcome> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _user = Provider.of<Child>(context, listen: false);
+    _wishProvider = Provider.of<WishProvider>(context, listen: false);
+    _wishProvider.getWishes(childId: _user.uid);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Child user = Provider.of<Child>(context);
-    return Scaffold(
+    _wishProvider = Provider.of<WishProvider>(context);
+    _loadingWish = _wishProvider.wishes != null ? false : true;
+    return _loadingWish ? Loading() : Scaffold(
       appBar: CustomAppBar(true, "Pemasukan Baru"),
       body: ListView(
         children: [
@@ -293,7 +307,7 @@ class _State extends State<InnerOutcome> {
                         _title = _dropDownLainnyaState;
                       }
                       var data = {
-                        "child_id" : user.uid,
+                        "child_id" : _user.uid,
                         "created_at" : DateTime.now(),
                         "description" : _detail,
                         "money" : int.parse(_amount),
@@ -303,10 +317,19 @@ class _State extends State<InnerOutcome> {
                       await FinancialDatabase().createFinancial(data);
 
                       var childData = {
-                        "outcome" : user.outcome + int.parse(_amount),
+                        "outcome" : _user.outcome + int.parse(_amount),
                       };
-                      await ChildDatabase(uid: user.uid).updateChildData(childData);
-                      Navigator.popUntil(context, (route) => route.isFirst);
+                      await ChildDatabase(uid: _user.uid).updateChildData(childData);
+                      var wishes = _wishProvider.wishes.where((element) => !element.isDone && element.deadline.difference(DateTime.now()).inDays >= 0);
+                      if(wishes.length > 0) {
+                        var wish = wishes.first;
+                        Map<String, dynamic> wishData = {
+                          "current_money" : wish.currentMoney - int.parse(_amount)
+                        };
+                        wishData["current_money"] = wishData["current_money"] < 0 ? 0 : wishData["current_money"];
+                        await WishDatabase(uid: wish.uid).updateWish(wishData);
+                      }
+                      Navigator.pop(context, (route) => route.isFirst);
                     },
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all<EdgeInsetsGeometry>(

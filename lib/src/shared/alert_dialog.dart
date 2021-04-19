@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mobile_unity/src/widgets/loading.dart';
 
 import 'constants.dart';
@@ -52,7 +53,13 @@ Future createLoadingAlertDialog(BuildContext context){
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10.0)
               ),
-              child: Loading()
+              child: Container(
+                padding: EdgeInsets.all(20.0),
+                child: SpinKitChasingDots(
+                  color: primaryColor,
+                  size: 30.0,
+                ),
+              )
           )
       ),
     );

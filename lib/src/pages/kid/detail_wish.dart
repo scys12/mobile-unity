@@ -56,6 +56,7 @@ class _DetailWishKidState extends State<DetailWishKid> {
                 _buildChildProfile(),
                 _buildTitleField(),
                 SizedBox(height: 20.0,),
+                _buildStatusField(),
                 _buildDeadlineField(),
                 _buildPointField(),
                 _buildFrekuensiField(),
@@ -101,6 +102,31 @@ class _DetailWishKidState extends State<DetailWishKid> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildStatusField(){
+    var isFinished;
+    if (_wishProvider.selectedWish.deadline.difference(DateTime.now()).inDays < 0 && !_wishProvider.selectedWish.isDone) isFinished = 0;
+    else if (_wishProvider.selectedWish.isDone) isFinished = 1;
+    else isFinished = 2;
+    return Container(
+      decoration: BoxDecoration(
+        color: isFinished == 1 ? greenColor : isFinished == 0 ? redColor : primaryColor,
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      child: ListTile(
+        leading: Icon(Icons.star, color: Colors.white),
+        title: Text(
+          isFinished == 1 ? "Sudah Terkabul" : isFinished == 0 ? "Belum Terkabul" : "Masih diwujudkan",
+          style: TextStyle(
+              fontSize: 18.0,
+              color: Colors.white,
+              fontFamily: "Poppins",
+              fontWeight: FontWeight.w600
+          ),
+        ),
       ),
     );
   }

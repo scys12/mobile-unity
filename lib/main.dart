@@ -24,6 +24,7 @@ import 'package:mobile_unity/src/pages/parent/new_education.dart';
 import 'package:mobile_unity/src/pages/parent/new_task.dart';
 import 'package:mobile_unity/src/pages/parent/transactions.dart';
 import 'package:mobile_unity/src/pages/parent/wrapper.dart';
+import 'package:mobile_unity/src/pages/welcome_parent_child.dart';
 import 'package:mobile_unity/src/pages/wrapper.dart';
 import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/provider/finance_provider.dart';
@@ -53,11 +54,11 @@ class MyApp extends StatelessWidget {
               providers: [
                 StreamProvider<Parent>.value(
                   value: AuthService().parent,
-                  initialData: null,
+                  initialData: Parent(),
                 ),
                 StreamProvider<Child>.value(
                   value: AuthService().child,
-                  initialData: null,
+                  initialData: Child(),
                 ),
                 ChangeNotifierProvider(create: (e) => TabIndex()),
                 ChangeNotifierProvider(
@@ -78,6 +79,7 @@ class MyApp extends StatelessWidget {
                 routes: {
                   '/authenticate': (context) => Authenticate(),
                   '/welcome': (context) => Wrapper(),
+                  '/welcome/child_parent': (context) => WelcomeParentChild(),
                   '/parent/add_child': (context) => AddChildScreen(),
                   '/parent/new_task': (context) => NewTaskChild(),
                   '/parent/wrapper': (context) => WrapperParent(),

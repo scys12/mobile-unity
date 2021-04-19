@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/task.dart';
 import 'package:mobile_unity/src/models/wish.dart';
+import 'package:mobile_unity/src/pages/kid/detail_task.dart';
 import 'package:mobile_unity/src/pages/kid/detail_wish.dart';
 import 'package:mobile_unity/src/provider/task_provider.dart';
 import 'package:mobile_unity/src/provider/wish_provider.dart';
@@ -83,7 +84,9 @@ class _KidAchievementState extends State<KidAchievement> with TickerProviderStat
       controller: ScrollController(keepScrollOffset: false),
       itemBuilder: (context, index){
         return InkWell(
-          onTap: ()=>Navigator.pushNamed(context, '/parent/detail_task'),
+          onTap: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => DetailTaskKid(taskId: tasks[index].uid,)));
+          },
           splashFactory: InkRipple.splashFactory,
           child: Container(
             decoration: BoxDecoration(
@@ -122,6 +125,29 @@ class _KidAchievementState extends State<KidAchievement> with TickerProviderStat
                             fontSize: 16.0,
                             color: Colors.black
                         ),
+                      ),
+                      SizedBox(height: 10.0,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
+                            decoration: BoxDecoration(
+                                color: primaryColor,
+                                borderRadius: BorderRadius.circular(10.0)
+                            ),
+                            child: Text(
+                              tasks[index].category,
+                              style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15.0,
+                                  color: Colors.white
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: 10.0,),
                       Row(

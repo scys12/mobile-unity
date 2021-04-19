@@ -67,11 +67,21 @@ class TaskDatabase {
 
   Future<List<Task>> getChildTaskNearDeadline(String childId, String parentId) async{
     var resp = await _tasksCollection
-        .where('is_done', isEqualTo: false)
-        .where('deadline', isGreaterThanOrEqualTo: DateTime.now())
-        .where('parent_id', isEqualTo: parentId)
-        .where('child_id', isEqualTo: childId)
-        .get();
+      .where('parent_id', isEqualTo: parentId)
+      .where('child_id', isEqualTo: childId)
+      .orderBy('deadline', descending: true)
+      .get();
+    return resp.docs.map(_taskListFromQueryDocumentSnapshot).toList();
+  }
+
+  Future<List<Task>> getTwoTasksNotFinished(String childId, String parentId) async{
+    var resp = await _tasksCollection
+      .where('parent_id', isEqualTo: parentId)
+      .where('child_id', isEqualTo: childId)
+      .where('deadline', isGreaterThanOrEqualTo: DateTime.now())
+      .where('is_done', isEqualTo: false)
+      .limit(2)
+      .get();
     return resp.docs.map(_taskListFromQueryDocumentSnapshot).toList();
   }
 

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/child.dart';
-import 'package:mobile_unity/src/pages/kid/task_photo.dart';
+import 'file:///D:/FlutterProject/mobile_unity/lib/src/shared/task_photo.dart';
 import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/provider/task_provider.dart';
 import 'package:mobile_unity/src/services/child_database.dart';

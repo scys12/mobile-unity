@@ -2,11 +2,14 @@ import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile_unity/src/models/child.dart';
+import 'package:mobile_unity/src/provider/wish_provider.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
 import 'package:mobile_unity/src/services/financial_database.dart';
+import 'package:mobile_unity/src/services/wish_database.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
+import 'package:mobile_unity/src/widgets/loading.dart';
 import 'package:provider/provider.dart';
 
 class InnerIncome extends StatefulWidget {
@@ -20,6 +23,7 @@ class _State extends State<InnerIncome> {
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _lainnyaController = TextEditingController();
+  WishProvider _wishProvider;
 
   var _amount = "";
   var _dropDownValue;
@@ -27,7 +31,8 @@ class _State extends State<InnerIncome> {
   var _dropDownLainnyaState = "";
   var _detail = "";
   bool _loading = false;
-
+  Child _user;
+  bool _loadingWish = true;
   List<String> choices = [
     "Makanan & Minuman",
     "Belanja",
@@ -36,9 +41,18 @@ class _State extends State<InnerIncome> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _user = Provider.of<Child>(context, listen: false);
+    _wishProvider = Provider.of<WishProvider>(context, listen: false);
+    _wishProvider.getWishes(childId: _user.uid);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Child user = Provider.of<Child>(context);
-    return Scaffold(
+    _wishProvider = Provider.of<WishProvider>(context);
+    _loadingWish = _wishProvider.wishes != null ? false : true;
+    return _loadingWish ? Loading() : Scaffold(
       appBar: CustomAppBar(true, "Pemasukan Baru"),
       body: ListView(
         children: [
@@ -293,7 +307,7 @@ class _State extends State<InnerIncome> {
                               _title = _dropDownLainnyaState;
                             }
                             var data = {
-                              "child_id" : user.uid,
+                              "child_id" : _user.uid,
                               "created_at" : DateTime.now(),
                               "description" : _detail,
                               "money" : int.parse(_amount),
@@ -303,10 +317,25 @@ class _State extends State<InnerIncome> {
                             await FinancialDatabase().createFinancial(data);
 
                             var childData = {
-                              "income" : user.income + int.parse(_amount),
+                              "income" : _user.income + int.parse(_amount),
                             };
-                            await ChildDatabase(uid: user.uid).updateChildData(childData);
-                            Navigator.popUntil(context, (route) => route.isFirst);
+                            var wishes = _wishProvider.wishes.where((element) => !element.isDone && element.deadline.difference(DateTime.now()).inDays >= 0);
+                            var returnContext = false;
+                            if(wishes.length > 0) {
+                              var wish = wishes.first;
+                              Map<String, dynamic> wishData = {
+                                "current_money" : wish.currentMoney + int.parse(_amount)
+                              };
+                              if (wishData["current_money"] >= wish.target) {
+                                returnContext = true;
+                                wishData["is_done"] = true;
+                                childData["total_point"] = _user.totalPoint + wish.point;
+                              }
+                              await WishDatabase(uid: wish.uid).updateWish(wishData);
+                            }
+                            await ChildDatabase(uid: _user.uid).updateChildData(childData);
+                            Navigator.pop(context);
+                            returnContext ? Navigator.pop(context, 'Selamat, Harapan kamu sudah terkabul') : Navigator.pop(context, (route) => route.isFirst);
                           },
                           style: ButtonStyle(
                             padding: MaterialStateProperty.all<EdgeInsetsGeometry>(

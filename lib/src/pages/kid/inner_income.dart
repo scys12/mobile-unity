@@ -335,7 +335,7 @@ class _State extends State<InnerIncome> {
                             }
                             await ChildDatabase(uid: _user.uid).updateChildData(childData);
                             Navigator.pop(context);
-                            returnContext ? Navigator.pop(context, 'Selamat, Harapan kamu sudah terkabul') : Navigator.pop(context, (route) => route.isFirst);
+                            returnContext ? Navigator.pop(context, 'Selamat, Harapan kamu sudah terkabul') : Navigator.pop(context, "no");
                           },
                           style: ButtonStyle(
                             padding: MaterialStateProperty.all<EdgeInsetsGeometry>(

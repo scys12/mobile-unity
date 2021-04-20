@@ -10,7 +10,6 @@ import 'package:mobile_unity/src/models/user.dart';
 import 'package:mobile_unity/src/pages/auth/authenticate.dart';
 import 'package:mobile_unity/src/pages/auth/sign_phone.dart';
 import 'package:mobile_unity/src/pages/kid/change_profile.dart';
-import 'file:///D:/FlutterProject/mobile_unity/lib/src/pages/kid/transactions.dart';
 import 'package:mobile_unity/src/pages/kid/dashboard.dart';
 import 'package:mobile_unity/src/pages/kid/add_wish.dart';
 import 'package:mobile_unity/src/pages/kid/detail_task.dart';
@@ -18,6 +17,7 @@ import 'package:mobile_unity/src/pages/kid/inner_income.dart';
 import 'package:mobile_unity/src/pages/kid/inner_outcome.dart';
 import 'package:mobile_unity/src/pages/kid/kid_task.dart';
 import 'package:mobile_unity/src/pages/kid/kid_wishes.dart';
+import 'package:mobile_unity/src/pages/kid/transactions.dart';
 import 'package:mobile_unity/src/pages/parent/add_child.dart';
 import 'package:mobile_unity/src/pages/parent/change_profile.dart';
 import 'package:mobile_unity/src/pages/parent/detail_task.dart';
@@ -121,6 +121,7 @@ class MyApp extends StatelessWidget {
                       '/child/new_outcome': (context) => InnerOutcome(),
                       '/child/all_wishes': (context) => AllKidWishes(),
                       '/child/change_profile': (context) => ChangeProfileChild(),
+                      '/child/transactions': (context) => KidTransactions(),
                       '/child/add_wish': (context) => AddWish(),
                       '/child/detail_task': (context) => DetailTaskKid(),
                       '/teenager/dashboard': (context) => DashboardTeenager(),

@@ -329,6 +329,7 @@ class _State extends State<InnerOutcome> {
                         wishData["current_money"] = wishData["current_money"] < 0 ? 0 : wishData["current_money"];
                         await WishDatabase(uid: wish.uid).updateWish(wishData);
                       }
+                      Navigator.pop(context);
                       Navigator.pop(context, (route) => route.isFirst);
                     },
                     style: ButtonStyle(

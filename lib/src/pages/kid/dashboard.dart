@@ -2,12 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/child.dart';
+import 'package:mobile_unity/src/models/financial.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/models/task.dart';
+import 'package:mobile_unity/src/models/wish.dart';
 import 'package:mobile_unity/src/pages/kid/detail_task.dart';
+import 'package:mobile_unity/src/provider/finance_provider.dart';
 import 'package:mobile_unity/src/services/auth.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
+import 'package:mobile_unity/src/widgets/loading.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
 import 'package:provider/provider.dart';
 
@@ -19,12 +23,53 @@ class DashboardKid extends StatefulWidget {
 class _DashboardKidState extends State<DashboardKid> {
   Child user;
   List<Task> tasks;
+  Wish _wish;
+  FinancialProvider _financialProvider;
+  List<Financial> financials = [];
+  bool _loading = true;
+  List<Financial> _filteredFinancials = [];
+  int _income = 0;
+  int _outcome = 0;
+  
+  List<Financial> filterFinancial(int _currentType){
+    List<Financial> filtered = [];
+    var now = DateTime.now();
+    var weekDay = now.weekday;
+    var startDate = now.subtract(Duration(days: weekDay-1));
+
+    if (_currentType == 0) {
+      filtered = financials.where((element) => element.createdAt.difference(now).inDays == 0).toList();
+    }else if (_currentType == 1) {
+      filtered = financials.where((element) => (startDate.difference(element.createdAt).inDays <=0 && startDate.difference(element.createdAt).inDays >=-6)).toList();
+    }else if(_currentType == 2) {
+      filtered = financials.where((element) => element.createdAt.month == now.month && element.createdAt.year == now.year).toList();
+    }
+    return filtered;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    user = Provider.of<Child>(context, listen: false);
+    _financialProvider = Provider.of(context, listen: false);
+    _financialProvider.getFinancialBasedChildId(childId: user.uid);
+  }
+
   @override
   Widget build(BuildContext context) {
     user = Provider.of<Child>(context);
     tasks = Provider.of<List<Task>>(context);
     tasks = tasks.take(2).toList();
-    return Scaffold(
+    _wish = Provider.of<Wish>(context);
+    if (_financialProvider.financials != null) {
+      setState(() {
+        _loading = false;
+      });
+      financials = _financialProvider.financials;
+      print(financials);
+      _checkWishReminder();
+    }
+    return _loading ? Loading() : Scaffold(
       body: ListView(
         physics: ClampingScrollPhysics(),
         children: [
@@ -72,12 +117,53 @@ class _DashboardKidState extends State<DashboardKid> {
                   height: 25.0,
                 ),
                 _buildButtonAllTask(),
+                SizedBox(height: 25.0,),
+                SubHeader(
+                  title: 'Reminder',
+                  isLihatSemua: false,
+                ),
+                SizedBox(
+                  height: 15.0,
+                ),
+                _buildReminder()
               ],
             ),
           )
         ],
       ),
     );
+  }
+
+  int _countIncomeOutcome(String type, List<Financial> finances){
+    return finances.where((element) => element.type == type).toList().fold(0, (previous, current) => previous + current.money);
+  }
+  
+  _checkWishReminder(){
+    if (_wish != null) {
+      var expectedMoney = _wish.expectedMoney;
+      var frekuensi = _wish.frekuensi;
+      _filteredFinancials = filterFinancial(frekuensi);
+      _outcome = _countIncomeOutcome("outcome", _filteredFinancials);
+      _income = _countIncomeOutcome("income", _filteredFinancials);
+    }
+  }
+
+  Widget _buildReminder(){
+    var type;
+    if (_wish != null) {
+      type = _wish.frekuensi == 0 ? "hari" : _wish.frekuensi == 1 ? "minggu" : "bulan";
+    } else {
+      type = "";
+    }
+    return _wish != null
+        ? Container(
+            child: _filteredFinancials.length > 0
+                ? _income-_outcome > _wish.expectedMoney
+                    ? Text("Kamu sudah berhasil menabung impianmu pada ${type} ini")
+                    : Text("Tabunganmu untuk memenuhi impian pada ${type} ini masih belum tercapai")
+                : Text("Kamu belum ada menabung pada ${type} ini"),
+          )
+        : Text("Kamu belum membuat satu impian");
   }
 
   Widget _buildHeader() {
@@ -253,61 +339,27 @@ class _DashboardKidState extends State<DashboardKid> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Total Pointku",
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 13.0,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 15.0,
-                      ),
-                      Text(
-                        "${user.totalPoint} pts",
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 25.0,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    "Total Uang",
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 18.0,
+                      color: Colors.white,
+                    ),
                   ),
-                  TextButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(whiteOpColor),
-                      padding: MaterialStateProperty.all(
-                          EdgeInsets.symmetric(horizontal: 10.0)),
+                  SizedBox(
+                    height: 8.0,
+                  ),
+                  Text(
+                    "${user.totalPoint} pts",
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 25.0,
+                      color: Colors.white,
                     ),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/child/transactions');
-                    },
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.history,
-                          color: Colors.white,
-                        ),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        Text(
-                          "Riwayat",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'Poppins',
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
+                  ),
                 ],
               )
             ],
@@ -414,7 +466,8 @@ class _DashboardKidState extends State<DashboardKid> {
         children: [
           _buildCatatanIcon(Icons.add_circle_outline, greenColor, "Pemasukan", () async{
             final result = await Navigator.pushNamed(context, '/child/new_income');
-            if (result != null) successMessage(context, result);
+            if (result != null)
+              if(result != "no") successMessage(context, result);
             }),
           Divider(
             thickness: 1.0,

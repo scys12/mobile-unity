@@ -39,6 +39,7 @@ class _ChangeProfileChildState extends State<ChangeProfileChild> {
     _phoneController = TextEditingController(text: user.phoneNumber.length > 0 ? user.phoneNumber.substring(3) : "");
     _nameController = TextEditingController(text: user.name);
     _dateController = TextEditingController(text: DateFormat("dd-MM-yyyy").format(user.bornDate).toString());
+    _date = user.bornDate;
     _selectedGender = user.gender.length == 0 ? "Laki-laki" : user.gender;
   }
 
@@ -84,7 +85,9 @@ class _ChangeProfileChildState extends State<ChangeProfileChild> {
     onTap: (){
       DatePicker.showPicker(context, showTitleActions: true, onChanged: (date) {
         setState(() {
+          print("Y ${date}");
           _date = date;
+          print("X ${_date}");
           _dateController.text = DateFormat("dd-MM-yyyy").format(_date).toString();
         });
       }, onConfirm: (date) {
@@ -205,7 +208,6 @@ class _ChangeProfileChildState extends State<ChangeProfileChild> {
             createLoadingAlertDialog(context);
           }
           var imageUrl = _image != null ? await Storage(image: _image, filename: uid, folderName: "child").uploadPicture() : user.imageUrl;
-          print(_selectedGender);
           var answers = {
             'born_date' : _date,
             'name' : _nameController.text,

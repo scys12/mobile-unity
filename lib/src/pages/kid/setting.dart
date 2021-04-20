@@ -155,7 +155,7 @@ class _KidSettingState extends State<KidSetting> {
                     padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0)
                 ),
                 onPressed: () {
-                  Navigator.pushNamed(context, '/parent/change_profile');
+                  Navigator.pushNamed(context, '/child/change_profile');
                 },
               )
             ],

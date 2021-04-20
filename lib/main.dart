@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/models/tab_index.dart';
+import 'package:mobile_unity/src/models/user.dart';
 import 'package:mobile_unity/src/pages/auth/authenticate.dart';
 import 'package:mobile_unity/src/pages/auth/sign_phone.dart';
 import 'file:///D:/FlutterProject/mobile_unity/lib/src/pages/kid/transactions.dart';
@@ -24,6 +25,7 @@ import 'package:mobile_unity/src/pages/parent/new_education.dart';
 import 'package:mobile_unity/src/pages/parent/new_task.dart';
 import 'package:mobile_unity/src/pages/parent/transactions.dart';
 import 'package:mobile_unity/src/pages/parent/wrapper.dart';
+import 'package:mobile_unity/src/pages/teenager/auth/authenticate.dart';
 import 'package:mobile_unity/src/pages/welcome_parent_child.dart';
 import 'package:mobile_unity/src/pages/wrapper.dart';
 import 'package:mobile_unity/src/provider/child_provider.dart';
@@ -52,13 +54,9 @@ class MyApp extends StatelessWidget {
         } else if (snapshot.hasData) {
           return MultiProvider(
               providers: [
-                StreamProvider<Parent>.value(
-                  value: AuthService().parent,
-                  initialData: Parent(),
-                ),
-                StreamProvider<Child>.value(
-                  value: AuthService().child,
-                  initialData: Child(),
+                StreamProvider<AuthUser>.value(
+                  value: AuthService().user,
+                  initialData: null,
                 ),
                 ChangeNotifierProvider(create: (e) => TabIndex()),
                 ChangeNotifierProvider(
@@ -78,6 +76,8 @@ class MyApp extends StatelessWidget {
                 home: Wrapper(),
                 routes: {
                   '/authenticate': (context) => Authenticate(),
+                  '/auth/sign_phone': (context) => SignPhone(),
+                  '/auth/teenager': (context) => AuthenticateTeenager(),
                   '/welcome': (context) => Wrapper(),
                   '/welcome/child_parent': (context) => WelcomeParentChild(),
                   '/parent/add_child': (context) => AddChildScreen(),
@@ -87,7 +87,6 @@ class MyApp extends StatelessWidget {
                   '/parent/all_tasks': (context) => ListChildTasks(),
                   '/parent/all_educations': (context) => ListChildEducations(),
                   '/parent/detail_task': (context) => DetailTaskChild(),
-                  '/auth/sign_phone': (context) => SignPhone(),
                   '/parent/change_profile': (context) => ChangeProfileScreen(),
                   '/parent/all_wishes': (context) => ListChildWishes(),
                   '/parent/transactions': (context) => ChildTransactions(),

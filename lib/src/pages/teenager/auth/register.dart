@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/services/auth.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/loading.dart';
 
-class SignIn extends StatefulWidget {
+class RegisterTeenager extends StatefulWidget {
   final Function toggleView;
-  SignIn({this.toggleView});
-
+  RegisterTeenager({this.toggleView});
   @override
-  _SignInState createState() => _SignInState();
+  _RegisterTeenagerState createState() => _RegisterTeenagerState();
 }
 
-class _SignInState extends State<SignIn> {
+class _RegisterTeenagerState extends State<RegisterTeenager> {
   final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
+  bool _loading = false;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _loading = false;
   String _error = '';
 
   @override
@@ -39,35 +37,35 @@ class _SignInState extends State<SignIn> {
                     children: [
                       SizedBox(height: 20.0,),
                       TextFormField(
-                        validator: (val){
-                          if(val.isEmpty)
-                            return 'Email masih kosong';
-                          else if(!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val)) {
-                            return 'Tolong masukkan alamat email yang valid';
-                          }
-                          return null;
-                        },
-                        controller: _emailController,
-                        decoration: textInputDecoration.copyWith(
-                          hintText: 'Email',
-                          prefixIcon: Icon(
-                            Icons.email,
-                            color: thirdColor,
-                          ),
-                        )
+                          validator: (val){
+                            if(val.isEmpty)
+                              return 'Email masih kosong';
+                            else if(!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val)) {
+                              return 'Tolong masukkan alamat email yang valid';
+                            }
+                            return null;
+                          },
+                          controller: _emailController,
+                          decoration: textInputDecoration.copyWith(
+                            hintText: 'Email',
+                            prefixIcon: Icon(
+                              Icons.email,
+                              color: thirdColor,
+                            ),
+                          )
                       ),
                       SizedBox(height: 20.0,),
                       TextFormField(
-                        validator: (val) => val.length < 6 ? 'Password minimal 6 karakter' : null,
-                        controller: _passwordController,
-                        obscureText: true,
-                        decoration: textInputDecoration.copyWith(
-                          hintText: 'Password',
-                          prefixIcon: Icon(
-                            Icons.vpn_key,
-                            color: thirdColor,
-                          ),
-                        )
+                          validator: (val) => val.length < 6 ? 'Password minimal 6 karakter' : null,
+                          controller: _passwordController,
+                          obscureText: true,
+                          decoration: textInputDecoration.copyWith(
+                            hintText: 'Password',
+                            prefixIcon: Icon(
+                              Icons.vpn_key,
+                              color: thirdColor,
+                            ),
+                          )
                       ),
                     ],
                   ),
@@ -78,17 +76,17 @@ class _SignInState extends State<SignIn> {
                   padding: EdgeInsets.symmetric(horizontal: 50.0),
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          primaryColor
-                      ),
-                      padding: MaterialStateProperty.all(
-                          EdgeInsets.symmetric(vertical: 15.0)
-                      ),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0)
+                        backgroundColor: MaterialStateProperty.all(
+                            primaryColor
+                        ),
+                        padding: MaterialStateProperty.all(
+                            EdgeInsets.symmetric(vertical: 15.0)
+                        ),
+                        shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0)
+                            )
                         )
-                      )
                     ),
                     onPressed: () async {
                       if (_formKey.currentState.validate()) {
@@ -101,23 +99,29 @@ class _SignInState extends State<SignIn> {
                         }
                         var _email = _emailController.text;
                         var _password = _passwordController.text;
-                        var result = await _authService.signInWithEmailAndPassword(_email, _password, "parent");
-                        if (result == null) {
+                        var result  = await _authService.registerEmailAndPassword(_email, _password, "teenager");
+                        if (result is String) {
                           setState(() {
                             _loading = false;
-                            _error = 'Email/Password salah';
-                            _passwordController.text = '';
+                            if (result == 'email-already-in-use') {
+                              _error = 'Email sudah digunakan. Harap mengganti email anda';
+                            }else{
+                              _error = 'Terdapat kesalahan. Harap mengecek ulang email atau password';
+                            }
                           });
                           if (!_loading) {
                             Navigator.pop(context);
                           }
                         }else{
-                          Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route)=> false);
+                          Navigator.pop(context);
+                          successMessage(context, "Akun Anda berhasil didaftarkan");
+                          _emailController.text = '';
                         }
+                        _passwordController.text = '';
                       }
                     },
                     child: Text(
-                      'Masuk',
+                      'Daftar',
                       style: TextStyle(
                         color: Colors.white,
                         fontFamily: 'Poppins',
@@ -130,14 +134,14 @@ class _SignInState extends State<SignIn> {
                 Text(
                   _error.length > 0 ? _error : '',
                   style: TextStyle(
-                    color: Colors.red
+                      color: Colors.red
                   ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Belum punya akun AturUang?',
+                      'Sudah punya akun AturUang?',
                       style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 14.0,
@@ -147,9 +151,9 @@ class _SignInState extends State<SignIn> {
                     TextButton(
                       onPressed: ()=> widget.toggleView(),
                       child: Text(
-                        'Daftar',
+                        'Masuk',
                         style: TextStyle(
-                          color: primaryColor
+                            color: primaryColor
                         ),
                       ),
                     )
@@ -163,7 +167,7 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  Widget _buildHeader(){
+  Widget _buildHeader() {
     return Column(
       children: [
         Image(
@@ -173,9 +177,9 @@ class _SignInState extends State<SignIn> {
         Text(
           "Selamat Datang di AturUang!",
           style: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 25.0,
-            fontWeight: FontWeight.w600
+              fontFamily: 'Poppins',
+              fontSize: 25.0,
+              fontWeight: FontWeight.w600
           ),
         ),
       ],

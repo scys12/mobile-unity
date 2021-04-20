@@ -18,9 +18,27 @@ class ParentDatabase{
       gender: data["gender"],
       email: data["email"],
       name: data["name"],
-      imageUrl: data["image_url"]
+      imageUrl: data["image_url"],
     );
   }
+
+  Stream<Parent> getParentData(){
+    return _parentCollection.doc(uid).snapshots().map(_parentFromSnapshot);
+  }
+
+  Parent _parentFromSnapshot(DocumentSnapshot snapshot) {
+    var data = snapshot.data();
+    return data != null ? Parent(
+      uid: snapshot.id,
+      imageUrl: data["image_url"],
+      phoneNumber: data["phone_number"],
+      isProfileFilled: data["is_profile_filled"],
+      gender: data["gender"],
+      name: data["name"],
+      email: data["email"],
+    ) : null;
+  }
+
 
   Future<void> updateParentData(Map<String, dynamic> data) async {
     return await _parentCollection.doc(uid).update(data);

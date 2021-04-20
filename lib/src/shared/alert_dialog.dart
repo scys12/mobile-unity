@@ -42,6 +42,44 @@ Future successMessage(BuildContext context, String message){
   });
 }
 
+Future failedMessage(BuildContext context, String message){
+  return showDialog(context: context, builder: (context) {
+    return AlertDialog(
+      backgroundColor: Colors.transparent,
+      elevation: 0.0,
+      content: Container(
+        margin: EdgeInsets.all(40.0),
+
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10.0)
+        ),
+        padding: EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.cancel_presentation,
+              color: redColor,
+            ),
+            SizedBox(height: 10.0,),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: "Poppins",
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  });
+}
+
 Future createLoadingAlertDialog(BuildContext context){
   return showDialog(barrierDismissible: false,context: context, builder: (context) {
     return Container(

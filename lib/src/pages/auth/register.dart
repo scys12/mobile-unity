@@ -99,7 +99,7 @@ class _RegisterState extends State<Register> {
                         }
                         var _email = _emailController.text;
                         var _password = _passwordController.text;
-                        var result  = await _authService.registerEmailAndPassword(_email, _password);
+                        var result  = await _authService.registerEmailAndPassword(_email, _password, "parent");
                         if (result is String) {
                           setState(() {
                             _loading = false;

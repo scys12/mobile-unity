@@ -9,7 +9,8 @@ class Child{
   final bool isProfileFilled;
   final String parentId;
   final DateTime bornDate;
+  final DateTime createdAt;
   final String imageUrl;
 
-  Child({this.uid, this.name, this.gender, this.phoneNumber, this.income, this.outcome, this.totalPoint, this.isProfileFilled, this.parentId, this.bornDate, this.imageUrl});
+  Child({this.uid, this.name, this.gender, this.phoneNumber, this.income, this.outcome, this.totalPoint, this.isProfileFilled, this.parentId, this.bornDate, this.imageUrl, this.createdAt});
 }

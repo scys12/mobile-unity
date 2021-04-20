@@ -107,6 +107,9 @@ class _WelcomeState extends State<Welcome> {
       margin: BubbleEdges.only(top: 20.0),
       color: primaryColor,
       child: TextButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/auth/teenager');
+        },
         child: Text(
           "Lebih dari 15 tahun",
           style: TextStyle(

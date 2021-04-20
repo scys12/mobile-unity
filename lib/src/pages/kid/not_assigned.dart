@@ -1,5 +1,6 @@
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_unity/src/services/auth.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 
 class NotAssigned extends StatefulWidget {
@@ -10,18 +11,24 @@ class NotAssigned extends StatefulWidget {
 class _NotAssignedState extends State<NotAssigned> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        padding: EdgeInsets.all(30.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildHeader(),
-              _buildBoxPersetujuan(),
-            ],
-          ),
-        )
+    return WillPopScope(
+      onWillPop: () async{
+        await AuthService().signOut();
+        return true;
+      },
+      child: Scaffold(
+        body: Container(
+          padding: EdgeInsets.all(30.0),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildHeader(),
+                _buildBoxPersetujuan(),
+              ],
+            ),
+          )
+        ),
       ),
     );
   }

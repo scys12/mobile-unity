@@ -13,6 +13,11 @@ class ChildDatabase{
     return resp.exists;
   }
 
+  Future<Child> getChild() async{
+    var resp = await _childCollection.doc(uid).get();
+    return _mapDataFromDynamic(uid, resp.data());
+  }
+
   Future<List<Child>> getOneChild(String parentId) async {
     var resp = await _childCollection
         .where('parent_id', isEqualTo:  parentId)
@@ -20,6 +25,15 @@ class ChildDatabase{
         .limit(1)
         .get();
     return resp.docs.map(_childListFromQueryDocumentSnapshot).toList();
+  }
+
+  Stream<Child> getChildData(){
+    return _childCollection.doc(uid).snapshots().map(_parentFromSnapshot);
+  }
+
+  Child _parentFromSnapshot(DocumentSnapshot snapshot) {
+    var data = snapshot.data();
+    return data != null ? _mapDataFromDynamic(snapshot.id, data) : null;
   }
 
   Stream<List<Child>> getChildrenFromParent(String parentId) {
@@ -42,7 +56,9 @@ class ChildDatabase{
   }
 
   Child _mapDataFromDynamic(String uid, Map<String, dynamic> data){
+    print("DATA ${data}");
     DateTime bornDate = data["born_date"].toDate();
+    DateTime createdAt = data["created_at"].toDate();
     return Child(
         uid: uid,
         phoneNumber: data["phone_number"],
@@ -54,7 +70,8 @@ class ChildDatabase{
         totalPoint: data["total_point"],
         name: data["name"],
         bornDate: bornDate,
-        imageUrl: data["image_url"]
+        imageUrl: data["image_url"],
+        createdAt: createdAt,
     );
   }
 
@@ -67,6 +84,7 @@ class ChildDatabase{
   }
 
   Future<Child> get users async{
+    print("UID ${uid}");
     var resp =  await _childCollection.doc(uid).get();
     var data = resp.data();
     return _mapDataFromDynamic(resp.id, data);

@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/parent.dart';
+import 'package:mobile_unity/src/models/teenager.dart';
+import 'package:mobile_unity/src/models/user.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
 import 'package:mobile_unity/src/services/parent_database.dart';
+import 'package:mobile_unity/src/services/teenager_database.dart';
 
 class AuthService {
   final FirebaseAuth _auth =  FirebaseAuth.instance;
@@ -12,18 +15,24 @@ class AuthService {
     return user != null && user.providerData[0].providerId == 'password' ? ParentDatabase(uid: user.uid).users : null ;
   }
 
-  Future<Child> _childFromFirebaseUser(User user) async{
-    return user != null && user.providerData[0].providerId == 'phone' ? ChildDatabase(uid: user.uid).users : null ;
+  Future<Teenager> _teenagerFromFirebaseUser(User user) async{
+    return user != null && user.providerData[0].providerId == 'password' ? TeenagerDatabase(uid: user.uid).users : null ;
   }
 
-  Stream<Parent> get parent{
-    return _auth.authStateChanges()
-        .asyncMap(_parentFromFirebaseUser);
+  Future<AuthUser> _authUserFromFirebaseUser(User user) async{
+    if (user != null) {
+      print("_AUTH USER FROM FIREBASE ${user.uid} ${user.providerData[0].providerId}");
+      var providerId = user.providerData[0].providerId;
+      return AuthUser(uid: user.uid, authId: providerId == "phone" ? user.phoneNumber : user.email, providerId: providerId);
+    } else {
+      return null;
+    }
   }
 
-  Stream<Child> get child{
+  Stream<AuthUser> get user{
+    print("_AUTH USER FROM GET USER");
     return _auth.authStateChanges()
-        .asyncMap(_childFromFirebaseUser);
+        .asyncMap(_authUserFromFirebaseUser);
   }
 
   //sign in phone
@@ -31,11 +40,13 @@ class AuthService {
     phoneNumber  = phoneNumber.toString().trim();
 
     void verificationCompleted(PhoneAuthCredential credential) async {
-      await _auth.signInWithCredential(credential);
+      print("ASA");
+      var a = await _auth.signInWithCredential(credential);
+      print("SINI ${a.user.uid}");
     }
 
     void verificationFailed(FirebaseAuthException e){
-     print(e.message);
+     print("VERIFICATION FAILED ${e.message}");
     }
 
     void codeSent(String verificationId, [int resendToken]) async {
@@ -55,11 +66,13 @@ class AuthService {
           timeout: const Duration(minutes: 2),
           codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
     }catch (e) {
-      print(e);
+      print("AUTH VERIFY PHONE NUMBER FAILED : ${e}");
     }
   }
 
   Future<User> signInWithPhoneNumber(String pin) async{
+    print(pin);
+    print(verificationId);
     PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: pin);
     UserCredential userCredential = await _auth.signInWithCredential(phoneAuthCredential);
     User user = userCredential.user;
@@ -76,8 +89,8 @@ class AuthService {
   }
 
   //register phone
-  Future registerEmailAndPassword(String email, String password) async {
-    Parent _user;
+  Future registerEmailAndPassword(String email, String password, String type) async {
+    dynamic _user;
     try {
       UserCredential credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User user = credential.user;
@@ -89,20 +102,29 @@ class AuthService {
         "email" : user.email,
         "image_url" : "",
       };
-      await ParentDatabase(uid: user.uid).createParentData(data);
-      _user = await _parentFromFirebaseUser(user);
+      if (type == "parent") {
+        await ParentDatabase(uid: user.uid).createParentData(data);
+        _user = await _parentFromFirebaseUser(user);
+      }else{
+        data["total_point"] = 0;
+        data["outcome"] = 0;
+        data["income"] = 0;
+        await TeenagerDatabase(uid: user.uid).createTeenagerData(data);
+        _user = await _teenagerFromFirebaseUser(user);
+      }
     } on FirebaseAuthException catch (e) {
       return e.code;
     }
     return _user;
   }
   //register email password
-  Future<Parent> signInWithEmailAndPassword(String email, String password) async {
-    Parent _user;
+  Future<Parent> signInWithEmailAndPassword(String email, String password, String type) async {
+    dynamic _user;
     try {
       UserCredential credential = await _auth.signInWithEmailAndPassword(email: email, password: password);
       User user = credential.user;
-      _user = await _parentFromFirebaseUser(user);
+      if(type == "teenager") _user = await _parentFromFirebaseUser(user);
+      else _user = await _teenagerFromFirebaseUser(user);
     } catch (e) {
       print(e);
     }

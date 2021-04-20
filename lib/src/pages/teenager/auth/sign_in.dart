@@ -5,15 +5,15 @@ import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/loading.dart';
 
-class SignIn extends StatefulWidget {
+class SignInTeenager extends StatefulWidget {
   final Function toggleView;
-  SignIn({this.toggleView});
+  SignInTeenager({this.toggleView});
 
   @override
-  _SignInState createState() => _SignInState();
+  _SignInTeenagerState createState() => _SignInTeenagerState();
 }
 
-class _SignInState extends State<SignIn> {
+class _SignInTeenagerState extends State<SignInTeenager> {
   final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -39,35 +39,35 @@ class _SignInState extends State<SignIn> {
                     children: [
                       SizedBox(height: 20.0,),
                       TextFormField(
-                        validator: (val){
-                          if(val.isEmpty)
-                            return 'Email masih kosong';
-                          else if(!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val)) {
-                            return 'Tolong masukkan alamat email yang valid';
-                          }
-                          return null;
-                        },
-                        controller: _emailController,
-                        decoration: textInputDecoration.copyWith(
-                          hintText: 'Email',
-                          prefixIcon: Icon(
-                            Icons.email,
-                            color: thirdColor,
-                          ),
-                        )
+                          validator: (val){
+                            if(val.isEmpty)
+                              return 'Email masih kosong';
+                            else if(!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val)) {
+                              return 'Tolong masukkan alamat email yang valid';
+                            }
+                            return null;
+                          },
+                          controller: _emailController,
+                          decoration: textInputDecoration.copyWith(
+                            hintText: 'Email',
+                            prefixIcon: Icon(
+                              Icons.email,
+                              color: thirdColor,
+                            ),
+                          )
                       ),
                       SizedBox(height: 20.0,),
                       TextFormField(
-                        validator: (val) => val.length < 6 ? 'Password minimal 6 karakter' : null,
-                        controller: _passwordController,
-                        obscureText: true,
-                        decoration: textInputDecoration.copyWith(
-                          hintText: 'Password',
-                          prefixIcon: Icon(
-                            Icons.vpn_key,
-                            color: thirdColor,
-                          ),
-                        )
+                          validator: (val) => val.length < 6 ? 'Password minimal 6 karakter' : null,
+                          controller: _passwordController,
+                          obscureText: true,
+                          decoration: textInputDecoration.copyWith(
+                            hintText: 'Password',
+                            prefixIcon: Icon(
+                              Icons.vpn_key,
+                              color: thirdColor,
+                            ),
+                          )
                       ),
                     ],
                   ),
@@ -78,17 +78,17 @@ class _SignInState extends State<SignIn> {
                   padding: EdgeInsets.symmetric(horizontal: 50.0),
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          primaryColor
-                      ),
-                      padding: MaterialStateProperty.all(
-                          EdgeInsets.symmetric(vertical: 15.0)
-                      ),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0)
+                        backgroundColor: MaterialStateProperty.all(
+                            primaryColor
+                        ),
+                        padding: MaterialStateProperty.all(
+                            EdgeInsets.symmetric(vertical: 15.0)
+                        ),
+                        shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0)
+                            )
                         )
-                      )
                     ),
                     onPressed: () async {
                       if (_formKey.currentState.validate()) {
@@ -101,7 +101,7 @@ class _SignInState extends State<SignIn> {
                         }
                         var _email = _emailController.text;
                         var _password = _passwordController.text;
-                        var result = await _authService.signInWithEmailAndPassword(_email, _password, "parent");
+                        var result = await _authService.signInWithEmailAndPassword(_email, _password, "teenager");
                         if (result == null) {
                           setState(() {
                             _loading = false;
@@ -130,7 +130,7 @@ class _SignInState extends State<SignIn> {
                 Text(
                   _error.length > 0 ? _error : '',
                   style: TextStyle(
-                    color: Colors.red
+                      color: Colors.red
                   ),
                 ),
                 Row(
@@ -149,7 +149,7 @@ class _SignInState extends State<SignIn> {
                       child: Text(
                         'Daftar',
                         style: TextStyle(
-                          color: primaryColor
+                            color: primaryColor
                         ),
                       ),
                     )
@@ -173,9 +173,9 @@ class _SignInState extends State<SignIn> {
         Text(
           "Selamat Datang di AturUang!",
           style: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 25.0,
-            fontWeight: FontWeight.w600
+              fontFamily: 'Poppins',
+              fontSize: 25.0,
+              fontWeight: FontWeight.w600
           ),
         ),
       ],

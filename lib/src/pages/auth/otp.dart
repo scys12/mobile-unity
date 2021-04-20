@@ -36,13 +36,13 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   void initState() {
+    super.initState();
+    _verifyPhone();
     onTapRecognizer = TapGestureRecognizer()
       ..onTap = () {
         Navigator.pop(context);
       };
     errorController = StreamController<ErrorAnimationType>();
-    _verifyPhone();
-    super.initState();
   }
 
   Future _verifyPhone() async{
@@ -153,6 +153,7 @@ class _OTPScreenState extends State<OTPScreen> {
                           createLoadingAlertDialog(context);
                         }
                         var resp = await _authService.signInWithPhoneNumber(v);
+                        print("SONO ${resp.uid}");
                         if(resp != null) {
                           var isExist = await ChildDatabase(uid: resp.uid).checkUser();
                           if(!isExist) {
@@ -163,12 +164,16 @@ class _OTPScreenState extends State<OTPScreen> {
                               'income' : 0,
                               'outcome' : 0,
                               'total_point' : 0,
+                              "born_date" : DateTime.now(),
                               'is_profile_filled' : false,
                               'parent_id' : "",
                               "image_url" : "",
+                              "created_at" : DateTime.now(),
                             };
-                            ChildDatabase(uid: resp.uid).createChildData(data);
+                            await ChildDatabase(uid: resp.uid).createChildData(data);
+                            print("ab");
                           }
+                          print("cd");
                           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => Wrapper()), (route) => false);
                         }
                         else {

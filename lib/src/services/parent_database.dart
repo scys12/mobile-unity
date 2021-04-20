@@ -1,6 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mobile_unity/src/models/parent.dart';
+import 'package:mobile_unity/src/models/user.dart';
 
 class ParentDatabase{
   final String uid;
@@ -11,7 +12,7 @@ class ParentDatabase{
   Future<Parent> get users async{
     var resp =  await _parentCollection.doc(uid).get();
     var data = resp.data();
-    return Parent(
+    return data != null ? Parent(
       uid: uid,
       phoneNumber: data["phone_number"],
       isProfileFilled: data["is_profile_filled"],
@@ -19,11 +20,15 @@ class ParentDatabase{
       email: data["email"],
       name: data["name"],
       imageUrl: data["image_url"],
-    );
+    ) : null;
   }
 
   Stream<Parent> getParentData(){
     return _parentCollection.doc(uid).snapshots().map(_parentFromSnapshot);
+  }
+
+  Stream<Parent> getParentDataFromUser(AuthUser user){
+    return user != null ? _parentCollection.doc(user.uid).snapshots().map(_parentFromSnapshot) : null;
   }
 
   Parent _parentFromSnapshot(DocumentSnapshot snapshot) {

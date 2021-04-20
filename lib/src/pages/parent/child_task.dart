@@ -285,7 +285,7 @@ class _ChildTaskState extends State<ChildTask> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Tugas ${_childProvider.selectedChild.name}",
+                  _childProvider.selectedChild != null ? "Tugas ${_childProvider.selectedChild.name}" : "Tugas",
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w600,
@@ -303,7 +303,8 @@ class _ChildTaskState extends State<ChildTask> {
                 )
               ],
             ),
-            IconButton(
+            _childProvider.selectedChild != null
+                ? IconButton(
               icon: Icon(
                 Icons.add_circle_outlined,
               ),
@@ -311,7 +312,7 @@ class _ChildTaskState extends State<ChildTask> {
               splashRadius: 30.0,
               iconSize: 50.0,
               onPressed: () => createAlertDialog(context),
-            )
+            ) : Container()
           ],
         )
     );

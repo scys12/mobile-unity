@@ -1,6 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mobile_unity/src/models/child.dart';
+import 'package:mobile_unity/src/models/user.dart';
 
 class ChildDatabase{
   final String uid;
@@ -18,17 +19,22 @@ class ChildDatabase{
     return _mapDataFromDynamic(uid, resp.data());
   }
 
-  Future<List<Child>> getOneChild(String parentId) async {
+  Future<Child> getOneChild(String parentId) async {
     var resp = await _childCollection
         .where('parent_id', isEqualTo:  parentId)
         .orderBy('created_at', descending: false)
         .limit(1)
         .get();
-    return resp.docs.map(_childListFromQueryDocumentSnapshot).toList();
+     var data = resp.docs.map(_childListFromQueryDocumentSnapshot).toList();
+     return data.length > 0 ? data[0] : null;
   }
 
   Stream<Child> getChildData(){
     return _childCollection.doc(uid).snapshots().map(_parentFromSnapshot);
+  }
+
+  Stream<Child> getChildDataFromUser(AuthUser user){
+    return user == null ? null : _childCollection.doc(user.uid).snapshots().map(_parentFromSnapshot);
   }
 
   Child _parentFromSnapshot(DocumentSnapshot snapshot) {

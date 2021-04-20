@@ -7,8 +7,7 @@ class ChildProvider extends ChangeNotifier{
 
   Future<void> getCurrentChild({parentId: String}) async {
     var resp = await ChildDatabase().getOneChild(parentId);
-    var child = resp[0];
-    this.selectedChild = child;
+    this.selectedChild = resp;
     notifyListeners();
   }
 

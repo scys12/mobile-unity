@@ -28,7 +28,15 @@ class _ChildTileState extends State<ChildTile> {
   @override
   Widget build(BuildContext context) {
     _childProvider = Provider.of<ChildProvider>(context);
-    Color color = _childProvider.selectedChild.uid == widget.childIndex.uid ? colors[0] : colors[1];
+    Color color;
+    IconData icon;
+    if (_childProvider.selectedChild != null) {
+     color = _childProvider.selectedChild.uid == widget.childIndex.uid ? colors[0] : colors[1];
+     icon = _childProvider.selectedChild.uid == widget.childIndex.uid ? icons[0] : icons[1];
+    }else {
+      color = colors[1];
+      icon = icons[1];
+    }
     return ListTile(
       leading: widget.childIndex.imageUrl.length > 0
           ? ClipRRect(
@@ -52,7 +60,7 @@ class _ChildTileState extends State<ChildTile> {
         ),
       ),
       trailing: Icon(
-        _childProvider.selectedChild.uid == widget.childIndex.uid ? icons[0] : icons[1],
+        icon,
         color: color,
       ),
       onTap: () {

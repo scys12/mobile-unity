@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:mobile_unity/src/models/child.dart';
-import 'package:mobile_unity/src/models/parent.dart';
+import 'package:mobile_unity/src/models/teenager.dart';
 import 'package:mobile_unity/src/pages/wrapper.dart';
 import 'package:mobile_unity/src/services/auth.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
@@ -10,15 +8,15 @@ import 'package:mobile_unity/src/widgets/loading.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
 import 'package:provider/provider.dart';
 
-class KidSetting extends StatefulWidget {
+class TeenagerSetting extends StatefulWidget {
   @override
-  _KidSettingState createState() => _KidSettingState();
+  _TeenagerSettingState createState() => _TeenagerSettingState();
 }
 
-class _KidSettingState extends State<KidSetting> {
+class _TeenagerSettingState extends State<TeenagerSetting> {
   @override
   Widget build(BuildContext context) {
-    final Child user = Provider.of<Child>(context);
+    final Teenager user = Provider.of<Teenager>(context);
     return user == null ? Loading() :  Scaffold(
       appBar: CustomAppBar(false, "Akun"),
       body: ListView(
@@ -43,7 +41,7 @@ class _KidSettingState extends State<KidSetting> {
     );
   }
 
-  Widget _buildProfile(Child user){
+  Widget _buildProfile(Teenager user){
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
       decoration: BoxDecoration(
@@ -80,36 +78,13 @@ class _KidSettingState extends State<KidSetting> {
               Row(
                 children: [
                   Icon(
-                    Icons.face,
-                    color: Colors.black,
-                    size: 20.0,
-                  ),
-                  SizedBox(width: 10.0,),
-                  Container(
-                    width:200,
-                    child: Text(
-                      user.name,
-                      style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15.0,
-                          color: Colors.black
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10.0,),
-              Row(
-                children: [
-                  Icon(
-                    Icons.date_range,
+                    Icons.email,
                     color: Colors.black,
                     size: 20.0,
                   ),
                   SizedBox(width: 10.0,),
                   Text(
-                    DateFormat("dd MMMM yyyy").format(user.bornDate).toString(),
+                    user.email,
                     style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w500,
@@ -119,10 +94,32 @@ class _KidSettingState extends State<KidSetting> {
                   ),
                 ],
               ),
-              SizedBox(height: 10.0,),
               user.isProfileFilled ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.face,
+                        color: Colors.black,
+                        size: 20.0,
+                      ),
+                      SizedBox(width: 10.0,),
+                      Container(
+                        width:200,
+                        child: Text(
+                          user.name,
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15.0,
+                              color: Colors.black
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5.0,),
                   Row(
                     children: [
                       Icon(
@@ -155,7 +152,7 @@ class _KidSettingState extends State<KidSetting> {
                     padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0)
                 ),
                 onPressed: () {
-                  Navigator.pushNamed(context, '/parent/change_profile');
+                  Navigator.pushNamed(context, '/teenager/change_profile');
                 },
               )
             ],
@@ -169,7 +166,7 @@ class _KidSettingState extends State<KidSetting> {
   Widget _buildAccountButton(){
     return ElevatedButton(
       onPressed: (){
-        Navigator.pushNamed(context, '/child/change_profile');
+        Navigator.pushNamed(context, '/teenager/change_profile');
       },
       style: ButtonStyle(
 
@@ -197,24 +194,24 @@ class _KidSettingState extends State<KidSetting> {
           Row(
             children: [
               Icon(
-                Icons.account_circle,
-                color: shadowColor
+                  Icons.account_circle,
+                  color: shadowColor
               ),
               SizedBox(width: 20.0,),
               Text(
                 "Ubah Profile",
                 style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 17.0,
-                  color: shadowColor
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 17.0,
+                    color: shadowColor
                 ),
               ),
             ],
           ),
           Icon(
-            Icons.arrow_forward_ios,
-            color: shadowColor
+              Icons.arrow_forward_ios,
+              color: shadowColor
           )
         ],
       ),
@@ -223,35 +220,35 @@ class _KidSettingState extends State<KidSetting> {
 
   Widget _buildSignOutButton(){
     return ElevatedButton(
-      onPressed: () async{
-        Navigator.of(context).pushNamedAndRemoveUntil('/welcome', (Route<dynamic> route) => false);
-        await AuthService().signOut();
+        onPressed: () async{
+          Navigator.of(context).pushNamedAndRemoveUntil('/welcome', (Route<dynamic> route) => false);
+          await AuthService().signOut();
 
-      },
-      style: ButtonStyle(
-        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-          EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        ),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.0)
+        },
+        style: ButtonStyle(
+          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+            EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+          ),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0)
+            ),
+          ),
+          elevation: MaterialStateProperty.all<double>(
+              0.0
+          ),
+          backgroundColor: MaterialStateProperty.all<Color>(
+              primaryColor
           ),
         ),
-        elevation: MaterialStateProperty.all<double>(
-            0.0
-        ),
-        backgroundColor: MaterialStateProperty.all<Color>(
-            primaryColor
-        ),
-      ),
-      child: Text(
-        "Keluar",
-        style: TextStyle(
-          fontFamily: 'Poppins',
-          fontWeight: FontWeight.w600,
-          fontSize: 17.0,
-        ),
-      )
+        child: Text(
+          "Keluar",
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w600,
+            fontSize: 17.0,
+          ),
+        )
     );
   }
 }

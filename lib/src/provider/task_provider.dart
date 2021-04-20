@@ -46,4 +46,10 @@ class TaskProvider extends ChangeNotifier{
     this.educations = educations;
     notifyListeners();
   }
+
+  Future<void> getTeenagerFinishTasks({childId: String}) async{
+    var tasks = await TaskDatabase().getTeenagerFinishedTask(childId);
+    this.tasks = tasks;
+    notifyListeners();
+  }
 }

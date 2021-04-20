@@ -19,12 +19,7 @@ class ChildAchievement extends StatefulWidget {
 class _ChildAchievementState extends State<ChildAchievement> {
   int touchedIndex;
   ChildProvider _childProvider;
-  final List<String> menuItems = [
-    'Hari Ini',
-    'Minggu Ini',
-    'Bulan Ini',
-    'Histori Keuangan',
-  ];
+
   String _currentType = 'Hari Ini';
   List<Financial> financials;
 
@@ -86,6 +81,12 @@ class _ChildAchievementState extends State<ChildAchievement> {
   }
 
   Widget _buildCard(int income, int outcome){
+    final List<String> menuItems = [
+      'Hari Ini',
+      'Minggu Ini',
+      'Bulan Ini',
+    ];
+    if(_childProvider.selectedChild != null) menuItems.add('Histori Keuangan',);
     return Container(
       padding: EdgeInsets.all(15.0),
       decoration: BoxDecoration(
@@ -313,7 +314,7 @@ class _ChildAchievementState extends State<ChildAchievement> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Prestasi ${_childProvider.selectedChild.name}",
+                  _childProvider.selectedChild != null ? "Prestasi ${_childProvider.selectedChild.name}" : "Prestasi",
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w600,
@@ -331,17 +332,24 @@ class _ChildAchievementState extends State<ChildAchievement> {
                 )
               ],
             ),
-            _childProvider.selectedChild.imageUrl.length > 0
+            _childProvider.selectedChild != null
+              ? _childProvider.selectedChild.imageUrl.length > 0
                 ? ClipRRect(
-              child: Image.network(
-                _childProvider.selectedChild.imageUrl,
-                fit: BoxFit.fill,
-                height: 40,
-                width: 40,
-              ),borderRadius: BorderRadius.circular(20.0),) : Icon(
+                    child: Image.network(
+                      _childProvider.selectedChild.imageUrl,
+                      fit: BoxFit.fill,
+                      height: 40,
+                      width: 40,
+                    ),borderRadius: BorderRadius.circular(20.0),
+                  )
+                : Icon(
+                  Icons.account_circle,
+                  size: 50.0,
+                )
+            : Icon(
               Icons.account_circle,
               size: 50.0,
-            ),
+            )
           ],
         )
     );

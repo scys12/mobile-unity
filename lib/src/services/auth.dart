@@ -12,16 +12,15 @@ class AuthService {
   String verificationId;
 
   Future<Parent> _parentFromFirebaseUser(User user) async{
-    return user != null && user.providerData[0].providerId == 'password' ? ParentDatabase(uid: user.uid).users : null ;
+    return user != null && user.providerData[0].providerId == 'password' ? await ParentDatabase(uid: user.uid).users : null ;
   }
 
   Future<Teenager> _teenagerFromFirebaseUser(User user) async{
-    return user != null && user.providerData[0].providerId == 'password' ? TeenagerDatabase(uid: user.uid).users : null ;
+    return user != null && user.providerData[0].providerId == 'password' ? await TeenagerDatabase(uid: user.uid).users : null ;
   }
 
   Future<AuthUser> _authUserFromFirebaseUser(User user) async{
     if (user != null) {
-      print("_AUTH USER FROM FIREBASE ${user.uid} ${user.providerData[0].providerId}");
       var providerId = user.providerData[0].providerId;
       return AuthUser(uid: user.uid, authId: providerId == "phone" ? user.phoneNumber : user.email, providerId: providerId);
     } else {
@@ -40,9 +39,7 @@ class AuthService {
     phoneNumber  = phoneNumber.toString().trim();
 
     void verificationCompleted(PhoneAuthCredential credential) async {
-      print("ASA");
       var a = await _auth.signInWithCredential(credential);
-      print("SINI ${a.user.uid}");
     }
 
     void verificationFailed(FirebaseAuthException e){
@@ -118,13 +115,13 @@ class AuthService {
     return _user;
   }
   //register email password
-  Future<Parent> signInWithEmailAndPassword(String email, String password, String type) async {
+  Future signInWithEmailAndPassword(String email, String password, String type) async {
     dynamic _user;
     try {
       UserCredential credential = await _auth.signInWithEmailAndPassword(email: email, password: password);
       User user = credential.user;
-      if(type == "teenager") _user = await _parentFromFirebaseUser(user);
-      else _user = await _teenagerFromFirebaseUser(user);
+      if(type == "teenager") _user = await _teenagerFromFirebaseUser(user);
+      else _user = await _parentFromFirebaseUser(user);
     } catch (e) {
       print(e);
     }

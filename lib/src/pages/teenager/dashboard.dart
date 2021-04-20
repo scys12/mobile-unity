@@ -20,12 +20,10 @@ class DashboardTeenager extends StatefulWidget {
 
 class _DashboardTeenagerState extends State<DashboardTeenager> {
   Teenager user;
-  List<Task> tasks;
+  List<Task> tasks = [];
   @override
   Widget build(BuildContext context) {
     user = Provider.of<Teenager>(context);
-    tasks = Provider.of<List<Task>>(context);
-    tasks = tasks.take(2).toList();
     return Scaffold(
       body: ListView(
         physics: ClampingScrollPhysics(),
@@ -94,7 +92,7 @@ class _DashboardTeenagerState extends State<DashboardTeenager> {
   Widget _buildButtonAllTask() {
     return ElevatedButton(
       onPressed: () {
-        Navigator.pushNamed(context, '/child/tasks');
+        Navigator.pushNamed(context, '/teenager/tasks');
       },
       style: ButtonStyle(
         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
@@ -140,7 +138,7 @@ class _DashboardTeenagerState extends State<DashboardTeenager> {
       margin: EdgeInsets.only(bottom: 100),
       child: Padding(
         padding: const EdgeInsets.only(
-            top: 30.0, bottom: 50.0, left: 20.0, right: 20.0),
+            top: 10.0, bottom: 60.0, left: 20.0, right: 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -161,7 +159,8 @@ class _DashboardTeenagerState extends State<DashboardTeenager> {
                 SizedBox(
                   width: 15,
                 ),
-                Column(
+                user.isProfileFilled
+                    ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -183,6 +182,37 @@ class _DashboardTeenagerState extends State<DashboardTeenager> {
                         fontSize: 18.0,
                         color: Colors.white,
                       ),
+                    ),
+                  ],
+                ) : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Halo',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 1.0,
+                        fontSize: 20.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                    TextButton(
+                      child: Text(
+                        'Lengkapi Profile',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700),
+                      ),
+                      style: TextButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          primary: primaryColor,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10.0,
+                              horizontal: 15.0)),
+                      onPressed: () {
+                        Navigator.pushNamed(
+                            context, '/parent/change_profile');
+                      },
                     ),
                   ],
                 ),
@@ -317,125 +347,70 @@ class _DashboardTeenagerState extends State<DashboardTeenager> {
     );
   }
 
-  void _addChildButtonPressed() {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return Container(
-            color: Color(0XFF737373),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topLeft: const Radius.circular(20),
-                    topRight: const Radius.circular(20)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListTile(
-                      leading: Icon(Icons.account_circle),
-                      title: Text(
-                        'Nama anak',
-                        style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18.0,
-                        ),
-                      ),
-                      trailing: Icon(
-                        Icons.check_box,
-                        color: primaryColor,
-                      ),
-                      onTap: () {},
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/parent/add_child');
-                      },
-                      style: ButtonStyle(
-                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                          EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 10.0),
-                        ),
-                        shape:
-                        MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0)),
-                        ),
-                        elevation: MaterialStateProperty.all<double>(0.0),
-                        backgroundColor:
-                        MaterialStateProperty.all<Color>(primaryColor),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.add,
-                          ),
-                          SizedBox(
-                            width: 15.0,
-                          ),
-                          Text(
-                            "Tambahkan anak",
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 17.0,
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+  Widget _buildCatatanKeuangan() {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: thirdColor),
+                    color: Colors.white
+                  ),
+                  child: _buildCatatanIcon(Icons.add_circle_outline, greenColor, "Pemasukan", () async{
+                    final result = await Navigator.pushNamed(context, '/teenager/new_income');
+                    if (result != null) successMessage(context, result);
+                  }),
               ),
             ),
-          );
-        });
-  }
-
-  Widget _buildCatatanKeuangan() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
-          boxShadow: [
-            BoxShadow(
-              color: shadowColor,
-              blurRadius: 2.0,
-              spreadRadius: 1.0,
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+                decoration: BoxDecoration(
+                    border: Border.all(color: thirdColor),
+                    color: Colors.white
+                ),child: _buildCatatanIcon(
+                    Icons.remove_circle_outline, redColor, "Pengeluaran", () async {
+                  Navigator.pushNamed(context, '/teenager/new_outcome');
+                }),
+              ),
             ),
           ],
-          color: Colors.white),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildCatatanIcon(Icons.add_circle_outline, greenColor, "Pemasukan", () async{
-            final result = await Navigator.pushNamed(context, '/child/new_income');
-            if (result != null) successMessage(context, result);
-          }),
-          Divider(
-            thickness: 1.0,
-            color: shadowColor,
-          ),
-          _buildCatatanIcon(
-              Icons.remove_circle_outline, redColor, "Pengeluaran", () async {
-            Navigator.pushNamed(context, '/child/new_outcome');
-          }),
-          VerticalDivider(
-            thickness: 1.0,
-            color: shadowColor,
-          ),
-          _buildCatatanIcon(
-              Icons.analytics_outlined, secondaryColor, "Ringkasan", () async {
-            Navigator.pushNamed(context, '/child/transactions');
-          }),
-        ],
-      ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+                decoration: BoxDecoration(
+                    border: Border.all(color: thirdColor),
+                    color: Colors.white
+                ),child: _buildCatatanIcon(
+                    Icons.analytics_outlined, secondaryColor, "Ringkasan", () async {
+                  Navigator.pushNamed(context, '/teenager/transactions');
+                }),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+                decoration: BoxDecoration(
+                    border: Border.all(color: thirdColor),
+                    color: Colors.white
+                ),child: _buildCatatanIcon(
+                    Icons.analytics_outlined, secondaryColor, "Reminder", () async {
+                  Navigator.pushNamed(context, '/teenager/transactions');
+                }),
+              ),
+            ),
+          ],
+        )
+      ],
     );
   }
 

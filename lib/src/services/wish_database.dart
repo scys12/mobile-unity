@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/task.dart';
 import 'package:mobile_unity/src/models/wish.dart';
 
@@ -61,9 +62,9 @@ class WishDatabase {
     );
   }
 
-  Stream<List<Wish>> getWish(String childId) {
-    return _wishesCollection
-      .where('child_id', isEqualTo: childId)
+  Stream<List<Wish>> getWish(Child child) {
+    return child == null ? null : _wishesCollection
+      .where('child_id', isEqualTo: child.uid)
       .where('is_done', isEqualTo: false)
       .orderBy('created_at', descending: true)
       .snapshots()

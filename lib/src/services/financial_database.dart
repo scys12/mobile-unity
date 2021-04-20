@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/financial.dart';
 import 'package:mobile_unity/src/models/task.dart';
 
@@ -45,9 +46,9 @@ class FinancialDatabase {
     return resp.docs.map(_financialListFromQueryDocumentSnapshot).toList();
   }
 
-  Stream<List<Financial>> getFinancials(String childId) {
-    return _financialCollection
-      .where('child_id', isEqualTo: childId)
+  Stream<List<Financial>> getFinancials(Child child) {
+    return child == null ? null :  _financialCollection
+      .where('child_id', isEqualTo: child.uid)
       .snapshots()
       .map(_financialListFromSnapshot);
   }

@@ -19,10 +19,19 @@ class _DashboardParentState extends State<DashboardParent> {
   final AuthService _authService = AuthService();
   int _currentIndex = 0;
   ChildProvider _childProvider;
+  Parent user;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    user = Provider.of<Parent>(context, listen: false);
+    _childProvider = Provider.of<ChildProvider>(context, listen: false);
+    _childProvider.getCurrentChild(parentId: user.uid);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final Parent user = Provider.of<Parent>(context);
+    user = Provider.of<Parent>(context);
     children = Provider.of<List<Child>>(context);
     _childProvider = Provider.of<ChildProvider>(context);
     return Scaffold(
@@ -77,32 +86,32 @@ class _DashboardParentState extends State<DashboardParent> {
                                 ),
                               ),
                               user.isProfileFilled
-                                  ? Text(
-                                      user.name,
-                                      style: TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 18.0,
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : TextButton(
-                                      child: Text(
-                                        'Lengkapi Profile',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w700),
-                                      ),
-                                      style: TextButton.styleFrom(
-                                          backgroundColor: Colors.white,
-                                          primary: primaryColor,
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 10.0,
-                                              horizontal: 15.0)),
-                                      onPressed: () {
-                                        Navigator.pushNamed(
-                                            context, '/parent/change_profile');
-                                      },
-                                    ),
+                              ? Text(
+                                  user.name,
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18.0,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : TextButton(
+                                  child: Text(
+                                    'Lengkapi Profile',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                  style: TextButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      primary: primaryColor,
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 10.0,
+                                          horizontal: 15.0)),
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                        context, '/parent/change_profile');
+                                  },
+                                ),
                             ],
                           ),
                         ],
@@ -139,7 +148,29 @@ class _DashboardParentState extends State<DashboardParent> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            child: Row(
+                            child: _childProvider.selectedChild == null
+                                ? Row(
+                                children: [
+                                  Icon(
+                                    Icons.account_circle,
+                                    color: Colors.black,
+                                  ),
+                                  SizedBox(
+                                    width: 10.0,
+                                  ),
+                                  Text(
+                                    "Tambahkan anak",
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: .5,
+                                      fontSize: 17.0,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              )
+                                : Row(
                               children: [
                                 _childProvider.selectedChild.imageUrl.length > 0
                                     ? ClipRRect(
@@ -148,7 +179,8 @@ class _DashboardParentState extends State<DashboardParent> {
                                     fit: BoxFit.fill,
                                     height: 30,
                                     width: 30,
-                                  ),borderRadius: BorderRadius.circular(20.0),) : Icon(
+                                  ),borderRadius: BorderRadius.circular(20.0),)
+                                    : Icon(
                                   Icons.account_circle,
                                   color: Colors.black,
                                 ),

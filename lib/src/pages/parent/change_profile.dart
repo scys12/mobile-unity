@@ -20,15 +20,24 @@ class _ChangeProfileScreenState extends State<ChangeProfileScreen> {
   final ImagePicker _picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
   bool _loading = false;
-  final _phoneController = TextEditingController();
-  final _nameController = TextEditingController();
+  TextEditingController _phoneController;
+  TextEditingController _nameController;
   String _selectedGender;
   String _fileError = '';
+  Parent user;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    user = Provider.of<Parent>(context, listen: false);
+    _phoneController = TextEditingController(text: user.phoneNumber.length > 0 ? user.phoneNumber.substring(3) : "");
+    _nameController = TextEditingController(text: user.name);
+    _selectedGender = user.gender.length == 0 ? "Laki-laki" : user.gender;
+
+  }
 
   @override
   Widget build(BuildContext context) {
-    final Parent user = Provider.of<Parent>(context);
-
     return Scaffold(
       appBar: CustomAppBar(true, "Ganti Profile"),
       body: ListView(
@@ -69,7 +78,6 @@ class _ChangeProfileScreenState extends State<ChangeProfileScreen> {
       'Laki-laki',
       'Perempuan'
     ];
-    setState(() => _selectedGender = gender);
     return DropdownButtonHideUnderline(
       child: DropdownButtonFormField(
         decoration: InputDecoration(
@@ -149,7 +157,7 @@ class _ChangeProfileScreenState extends State<ChangeProfileScreen> {
       }
     },
     keyboardType: TextInputType.phone,
-    controller: _phoneController..text = phoneNumber.substring(3),
+    controller: _phoneController,
   );
 
   Widget _buildName(String name) => TextFormField(
@@ -171,7 +179,7 @@ class _ChangeProfileScreenState extends State<ChangeProfileScreen> {
       ),
       prefixIcon: Icon(Icons.face, color: shadowColor,)
     ),
-    controller: _nameController..text = name,
+    controller: _nameController,
     validator: (value) {
       if (value.isEmpty) {
         return 'Nama masih kosong';
@@ -246,7 +254,7 @@ class _ChangeProfileScreenState extends State<ChangeProfileScreen> {
   Widget _buildUploadButton(){
     return TextButton.icon(
       label: Text(
-        'Unggah Foto Anak',
+        'Unggah Foto',
         style: TextStyle(
           color: secondaryColor
         ),

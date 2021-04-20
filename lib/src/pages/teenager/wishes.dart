@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/child.dart';
+import 'package:mobile_unity/src/models/teenager.dart';
 import 'package:mobile_unity/src/models/wish.dart';
 import 'package:mobile_unity/src/pages/kid/detail_wish.dart';
 import 'package:mobile_unity/src/provider/wish_provider.dart';
@@ -11,21 +12,21 @@ import 'package:mobile_unity/src/widgets/loading.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
 import 'package:provider/provider.dart';
 
-class AllKidWishes extends StatefulWidget {
+class AllTeenagerWishes extends StatefulWidget {
   @override
-  _AllKidWishesState createState() => _AllKidWishesState();
+  _AllTeenagerWishesState createState() => _AllTeenagerWishesState();
 }
 
-class _AllKidWishesState extends State<AllKidWishes> {
+class _AllTeenagerWishesState extends State<AllTeenagerWishes> {
   WishProvider _wishProvider;
-  Child _user;
+  Teenager _user;
   Wish _wish;
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _user = Provider.of<Child>(context, listen: false);
+    _user = Provider.of<Teenager>(context, listen: false);
     _wishProvider = Provider.of<WishProvider>(context, listen: false);
     _wishProvider.getWishes(childId: _user.uid);
   }

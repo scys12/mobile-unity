@@ -41,7 +41,7 @@ class _State extends State<WrapperChildren> {
     return MultiProvider(
       providers: [
         StreamProvider<List<Task>>.value(
-          value: TaskDatabase().getTasks(user.parentId, user.uid),
+          value: TaskDatabase().getTasks(user.parentId, user),
           initialData: [],
         ),
         StreamProvider<Wish>.value(

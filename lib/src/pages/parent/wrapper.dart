@@ -47,28 +47,23 @@ class _WrapperParentState extends State<WrapperParent> {
   Widget build(BuildContext context) {
     _tabIndex = Provider.of<TabIndex>(context);
     childProvider =  Provider.of<ChildProvider>(context);
-    if (childProvider.selectedChild != null) {
-      setState(() {
-        _loading = false;
-      });
-    }
 
-    return _loading ? Loading() : MultiProvider(
+    return MultiProvider(
       providers: [
         StreamProvider<List<Child>>.value(
           value: ChildDatabase().getChildrenFromParent(parent.uid),
           initialData: [],
         ),
         StreamProvider<List<Task>>.value(
-          value: TaskDatabase().getTasks(parent.uid, childProvider.selectedChild.uid),
+          value: TaskDatabase().getTasks(parent.uid, childProvider.selectedChild),
           initialData: [],
         ),
         StreamProvider<List<Wish>>.value(
-          value: WishDatabase().getWish(childProvider.selectedChild.uid),
+          value: WishDatabase().getWish(childProvider.selectedChild),
           initialData: [],
         ),
         StreamProvider<List<Financial>>.value(
-          value: FinancialDatabase().getFinancials(childProvider.selectedChild.uid),
+          value: FinancialDatabase().getFinancials(childProvider.selectedChild),
           initialData: [],
         ),
       ],

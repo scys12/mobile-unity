@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
+import 'package:mobile_unity/src/services/parent_database.dart';
 import 'package:mobile_unity/src/services/storage.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
@@ -14,105 +14,68 @@ import 'package:mobile_unity/src/widgets/app_bar.dart';
 import 'package:mobile_unity/src/widgets/custom_picker.dart';
 import 'package:provider/provider.dart';
 
-class AddChildScreen extends StatefulWidget {
+class ChangeProfileChild extends StatefulWidget {
   @override
-  _AddChildScreenState createState() => _AddChildScreenState();
+  _ChangeProfileChildState createState() => _ChangeProfileChildState();
 }
 
-class _AddChildScreenState extends State<AddChildScreen> {
+class _ChangeProfileChildState extends State<ChangeProfileChild> {
 
   File _image;
   final ImagePicker _picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
-  DateTime _date;
-  final _dateController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _nameController = TextEditingController();
-  String _selectedGender;
-  String _error ='';
   bool _loading = false;
+  TextEditingController _phoneController;
+  TextEditingController _nameController;
+  String _selectedGender;
   String _fileError = '';
+  Child user;
+  DateTime _date;
+  TextEditingController _dateController;
+  @override
+  void initState() {
+    super.initState();
+    user = Provider.of<Child>(context, listen: false);
+    _phoneController = TextEditingController(text: user.phoneNumber.length > 0 ? user.phoneNumber.substring(3) : "");
+    _nameController = TextEditingController(text: user.name);
+    _dateController = TextEditingController(text: DateFormat("dd-MM-yyyy").format(user.bornDate).toString());
+    _selectedGender = user.gender.length == 0 ? "Laki-laki" : user.gender;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(true, "Tambahkan Anak"),
+      appBar: CustomAppBar(true, "Ganti Profile"),
       body: ListView(
         padding: EdgeInsets.all(16.0),
-        physics: ClampingScrollPhysics(),
         children: [
           Form(
             key: _formKey,
             child: Column(
-              mainAxisSize: MainAxisSize.max,
               children: [
                 SizedBox(height: 15.0,),
-                _buildUploadImage(),
+                _buildUploadImage(user.imageUrl),
                 SizedBox(height: 15.0,),
                 _buildUploadButton(),
-                Text(_fileError, style: TextStyle(
-                  color: redColor
-                ),),
-                SizedBox(height: 15.0,),
-                _buildChildName(),
-                SizedBox(height: 15.0,),
-                _buildPhoneNumber(),
-                SizedBox(height: 15.0,),
-                _buildBornDate(),
-                SizedBox(height: 15.0,),
-                _buildGender(),
-                SizedBox(height: 15.0,),
-                _buildSubmitButton(context),
-                SizedBox(height: 10.0,),
                 Text(
-                  _error,
+                  _fileError,
                   style: TextStyle(
                     color: redColor
                   ),
-                )
+                ),
+                SizedBox(height: 15.0,),
+                _buildName(user.name),
+                SizedBox(height: 15.0,),
+                SizedBox(height: 15.0,),
+                _buildBornDate(),
+                SizedBox(height: 15.0,),
+                _buildGender(user.gender),
+                SizedBox(height: 15.0,),
+                _buildSubmitButton(user.uid),
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildGender() {
-    final List<String> genders = [
-      'Laki-laki',
-      'Perempuan'
-    ];
-    return DropdownButtonHideUnderline(
-      child: DropdownButtonFormField(
-        decoration: InputDecoration(
-          alignLabelWithHint: true,
-          enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: shadowColor, width: 2.0),
-              borderRadius: BorderRadius.circular(20.0)
-          ),
-          focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: secondaryColor, width: 2.0),
-              borderRadius: BorderRadius.circular(20.0)
-          ),
-          labelText: "Pilih Jenis Kelamin",
-          labelStyle: TextStyle(
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w600,
-              color: shadowColor
-          ),
-        ),
-        items: genders.map((e) => DropdownMenuItem(
-          child: Text(e),
-          value: e,
-        )).toList(),
-        onChanged: (value){
-          setState(() {
-            _selectedGender = value;
-          });
-        },
-        value:  _selectedGender,
-        validator: (value) => value == null ? 'Harap memilih salah satu' : null,
       ),
     );
   }
@@ -160,57 +123,49 @@ class _AddChildScreenState extends State<AddChildScreen> {
     controller: _dateController,
   );
 
-  Widget _buildPhoneNumber() => TextFormField(
-    keyboardType: TextInputType.phone,
-    decoration: InputDecoration(
-      labelText: 'Nomor HP',
-      labelStyle: TextStyle(
-        fontFamily: 'Poppins',
-        fontWeight: FontWeight.w600,
-        color: shadowColor,
-      ),
-      alignLabelWithHint: true,
-      enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: shadowColor, width: 2.0),
-          borderRadius: BorderRadius.circular(20.0)
-      ),
-      focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: secondaryColor, width: 2.0),
-          borderRadius: BorderRadius.circular(20.0)
-      ),
-      prefix: Row(
-        mainAxisSize: MainAxisSize.min,
-
-        children: [
-          CircleAvatar(
-            backgroundImage: AssetImage("assets/images/indonesia.png"),
-            radius: 10.0,
+  Widget _buildGender(String gender) {
+    final List<String> genders = [
+      'Laki-laki',
+      'Perempuan'
+    ];
+    return DropdownButtonHideUnderline(
+      child: DropdownButtonFormField(
+        decoration: InputDecoration(
+          alignLabelWithHint: true,
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: shadowColor, width: 2.0),
+              borderRadius: BorderRadius.circular(20.0)
           ),
-          SizedBox(width: 5.0,),
-          Text(
-            "+62",
-            style: TextStyle(
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: secondaryColor, width: 2.0),
+              borderRadius: BorderRadius.circular(20.0)
+          ),
+          labelText: "Pilih Jenis Kelamin",
+          labelStyle: TextStyle(
               fontFamily: 'Poppins',
-              fontWeight: FontWeight.w600
-            ),
+              fontWeight: FontWeight.w600,
+              color: shadowColor
           ),
-          SizedBox(width: 10.0,),
-        ],
-      )
-    ),
-    validator: (value) {
-      if (value.length < 10) {
-        return 'Masukkan nomor hp yang valid';
-      }else{
-        return null;
-      }
-    },
-    controller: _phoneController,
-  );
+        ),
+        items: genders.map((e) => DropdownMenuItem(
+          child: Text(e),
+          value: e,
+        )).toList(),
+        onChanged: (value){
+          setState(() {
+            _selectedGender = value;
+          });
+        },
+        value:  _selectedGender,
+        validator: (value) => value == null ? 'Harap memilih salah satu' : null,
+      ),
+    );
+  }
 
-  Widget _buildChildName() => TextFormField(
+
+  Widget _buildName(String name) => TextFormField(
     decoration: InputDecoration(
-      labelText: 'Nama Anak',
+      labelText: 'Nama',
       labelStyle: TextStyle(
         fontWeight: FontWeight.w600,
         fontFamily: 'Poppins',
@@ -237,53 +192,42 @@ class _AddChildScreenState extends State<AddChildScreen> {
     },
   );
 
-  Widget _buildSubmitButton(BuildContext context) {
-    final Parent user = Provider.of<Parent>(context);
+  Widget _buildSubmitButton(String uid) {
     return ElevatedButton(
       onPressed: () async {
-        if (_image == null) {
+        if (_image == null && user.imageUrl.length == 0) {
           setState(() => _fileError = 'Harap mengupload foto');
         }else
           setState(() => _fileError = '');
-
-        if (_formKey.currentState.validate() && _image != null) {
-          var phoneNumber = "+62${_phoneController.text}";
+        if (_formKey.currentState.validate() && (_image != null || user.imageUrl.length > 0)) {
           setState(() => _loading = true);
           if (_loading) {
             createLoadingAlertDialog(context);
           }
-          var children = await ChildDatabase().checkPhoneNumber(phoneNumber);
-          setState(() => _loading = false);
-          if (children.length == 0) {
-            Navigator.pop(context);
-            setState(() => _error = 'Periksa kembali nomor HP anak');
-          }else {
-            var imageUrl = await Storage(image: _image, filename: children[0].uid, folderName: "child").uploadPicture();
-            setState(() => _error = '');
-            var answers = {
-              'name' : _nameController.text,
-              'born_date' : _date,
-              'created_at' : DateTime.now(),
-              'gender' : _selectedGender,
-              'parent_id' : user.uid,
-              'is_profile_filled' : true,
-              "image_url" : imageUrl,
-            };
-            var document = ChildDatabase(uid: children[0].uid).updateChildData(answers);
-            Navigator.popUntil(context, (route) => route.isFirst);
-          }
+          var imageUrl = _image != null ? await Storage(image: _image, filename: uid, folderName: "child").uploadPicture() : user.imageUrl;
+          print(_selectedGender);
+          var answers = {
+            'born_date' : _date,
+            'name' : _nameController.text,
+            'gender' : _selectedGender,
+            'is_profile_filled' : true,
+            'image_url' : imageUrl
+          };
+          var resp = await ChildDatabase(uid: uid).updateChildData(answers);
+          Navigator.pop(context);
+          Navigator.popUntil(context, (route) => route.isFirst);
         }
       },
-      child: Text('Simpan Profile Anak'),
+      child: Text('Simpan Profile'),
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(
-          secondaryColor
-        )
+          backgroundColor: MaterialStateProperty.all<Color>(
+              secondaryColor
+          )
       ),
     );
   }
 
-  Widget _buildUploadImage(){
+  Widget _buildUploadImage(String imageUrl){
     return CircleAvatar(
       radius: 50,
       backgroundColor: shadowColor,
@@ -291,9 +235,16 @@ class _AddChildScreenState extends State<AddChildScreen> {
         child: SizedBox(
           width: 150,
           height: 150,
-          child: _image != null
+          child: (_image != null)
               ? Image.file(_image, fit: BoxFit.fill,)
-              : Center(
+              : imageUrl.length > 0
+              ? ClipRRect(
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.fill,
+                height: 50,
+                width: 50,
+              )) : Center(
             child: Icon(
               Icons.image,
               color: secondaryColor,
@@ -307,9 +258,9 @@ class _AddChildScreenState extends State<AddChildScreen> {
   Widget _buildUploadButton(){
     return TextButton.icon(
       label: Text(
-        'Unggah Foto Anak',
+        'Unggah Foto',
         style: TextStyle(
-            color: secondaryColor
+          color: secondaryColor
         ),
       ),
       onPressed: (){
@@ -350,4 +301,6 @@ class _AddChildScreenState extends State<AddChildScreen> {
       });
     }
   }
+
+
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -335,7 +337,10 @@ class _State extends State<InnerIncome> {
                             }
                             await ChildDatabase(uid: _user.uid).updateChildData(childData);
                             Navigator.pop(context);
-                            returnContext ? Navigator.pop(context, 'Selamat, Harapan kamu sudah terkabul') : Navigator.pop(context, "no");
+                            successMessage(context, "Selamat harapan kamu sudah terkabul");
+                            Timer(Duration(seconds: 3), () {
+                              returnContext ? Navigator.pushReplacementNamed(context, '/child/wrapper') : Navigator.pushReplacementNamed(context, '/child/');
+                            });
                           },
                           style: ButtonStyle(
                             padding: MaterialStateProperty.all<EdgeInsetsGeometry>(

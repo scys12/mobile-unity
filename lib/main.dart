@@ -18,6 +18,7 @@ import 'package:mobile_unity/src/pages/kid/inner_outcome.dart';
 import 'package:mobile_unity/src/pages/kid/kid_task.dart';
 import 'package:mobile_unity/src/pages/kid/kid_wishes.dart';
 import 'package:mobile_unity/src/pages/kid/transactions.dart';
+import 'package:mobile_unity/src/pages/kid/wrapper.dart';
 import 'package:mobile_unity/src/pages/parent/add_child.dart';
 import 'package:mobile_unity/src/pages/parent/change_profile.dart';
 import 'package:mobile_unity/src/pages/parent/detail_task.dart';
@@ -117,6 +118,7 @@ class MyApp extends StatelessWidget {
                       '/parent/transactions': (context) => ChildTransactions(),
                       '/child/dashboard': (context) => DashboardKid(),
                       '/child/tasks': (context) => KidTask(),
+                      '/child/wrapper' : (context) => WrapperChildren(),
                       '/child/new_income': (context) => InnerIncome(),
                       '/child/new_outcome': (context) => InnerOutcome(),
                       '/child/all_wishes': (context) => AllKidWishes(),

@@ -307,7 +307,7 @@ class _State extends State<AddWish> {
                         "deadline" : DateTime(_date.year, _date.month, _date.day, 23, 59, 59),
                       };
                       await WishDatabase().createWish(data);
-                      Navigator.popUntil(context, (route) => route.isFirst);
+                      Navigator.pushReplacementNamed(context, '/child/wrapper');
                     },
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all<EdgeInsetsGeometry>(

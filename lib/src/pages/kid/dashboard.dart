@@ -52,7 +52,12 @@ class _DashboardKidState extends State<DashboardKid> {
     super.initState();
     user = Provider.of<Child>(context, listen: false);
     _financialProvider = Provider.of(context, listen: false);
-    _financialProvider.getFinancialBasedChildId(childId: user.uid);
+    initData();
+  }
+
+  initData() async{
+    await _financialProvider.getFinancialBasedChildId(childId: user.uid);
+    print("k");
   }
 
   @override
@@ -65,8 +70,8 @@ class _DashboardKidState extends State<DashboardKid> {
       setState(() {
         _loading = false;
       });
+      print("c");
       financials = _financialProvider.financials;
-      print(financials);
       _checkWishReminder();
     }
     return _loading ? Loading() : Scaffold(
@@ -464,11 +469,9 @@ class _DashboardKidState extends State<DashboardKid> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildCatatanIcon(Icons.add_circle_outline, greenColor, "Pemasukan", () async{
-            final result = await Navigator.pushNamed(context, '/child/new_income');
-            if (result != null)
-              if(result != "no") successMessage(context, result);
-            }),
+          _buildCatatanIcon(Icons.add_circle_outline, greenColor, "Pemasukan", () async {
+            await Navigator.pushNamed(context, '/child/new_income');
+          }),
           Divider(
             thickness: 1.0,
             color: shadowColor,

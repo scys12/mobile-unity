@@ -111,7 +111,7 @@ class _NewEducationChildState extends State<NewEducationChild> {
           setState(() => _loading = true);
           print(answers);
           var document = _taskDatabase.createTask(answers);
-          Navigator.popUntil(context, (route) => route.isFirst);
+          Navigator.pushReplacementNamed(context, '/parent/wrapper');
         }
       },
       child: _loading ? CircularProgressIndicator() : Text('Buat Edukasi'),

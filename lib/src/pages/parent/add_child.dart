@@ -270,7 +270,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
               "image_url" : imageUrl,
             };
             var document = ChildDatabase(uid: children[0].uid).updateChildData(answers);
-            Navigator.popUntil(context, (route) => route.isFirst);
+            Navigator.pushReplacementNamed(context, '/parent/wrapper');
           }
         }
       },

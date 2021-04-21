@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/tab_index.dart';
 import 'package:mobile_unity/src/models/task.dart';
@@ -10,6 +11,7 @@ import 'package:mobile_unity/src/pages/kid/kid_task.dart';
 import 'package:mobile_unity/src/pages/kid/setting.dart';
 import 'package:mobile_unity/src/services/task_database.dart';
 import 'package:mobile_unity/src/services/wish_database.dart';
+import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:provider/provider.dart';
 
@@ -35,6 +37,11 @@ class _State extends State<WrapperChildren> {
 
   @override
   Widget build(BuildContext context) {
+    final String arguments = ModalRoute.of(context).settings.arguments;
+    if (arguments != null)
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        successMessage(context, arguments);
+      });
     _tabIndex = Provider.of<TabIndex>(context);
     final Child user = Provider.of<Child>(context);
 

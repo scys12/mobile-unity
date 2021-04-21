@@ -217,7 +217,7 @@ class _ChangeProfileChildState extends State<ChangeProfileChild> {
           };
           var resp = await ChildDatabase(uid: uid).updateChildData(answers);
           Navigator.pop(context);
-          Navigator.popUntil(context, (route) => route.isFirst);
+          Navigator.pushReplacementNamed(context, '/child/wrapper');
         }
       },
       child: Text('Simpan Profile'),

@@ -330,7 +330,7 @@ class _State extends State<InnerOutcome> {
                         await WishDatabase(uid: wish.uid).updateWish(wishData);
                       }
                       Navigator.pop(context);
-                      Navigator.pop(context, (route) => route.isFirst);
+                      Navigator.pushReplacementNamed(context, '/child/wrapper');
                     },
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all<EdgeInsetsGeometry>(

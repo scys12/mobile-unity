@@ -79,7 +79,7 @@ class _ListChildEducationsState extends State<ListChildEducations> {
                             style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontWeight: FontWeight.w600,
-                                fontSize: 16.0,
+                                fontSize: 20.0,
                                 color: Colors.black
                             ),
                           ),
@@ -98,18 +98,18 @@ class _ListChildEducationsState extends State<ListChildEducations> {
                                 style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 15.0,
+                                    fontSize: 18.0,
                                     color: shadowColor
                                 ),
                               ),
                               trailing: Container(
                                 padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
                                 decoration: BoxDecoration(
-                                    color: _taskProvider.educations[index].isDone ? greenColor : redColor,
+                                    color: _taskProvider.educations[index].deadline.difference(DateTime.now()).inSeconds < 0 ? redColor : _taskProvider.educations[index].isDone ? greenColor : primaryColor,
                                     borderRadius: BorderRadius.circular(10.0)
                                 ),
                                 child: Text(
-                                  DateTime.now().difference(_taskProvider.educations[index].deadline).inDays <= 0 ? "Sedang Berjuang" : "Sudah selesai",
+                                  _taskProvider.educations[index].deadline.difference(DateTime.now()).inSeconds < 0 ? "Gagal Diselesaikan" : _taskProvider.educations[index].isDone ? "Sudah Selesai" : "Sedang Berjuang",
                                   style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontWeight: FontWeight.w400,
@@ -120,47 +120,77 @@ class _ListChildEducationsState extends State<ListChildEducations> {
                               )
                           ),
                           ListTile(
-                              dense: true,
-                              visualDensity: VisualDensity.compact,
-                              leading: Icon(
-                                Icons.card_giftcard,
-                                color: shadowColor,
-                                size: 23.0,
-                              ),
-                              contentPadding: EdgeInsets.zero,
-                              minLeadingWidth: 0.0,
-                              title: Text(
-                                '${_taskProvider.educations[index].point}pts',
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 20.0,
+                            dense: true,
+                            visualDensity: VisualDensity.compact,
+                            leading: Icon(
+                              Icons.card_giftcard,
+                              color: shadowColor,
+                              size: 23.0,
+                            ),
+                            contentPadding: EdgeInsets.zero,
+                            minLeadingWidth: 0.0,
+                            title: Row(
+                              children: [
+                                Text(
+                                  'Hadiah  ',
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18.0,
+                                      color: shadowColor
+                                  ),
                                 ),
-                              ),
-                              trailing: Container(
-                                padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
-                                decoration: BoxDecoration(
-                                    color: secondaryColor,
-                                    borderRadius: BorderRadius.circular(10.0)
+                                Text(
+                                  '${_taskProvider.educations[index].point}pts',
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18.0,
+                                  ),
                                 ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(Icons.category, color: Colors.white, size: 15.0,),
-                                    SizedBox(width: 5.0,),
-                                    Text(
-                                      _taskProvider.educations[index].category,
-                                      style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 15.0,
-                                          color: Colors.white
-                                      ),
+                              ],
+                            ),
+                          ),
+                          ListTile(
+                            dense: true,
+                            visualDensity: VisualDensity.compact,
+                            leading: Icon(
+                              Icons.category,
+                              color: shadowColor,
+                              size: 23.0,
+                            ),
+                            contentPadding: EdgeInsets.zero,
+                            minLeadingWidth: 0.0,
+                            title: Row(
+                              children: [
+                                Text(
+                                  'Kategori  ',
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18.0,
+                                      color: shadowColor
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
+                                  decoration: BoxDecoration(
+                                      color: secondaryColor,
+                                      borderRadius: BorderRadius.circular(10.0)
+                                  ),
+                                  child: Text(
+                                    _taskProvider.educations[index].category,
+                                    style: TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 15.0,
+                                        color: Colors.white
                                     ),
-                                  ],
-                                ),
-                              )
-                          )
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),

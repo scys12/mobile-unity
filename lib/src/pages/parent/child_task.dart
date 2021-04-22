@@ -24,22 +24,21 @@ class _ChildTaskState extends State<ChildTask> {
   List<Task> tasks = [];
   ChildProvider _childProvider;
   List<Wish> _wishes;
-  bool _loading = true;
 
   @override
   Widget build(BuildContext context) {
     tasks = Provider.of<List<Task>>(context);
     _childProvider = Provider.of<ChildProvider>(context);
-    var _newEducations = tasks.where((e) => e.category == 'Edukasi Finansial').take(2).toList();
-    var _newTasks = tasks.where((e) => e.category != 'Edukasi Finansial').take(2).toList();
+    List<Task> _newEducations;
+    List<Task> _newTasks;
     _wishes =  Provider.of<List<Wish>>(context);
-    var _newWish = _wishes.where((element) => !element.isDone).take(1).toList();
-    if (tasks != null) {
-      setState(() {
-        _loading = false;
-      });
+    List<Wish> _newWish;
+    if (tasks != null && _wishes != null) {
+      _newEducations = tasks.where((e) => e.category == 'Edukasi Finansial').take(2).toList();
+      _newTasks = tasks.where((e) => e.category != 'Edukasi Finansial').take(2).toList();
+      _newWish = _wishes.where((element) => !element.isDone).take(1).toList();
     }
-    return _loading ? Loading() : Scaffold(
+    return Scaffold(
       appBar: CustomAppBar(false, "Tugas"),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -48,9 +47,16 @@ class _ChildTaskState extends State<ChildTask> {
           SizedBox(height: 25.0,),
           _buildHeader(context),
           SizedBox(height: 25.0,),
-          SubHeader(title: 'Tugas', isLihatSemua: _newTasks.length > 0 ? true : false, path: '/parent/all_tasks'),
+          SubHeader(title: 'Tugas', isLihatSemua: _newTasks == null ? false : _newTasks.length > 0 ? true : false, path: '/parent/all_tasks'),
           SizedBox(height: 25.0,),
-          _newTasks.length > 0 ? Row(
+          _newTasks == null ? Text(
+            'Tidak ada edukasi finansial',
+            style: TextStyle(
+                fontSize: 15.0,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500
+            ),
+          ) : _newTasks.length > 0 ? Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ..._newTasks.asMap().map((idx, element) =>
@@ -68,9 +74,16 @@ class _ChildTaskState extends State<ChildTask> {
             ),
           ),
           SizedBox(height: 25.0,),
-          SubHeader(title: 'Edukasi Finansial', isLihatSemua: _newEducations.length > 0 ? true : false, path: '/parent/all_educations'),
+          SubHeader(title: 'Edukasi Finansial', isLihatSemua: _newEducations == null ? false : _newEducations.length > 0 ? true : false, path: '/parent/all_educations'),
           SizedBox(height: 25.0,),
-          _newEducations.length > 0 ? Row(
+          _newEducations == null ? Text(
+            'Tidak ada edukasi finansial',
+            style: TextStyle(
+                fontSize: 15.0,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500
+            ),
+          ) : _newEducations.length > 0 ? Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ..._newEducations.asMap().map((idx, element) =>
@@ -88,7 +101,7 @@ class _ChildTaskState extends State<ChildTask> {
             ),
           ),
           SizedBox(height: 25.0,),
-          SubHeader(title: 'Impian', isLihatSemua: _wishes.length > 0 ? true : false, path: '/parent/all_wishes'),
+          SubHeader(title: 'Impian', isLihatSemua: _wishes == null ? false : _wishes.length > 0 ? true : false, path: '/parent/all_wishes'),
           SizedBox(height: 25.0,),
           _buildImpian(_newWish),
           SizedBox(height: 15.0,),
@@ -98,7 +111,14 @@ class _ChildTaskState extends State<ChildTask> {
   }
 
   Widget _buildImpian(List<Wish> wish){
-    return wish.length > 0 ? InkWell(
+    return wish == null ? Text(
+      'Belum ada yang diimpikan si kecil',
+      style: TextStyle(
+          fontSize: 15.0,
+          fontFamily: 'Poppins',
+          fontWeight: FontWeight.w500
+      ),
+    ) : wish.length > 0 ? InkWell(
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => DetailWishChild(wishId: _wishes[0].uid,)),

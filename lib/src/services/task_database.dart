@@ -16,6 +16,13 @@ class TaskDatabase {
     return await _tasksCollection.doc(uid).update(answers);
   }
 
+  Future<int> countFinishedTask() async{
+    var resp = await _tasksCollection
+        .where('is_finished', isEqualTo: true)
+        .get();
+    return resp.docs.map(_taskListFromQueryDocumentSnapshot).toList().length;
+  }
+
   Future<List<Task>> getFinishedTasks(String childId, String parentId) async{
     var resp = await _tasksCollection
         .where('is_done', isEqualTo: true)
@@ -35,6 +42,8 @@ class TaskDatabase {
     DateTime createdDate = data["created_at"].toDate();
     DateTime deadlineDate = data["deadline"].toDate();
     DateTime submitTaskDate = data["submit_task_date"] != null ? data["submit_task_date"].toDate() : null;
+    var status = data["status"] != null ? data["status"] : 0;
+    var imageUrl = data["image_url"] != null ? data["image_url"] : "";
     return Task(
       uid: id,
       parentId: data["parent_id"],
@@ -44,10 +53,10 @@ class TaskDatabase {
       deadline: deadlineDate,
       category: data["category"],
       title: data["title"],
-      submitTaskDate: submitTaskDate,
-      status: data["status"],
       createdAt: createdDate,
-      imageUrl: data["image_url"]
+      submitTaskDate: submitTaskDate,
+      status: status,
+      imageUrl: imageUrl
     );
   }
 
@@ -97,29 +106,12 @@ class TaskDatabase {
   }
 
   List<Task> _taskListFromSnapshot(QuerySnapshot snapshot) {
-    var resp =  snapshot.docs.map((data) {
-      DateTime createdDate = data["created_at"].toDate();
-      DateTime deadlineDate = data["deadline"].toDate();
-      return Task(
-        uid: data.id,
-        title: data["title"],
-        category: data["category"],
-        deadline: deadlineDate,
-        createdAt: createdDate,
-        isDone: data["is_done"],
-        point: data["point"],
-        parentId: data["parent_id"],
-        childId: data["child_id"],
-        imageUrl: data["image_url"]
-      );
-    }).toList();
+    var resp =  snapshot.docs.map(_taskListFromQueryDocumentSnapshot).toList();
     return resp;
   }
 
   Stream<List<Task>> getTasks(String parentId, Child child) {
     return child == null ? null : _tasksCollection
-      .where('is_done', isEqualTo: false)
-      .where('deadline', isGreaterThanOrEqualTo: DateTime.now())
       .where('parent_id', isEqualTo: parentId)
       .where('child_id', isEqualTo: child.uid)
       .snapshots()

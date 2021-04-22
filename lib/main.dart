@@ -67,7 +67,7 @@ class MyApp extends StatelessWidget {
         } else if (snapshot.hasData) {
           return StreamProvider<AuthUser>.value(
             value: AuthService().user,
-            initialData: null,
+            initialData: AuthUser(),
             builder: (context, child) {
               var _user = Provider.of<AuthUser>(context);
               return MultiProvider(

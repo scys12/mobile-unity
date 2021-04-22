@@ -38,10 +38,6 @@ class _State extends State<WrapperChildren> {
   @override
   Widget build(BuildContext context) {
     final String arguments = ModalRoute.of(context).settings.arguments;
-    if (arguments != null)
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        successMessage(context, arguments);
-      });
     _tabIndex = Provider.of<TabIndex>(context);
     final Child user = Provider.of<Child>(context);
 

@@ -25,16 +25,17 @@ class Wrapper extends StatelessWidget {
     final Teenager teenager = Provider.of<Teenager>(context);
     final Child child = Provider.of<Child>(context);
     var _authUser = Provider.of<AuthUser>(context);
+    print("auth user ${_authUser.uid}");
     if(_authUser == null)
       return Welcome();
-    else if (parent != null) {
+    if (parent != null) {
       return WrapperParent();
     }
-    else if (child != null) {
+    if (child != null) {
       if (child.parentId == "") return NotAssigned();
       else return WrapperChildren();
     }
-    else if (teenager != null) {
+    if (teenager != null) {
       return WrapperTeenager();
     }
     else

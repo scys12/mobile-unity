@@ -139,19 +139,11 @@ class _KidTaskState extends State<KidTask> {
                           Navigator.push(context, MaterialPageRoute(builder: (context) => DetailTaskKid(taskId: tasks[index].uid,)));
                         },
                         splashFactory: InkRipple.splashFactory,
-                        child: Container(
-                          decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: shadowColor,
-                                  spreadRadius: 3.0,
-                                  blurRadius: 2.0,
-                                ),
-                              ],
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10.0)
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
-                          margin: EdgeInsets.symmetric(vertical: 10.0),
+                          margin: EdgeInsets.symmetric(vertical: 5.0),
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                             child: Column(
@@ -163,48 +155,118 @@ class _KidTaskState extends State<KidTask> {
                                   style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontWeight: FontWeight.w600,
-                                      fontSize: 16.0,
+                                      fontSize: 20.0,
                                       color: Colors.black
                                   ),
                                 ),
-                                SizedBox(height: 10.0,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
-                                      decoration: BoxDecoration(
-                                          color: redColor,
-                                          borderRadius: BorderRadius.circular(10.0)
-                                      ),
-                                      child: Text(
-                                        DateFormat("dd MMMM yyyy").format(tasks[index].deadline).toString(),
-                                        style: TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 15.0,
-                                            color: Colors.white
-                                        ),
+                                ListTile(
+                                    dense: true,
+                                    leading: Icon(
+                                      Icons.schedule,
+                                      color: shadowColor,
+                                      size: 23.0,
+                                    ),
+                                    visualDensity: VisualDensity.compact,
+                                    contentPadding: EdgeInsets.zero,
+                                    minLeadingWidth: 0.0,
+                                    title: Text(
+                                      DateFormat("dd-MM-yyyy").format(tasks[index].deadline).toString(),
+                                      style: TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18.0,
+                                          color: shadowColor
                                       ),
                                     ),
-                                    Container(
+                                    trailing: Container(
                                       padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
                                       decoration: BoxDecoration(
-                                          color: primaryColor,
+                                          color: tasks[index].deadline.difference(DateTime.now()).inSeconds < 0 ? redColor : tasks[index].isDone ? greenColor : primaryColor,
                                           borderRadius: BorderRadius.circular(10.0)
                                       ),
                                       child: Text(
-                                        "+${tasks[index].point}pts",
+                                        tasks[index].deadline.difference(DateTime.now()).inSeconds < 0 ? "Gagal Diselesaikan" : tasks[index].isDone ? "Sudah Selesai" : "Sedang Berjuang",
                                         style: TextStyle(
                                             fontFamily: 'Poppins',
-                                            fontWeight: FontWeight.w500,
+                                            fontWeight: FontWeight.w400,
                                             fontSize: 15.0,
                                             color: Colors.white
                                         ),
                                       ),
                                     )
-                                  ],
-                                )
+                                ),
+                                ListTile(
+                                  dense: true,
+                                  visualDensity: VisualDensity.compact,
+                                  leading: Icon(
+                                    Icons.card_giftcard,
+                                    color: shadowColor,
+                                    size: 23.0,
+                                  ),
+                                  contentPadding: EdgeInsets.zero,
+                                  minLeadingWidth: 0.0,
+                                  title: Row(
+                                    children: [
+                                      Text(
+                                        'Hadiah  ',
+                                        style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 18.0,
+                                            color: shadowColor
+                                        ),
+                                      ),
+                                      Text(
+                                        '${tasks[index].point}pts',
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18.0,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                ListTile(
+                                  dense: true,
+                                  visualDensity: VisualDensity.compact,
+                                  leading: Icon(
+                                    Icons.category,
+                                    color: shadowColor,
+                                    size: 23.0,
+                                  ),
+                                  contentPadding: EdgeInsets.zero,
+                                  minLeadingWidth: 0.0,
+                                  title: Row(
+                                    children: [
+                                      Text(
+                                        'Kategori  ',
+                                        style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 18.0,
+                                            color: shadowColor
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
+                                        decoration: BoxDecoration(
+                                            color: secondaryColor,
+                                            borderRadius: BorderRadius.circular(10.0)
+                                        ),
+                                        child: Text(
+                                          tasks[index].category,
+                                          style: TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 15.0,
+                                              color: Colors.white
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -409,18 +471,31 @@ class _KidTaskState extends State<KidTask> {
               style: TextStyle(
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w700,
-                  fontSize: 15.0),
+                  fontSize: 20.0),
             ),
             SizedBox(
               height: 10.0,
             ),
-            Text(
-              DateFormat("dd MMMM yyyy").format(task.deadline).toString(),
-              style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
-                  color: thirdColor,
-                  fontSize: 15.0),
+            Row(
+              children: [
+                Text(
+                  "Batas",
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                      fontSize: 15.0),
+                ),
+                SizedBox(width: 10.0,),
+                Text(
+                  DateFormat("dd MMMM yyyy").format(task.deadline).toString(),
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      color: shadowColor,
+                      fontSize: 15.0),
+                ),
+              ],
             ),
             SizedBox(
               height: 10.0,

@@ -69,6 +69,7 @@ class _ListChildWishesState extends State<ListChildWishes> {
                   splashFactory: InkRipple.splashFactory,
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                    margin: EdgeInsets.only(bottom: 15.0),
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10.0),
@@ -83,27 +84,47 @@ class _ListChildWishesState extends State<ListChildWishes> {
                     ),
                     child: Column(
                       children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(
+                        ListTile(
+                            dense: true,
+                            contentPadding: EdgeInsets.zero,
+                            visualDensity: VisualDensity.compact,
+
+                            leading: Icon(
                               Icons.nights_stay_rounded,
                               color: primaryColor,
                               size: 30.0,
                             ),
-                            SizedBox(width: 10,),
-                            Expanded(
-                              child: Text(
-                                _wishProvider.wishes[index].title,
-                                style: TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 15.0,
-                                    color: Colors.black
+                            title: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _wishProvider.wishes[index].title,
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 15.0,
+                                      color: Colors.black
+                                  ),
                                 ),
-                              ),
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
+                                  decoration: BoxDecoration(
+                                      color: _wishProvider.wishes[index].isDone ? greenColor : _wishProvider.wishes[index].deadline.difference(DateTime.now()).inSeconds > 0 ? primaryColor : redColor,
+                                      borderRadius: BorderRadius.circular(10.0)
+                                  ),
+                                  child: Text(
+                                    _wishProvider.wishes[index].isDone ? "Sudah Terkabul" : _wishProvider.wishes[index].deadline.difference(DateTime.now()).inSeconds > 0 ? "Masih diwujudkan" : "Belum Terkabul",
+                                    style: TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 15.0,
+                                        color: Colors.white
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
+                            trailing: Text(
                               DateFormat("dd MMMM yyyy").format(_wishProvider.wishes[index].deadline).toString(),
                               style: TextStyle(
                                   color: shadowColor,
@@ -111,7 +132,6 @@ class _ListChildWishesState extends State<ListChildWishes> {
                                   fontWeight: FontWeight.w600
                               ),
                             )
-                          ],
                         ),
                         SizedBox(height: 12.0,),
                         ClipRRect(

@@ -31,18 +31,18 @@ class _DashboardKidState extends State<DashboardKid> {
   int _income = 0;
   int _outcome = 0;
   
-  List<Financial> filterFinancial(int _currentType){
+  List<Financial> filterFinancial(int _currentType, DateTime wishCreatedAt){
     List<Financial> filtered = [];
     var now = DateTime.now();
     var weekDay = now.weekday;
     var startDate = now.subtract(Duration(days: weekDay-1));
 
     if (_currentType == 0) {
-      filtered = financials.where((element) => element.createdAt.difference(now).inDays == 0).toList();
+      filtered = financials.where((element) => element.createdAt.difference(now).inDays == 0 && element.createdAt.difference(wishCreatedAt).inSeconds > 0).toList();
     }else if (_currentType == 1) {
-      filtered = financials.where((element) => (startDate.difference(element.createdAt).inDays <=0 && startDate.difference(element.createdAt).inDays >=-6)).toList();
+      filtered = financials.where((element) => (startDate.difference(element.createdAt).inDays <=0 && startDate.difference(element.createdAt).inDays >=-6) && element.createdAt.difference(wishCreatedAt).inSeconds > 0).toList();
     }else if(_currentType == 2) {
-      filtered = financials.where((element) => element.createdAt.month == now.month && element.createdAt.year == now.year).toList();
+      filtered = financials.where((element) => element.createdAt.month == now.month && element.createdAt.year == now.year && element.createdAt.difference(wishCreatedAt).inSeconds > 0).toList();
     }
     return filtered;
   }
@@ -57,7 +57,6 @@ class _DashboardKidState extends State<DashboardKid> {
 
   initData() async{
     await _financialProvider.getFinancialBasedChildId(childId: user.uid);
-    print("k");
   }
 
   @override
@@ -70,7 +69,6 @@ class _DashboardKidState extends State<DashboardKid> {
       setState(() {
         _loading = false;
       });
-      print("c");
       financials = _financialProvider.financials;
       _checkWishReminder();
     }
@@ -130,7 +128,10 @@ class _DashboardKidState extends State<DashboardKid> {
                 SizedBox(
                   height: 15.0,
                 ),
-                _buildReminder()
+                _buildReminder(),
+                SizedBox(
+                  height: 15.0,
+                ),
               ],
             ),
           )
@@ -147,7 +148,7 @@ class _DashboardKidState extends State<DashboardKid> {
     if (_wish != null) {
       var expectedMoney = _wish.expectedMoney;
       var frekuensi = _wish.frekuensi;
-      _filteredFinancials = filterFinancial(frekuensi);
+      _filteredFinancials = filterFinancial(frekuensi, _wish.createdAt);
       _outcome = _countIncomeOutcome("outcome", _filteredFinancials);
       _income = _countIncomeOutcome("income", _filteredFinancials);
     }
@@ -162,13 +163,73 @@ class _DashboardKidState extends State<DashboardKid> {
     }
     return _wish != null
         ? Container(
-            child: _filteredFinancials.length > 0
-                ? _income-_outcome > _wish.expectedMoney
-                    ? Text("Kamu sudah berhasil menabung impianmu pada ${type} ini")
-                    : Text("Tabunganmu untuk memenuhi impian pada ${type} ini masih belum tercapai")
-                : Text("Kamu belum ada menabung pada ${type} ini"),
+            width: double.infinity,
+            padding: EdgeInsets.all(15.0),
+            decoration: BoxDecoration(
+                color: _filteredFinancials.length > 0 ? _income-_outcome > _wish.expectedMoney ? primaryColor : redColor : redColor,
+                borderRadius: BorderRadius.circular(5.0)
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(Icons.notifications, color: Colors.white,),
+                SizedBox(height: 10.0,),
+                _filteredFinancials.length > 0
+                    ? _income-_outcome >= _wish.expectedMoney
+                    ? Text(
+                  "Kamu sudah berhasil menabung sebanyak ${_income-_outcome} untuk impian ${_wish.title} pada ${type} ini",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15.0,
+                  ),
+                )
+                    : Text(
+                  "Tabunganmu untuk memenuhi impian pada ${type} ini masih belum tercapai. Kamu baru menabung sebanyak Rp ${_income-_outcome} dari Rp ${_wish.expectedMoney}.",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15.0,
+                  ),
+                )
+                    : Text(
+                  "Kamu belum ada menabung pada ${type} ini untuk impian ${_wish.title}. Kamu harus menabung sebanyak Rp ${_wish.expectedMoney}",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15.0,
+                  ),
+                )
+              ],
+            ),
           )
-        : Text("Kamu belum membuat satu impian");
+        : Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(Icons.notifications, color: Colors.white,),
+                SizedBox(height: 10.0,),
+                Text(
+                  "Kamu belum membuat satu impian",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15.0,
+                  ),
+                ),
+              ],
+            ),
+            width: double.infinity,
+            padding: EdgeInsets.all(15.0),
+            decoration: BoxDecoration(
+              color: redColor,
+              borderRadius: BorderRadius.circular(5.0)
+            ),
+          );
   }
 
   Widget _buildHeader() {
@@ -606,18 +667,31 @@ class _DashboardKidState extends State<DashboardKid> {
               style: TextStyle(
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w700,
-                  fontSize: 15.0),
+                  fontSize: 20.0),
             ),
             SizedBox(
               height: 10.0,
             ),
-            Text(
-                DateFormat("dd MMMM yyyy").format(task.deadline).toString(),
-              style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
-                  color: thirdColor,
-                  fontSize: 15.0),
+            Row(
+              children: [
+                Text(
+                  "Batas",
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                      fontSize: 15.0),
+                ),
+                SizedBox(width: 10.0,),
+                Text(
+                  DateFormat("dd MMMM yyyy").format(task.deadline).toString(),
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      color: shadowColor,
+                      fontSize: 15.0),
+                ),
+              ],
             ),
             SizedBox(
               height: 10.0,

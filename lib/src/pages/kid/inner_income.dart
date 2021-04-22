@@ -318,7 +318,7 @@ class _State extends State<InnerIncome> {
                             };
                             await FinancialDatabase().createFinancial(data);
 
-                            var childData = {
+                            Map<String, dynamic> childData = {
                               "income" : _user.income + int.parse(_amount),
                             };
                             var wishes = _wishProvider.wishes.where((element) => !element.isDone && element.deadline.difference(DateTime.now()).inDays >= 0);
@@ -335,12 +335,25 @@ class _State extends State<InnerIncome> {
                               }
                               await WishDatabase(uid: wish.uid).updateWish(wishData);
                             }
+                            var totalWish = await WishDatabase().countFinishedWish();
+                            childData["achievements"] = _user.achievements;
+                            if (totalWish >= 1) {
+                              childData["achievements"][1] = true;
+                            }
+                            if (totalWish >= 5) {
+                              childData["achievements"][3] = true;
+                            }
+                            if (totalWish >= 15) {
+                              childData["achievements"][5] = true;
+                            }
                             await ChildDatabase(uid: _user.uid).updateChildData(childData);
                             Navigator.pop(context);
-                            successMessage(context, "Selamat harapan kamu sudah terkabul");
-                            Timer(Duration(seconds: 3), () {
-                              returnContext ? Navigator.pushReplacementNamed(context, '/child/wrapper') : Navigator.pushReplacementNamed(context, '/child/');
-                            });
+                            if (returnContext) {
+                              successMessage(context, "Selamat harapan kamu sudah terkabul");
+                              Timer(Duration(seconds: 3), () {
+                                Navigator.pushReplacementNamed(context, '/child/wrapper');
+                              });
+                            } else Navigator.pushReplacementNamed(context, '/child/wrapper');
                           },
                           style: ButtonStyle(
                             padding: MaterialStateProperty.all<EdgeInsetsGeometry>(

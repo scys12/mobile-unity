@@ -18,6 +18,13 @@ class WishDatabase {
     var response = await _wishesCollection.doc(uid).update(answers);
   }
 
+  Future<int> countFinishedWish() async{
+    var resp = await _wishesCollection
+        .where('is_finished', isEqualTo: true)
+        .get();
+    return resp.docs.map(_wishListFromQueryDocumentSnapshot).toList().length;
+  }
+
   List<Wish> _wishListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((data) {
       return _mapDataFromDynamic(data.id, data.data());

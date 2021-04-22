@@ -74,6 +74,7 @@ class _DetailTaskKidState extends State<DetailTaskKid> {
                 _buildChildProfile(),
                 _buildTitleField(),
                 SizedBox(height: 20.0,),
+                _buildStatusField(),
                 _buildDeadlineField(),
                 SizedBox(height: 20.0,),
                 _buildCategoryField(),
@@ -82,19 +83,20 @@ class _DetailTaskKidState extends State<DetailTaskKid> {
                 SizedBox(height: 20.0,),
                 Divider(color: shadowColor,thickness: 2.0,),
                 SizedBox(height: 10.0,),
-                (_taskProvider.selectedTask.imageUrl == "" && _image == null)
+                ((_taskProvider.selectedTask.imageUrl == "" || _taskProvider.selectedTask.imageUrl == null) && _image == null)
                     ? Column(
                       children: [
                         _buildWarning(),
                         SizedBox(height: 20.0,),
-                        _buildButtonFinishTask(),
+                        _buildButtonFinishTask("Selesaikan Tugas"),
                       ],)
-                    : _taskProvider.selectedTask.imageUrl != "" && _image == null
+                    : (_taskProvider.selectedTask.imageUrl != "" || _taskProvider.selectedTask.imageUrl != null) && _image == null && _taskProvider.selectedTask.submitTaskDate != null
                     ? Column(
                       children: [
                         SubHeader(title: "Progress", isLihatSemua: false,),
                         SizedBox(height: 10.0,),
                         _buildProgress(),
+                        _taskProvider.selectedTask.status == 3 ? _buildButtonFinishTask("Upload Ulang Tugas") : Container(),
                       ],
                     ) :  Column(
                       children: [
@@ -113,6 +115,31 @@ class _DetailTaskKidState extends State<DetailTaskKid> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildStatusField(){
+    var isFinished;
+    if (_taskProvider.selectedTask.deadline.difference(DateTime.now()).inDays < 0 && !_taskProvider.selectedTask.isDone) isFinished = 0;
+    else if (_taskProvider.selectedTask.isDone) isFinished = 1;
+    else isFinished = 2;
+    return Container(
+      decoration: BoxDecoration(
+        color: isFinished == 1 ? greenColor : isFinished == 0 ? redColor : primaryColor,
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      child: ListTile(
+        leading: Icon(Icons.star, color: Colors.white),
+        title: Text(
+          isFinished == 1 ? "Sudah Diselesaikan" : isFinished == 0 ? "Belum Diselesaikan" : "Sedang Berjuang",
+          style: TextStyle(
+              fontSize: 18.0,
+              color: Colors.white,
+              fontFamily: "Poppins",
+              fontWeight: FontWeight.w600
+          ),
+        ),
       ),
     );
   }
@@ -436,7 +463,7 @@ class _DetailTaskKidState extends State<DetailTaskKid> {
     );
   }
 
-  Widget _buildButtonFinishTask() {
+  Widget _buildButtonFinishTask(String title) {
     return ElevatedButton(
       onPressed: (){
         showModalUploadImageBottom(context, _getImageFromCamera, _getImageFromGallery);
@@ -456,7 +483,7 @@ class _DetailTaskKidState extends State<DetailTaskKid> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "Selesaikan Tugas",
+            title,
             style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w600,

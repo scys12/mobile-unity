@@ -192,16 +192,16 @@ class _ChangeProfileScreenState extends State<ChangeProfileScreen> {
   Widget _buildSubmitButton(String uid) {
     return ElevatedButton(
       onPressed: () async {
-        if (_image == null) {
+        if (_image == null && user.imageUrl.length == 0) {
           setState(() => _fileError = 'Harap mengupload foto');
         }else
           setState(() => _fileError = '');
-        if (_formKey.currentState.validate() && _image != null) {
+        if (_formKey.currentState.validate()  && (_image != null || user.imageUrl.length > 0)) {
           setState(() => _loading = true);
           if (_loading) {
             createLoadingAlertDialog(context);
           }
-          var imageUrl = await Storage(image: _image, filename: uid, folderName: "parent").uploadPicture();
+          var imageUrl = _image != null ? await Storage(image: _image, filename: uid, folderName: "parent").uploadPicture() : user.imageUrl;
           var answers = {
             'name' : _nameController.text,
             'phone_number' : "+62${_phoneController.text}",
@@ -211,7 +211,7 @@ class _ChangeProfileScreenState extends State<ChangeProfileScreen> {
           };
           var resp = await ParentDatabase(uid: uid).updateParentData(answers);
           Navigator.pop(context);
-          Navigator.pushReplacementNamed(context, '/parent/wrapper');
+          Navigator.popUntil(context, (route) => route.isFirst);
         }
       },
       child: Text('Simpan Profile'),

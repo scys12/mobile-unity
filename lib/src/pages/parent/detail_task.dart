@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/provider/task_provider.dart';
+import 'package:mobile_unity/src/services/task_database.dart';
+import 'package:mobile_unity/src/services/child_database.dart';
+import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
+import 'package:mobile_unity/src/shared/task_photo.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
 import 'package:mobile_unity/src/widgets/loading.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
@@ -51,17 +55,53 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
                 _buildChildProfile(),
                 SizedBox(height: 20.0,),
                 _buildTitleField(),
+                SizedBox(height: 20.0,),
+                _buildStatusField(),
+                SizedBox(height: 20.0,),
                 _buildDeadlineField(),
                 _buildCategoryField(),
                 _buildPointField(),
-                SizedBox(height: 20.0,),
                 SubHeader(title: "Progress", isLihatSemua: false,),
                 SizedBox(height: 10.0,),
-                _buildProgress()
+                _taskProvider.selectedTask.imageUrl != "" && _taskProvider.selectedTask.imageUrl != ""
+                    ? _buildProgress()
+                    : Text(
+                  "Tidak ada progress",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18.0,
+                  ),
+                )
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildStatusField(){
+    var isFinished;
+    if (_taskProvider.selectedTask.deadline.difference(DateTime.now()).inDays < 0 && !_taskProvider.selectedTask.isDone) isFinished = 0;
+    else if (_taskProvider.selectedTask.isDone) isFinished = 1;
+    else isFinished = 2;
+    return Container(
+      decoration: BoxDecoration(
+        color: isFinished == 1 ? greenColor : isFinished == 0 ? redColor : primaryColor,
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      child: ListTile(
+        leading: Icon(Icons.star, color: Colors.white),
+        title: Text(
+          isFinished == 1 ? "Sudah Diselesaikan" : isFinished == 0 ? "Belum Diselesaikan" : "Sedang Berjuang",
+          style: TextStyle(
+              fontSize: 18.0,
+              color: Colors.white,
+              fontFamily: "Poppins",
+              fontWeight: FontWeight.w600
+          ),
+        ),
       ),
     );
   }
@@ -78,7 +118,7 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Lumen sudah menyelesaikan tugas ",
+              "${_childProvider.selectedChild.name} mengumpul tugas",
               style: TextStyle(
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w600,
@@ -94,11 +134,20 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
                 ),
                 SizedBox(width: 10.0,),
                 Text(
-                  "20-01-2021",
+                  "Dikumpul pada : ",
                   style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.w700,
                       color: shadowColor
+                  ),
+                ),
+                SizedBox(width: 5.0,),
+                Text(
+                  DateFormat("dd MMMM yyyy").format(_taskProvider.selectedTask.submitTaskDate).toString(),
+                  style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black
                   ),
                 )
               ],
@@ -113,7 +162,12 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
                         shadowColor
                     ),
                   ),
-                  onPressed: () {  },
+                  onPressed: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => TaskPhoto(imageUrl: _taskProvider.selectedTask.imageUrl,)),
+                    );
+                  },
                   child: Text(
                     "Lihat Bukti",
                     style: TextStyle(
@@ -121,35 +175,103 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
                     ),
                   ),
                 ),
-                TextButton(
+                _taskProvider.selectedTask.status == 2
+                    ? TextButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
                         primaryColor
                     ),
                   ),
-
+                  onPressed: null,
                   child: Text(
-                    "Lihat Setuju",
+                    "Telah disetujui",
                     style: TextStyle(
                         color: Colors.white
                     ),
                   ),
-                ),
-                OutlinedButton(
+                ) : _taskProvider.selectedTask.status == 3
+                    ?TextButton(
                   style: ButtonStyle(
-                    side: MaterialStateProperty.all<BorderSide>(
-                      BorderSide(
-                        color: primaryColor
-                      )
-                    )
-                  ),
-                  onPressed: () {  },
-                  child: Text(
-                    "Tolak",
-                    style: TextStyle(
-                      color: primaryColor
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        redColor
                     ),
                   ),
+
+                  onPressed: null,
+                  child: Text(
+                    "Telah Ditolak",
+                    style: TextStyle(
+                        color: Colors.white
+                    ),
+                  ),
+                ) : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            primaryColor
+                        ),
+                      ),
+
+                      onPressed: () async {
+                        createLoadingAlertDialog(context);
+                        var data = {
+                          "is_done" : true,
+                          "status" : 2,
+                        };
+                        await TaskDatabase(uid: _taskProvider.selectedTask.uid).updateTask(data);
+                        Map<String, dynamic> userData = {
+                          "total_point" : _childProvider.selectedChild.totalPoint+_taskProvider.selectedTask.point,
+                        };
+                        var totalTask = await TaskDatabase().countFinishedTask();
+                        userData["achievements"] = _childProvider.selectedChild.achievements;
+                        if (totalTask >= 1) {
+                          userData["achievements"][0] = true;
+                        }
+                        if (totalTask >= 5) {
+                          userData["achievements"][2] = true;
+                        }
+                        if (totalTask >= 15) {
+                          userData["achievements"][4] = true;
+                        }
+                        await ChildDatabase(uid: _childProvider.selectedChild.uid).updateChildData(userData);
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => this.widget));
+                      },
+                      child: Text(
+                        "Setuju",
+                        style: TextStyle(
+                            color: Colors.white
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10.0,),
+                    OutlinedButton(
+                      style: ButtonStyle(
+                          side: MaterialStateProperty.all<BorderSide>(
+                              BorderSide(
+                                  color: primaryColor
+                              )
+                          )
+                      ),
+                      onPressed: () async {
+                        createLoadingAlertDialog(context);
+                        var data = {
+                          "status" : 3,
+                        };
+                        await TaskDatabase(uid: _taskProvider.selectedTask.uid).updateTask(data);
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => this.widget));
+                      },
+                      child: Text(
+                        "Tolak",
+                        style: TextStyle(
+                            color: primaryColor
+                        ),
+                      ),
+                    )
+                  ],
                 )
               ],
             )
@@ -162,9 +284,17 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
   Widget _buildChildProfile(){
     return Row(
       children: [
-        Icon(
+        _childProvider.selectedChild.imageUrl.length > 0
+            ? ClipRRect(
+          child: Image.network(
+            _childProvider.selectedChild.imageUrl,
+            fit: BoxFit.fill,
+            height: 40,
+            width: 40,
+          ),borderRadius: BorderRadius.circular(20.0),) : Icon(
           Icons.account_circle,
-          size: 30.0,
+          size: 50.0,
+          color: Colors.white,
         ),
         SizedBox(width: 10.0,),
         Text(
@@ -192,49 +322,55 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
   }
 
   Widget _buildPointField(){
-    return Container(
-      padding: EdgeInsets.all(15.0),
-      child: Row(
-        children: [
-          Icon(Icons.card_giftcard, color: shadowColor,),
-          SizedBox(width: 10.0,),
-          Text(
-            "${_taskProvider.selectedTask.point}pts",
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                fontSize: 17.0
-            ),
-          ),
-        ],
+    return ListTile(
+      leading: Icon(Icons.card_giftcard, color: shadowColor,),
+      title: Text(
+        "Jumlah poin yang didapat",
+        style: TextStyle(
+            fontSize: 18.0,
+            color: shadowColor,
+            fontFamily: "Poppins",
+            fontWeight: FontWeight.w600
+        ),
+      ),
+      trailing: Text(
+        "${_taskProvider.selectedTask.point}pts",
+        style: TextStyle(
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w600,
+            fontSize: 17.0
+        ),
       ),
     );
   }
 
   Widget _buildCategoryField(){
-    return Container(
-      padding: EdgeInsets.all(15.0),
-      child: Row(
-        children: [
-          Icon(Icons.category, color: shadowColor,),
-          SizedBox(width: 10.0,),
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
-            decoration: BoxDecoration(
-              color: secondaryColor,
-              borderRadius: BorderRadius.circular(5.0)
-            ),
-            child: Text(
-              _taskProvider.selectedTask.category,
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                fontSize: 17.0,
-                color: Colors.white
-              ),
-            ),
+    return ListTile(
+      leading: Icon(Icons.category, color: shadowColor,),
+      title:Text(
+        "Kategori Tugas",
+        style: TextStyle(
+            fontSize: 18.0,
+            color: shadowColor,
+            fontFamily: "Poppins",
+            fontWeight: FontWeight.w600
+        ),
+      ),
+      trailing: Container(
+        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
+        decoration: BoxDecoration(
+            color: secondaryColor,
+            borderRadius: BorderRadius.circular(5.0)
+        ),
+        child: Text(
+          _taskProvider.selectedTask.category,
+          style: TextStyle(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              fontSize: 15.0,
+              color: Colors.white
           ),
-        ],
+        ),
       ),
     );
   }
@@ -269,21 +405,24 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
   }
 
   Widget _buildDeadlineField() {
-    return Container(
-      padding: EdgeInsets.all(15.0),
-      child: Row(
-        children: [
-          Icon(Icons.schedule, color: shadowColor,),
-          SizedBox(width: 10.0,),
-          Text(
-            DateFormat("dd-MM-yyyy").format(_taskProvider.selectedTask.deadline).toString(),
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w600,
-              fontSize: 17.0
-            ),
-          ),
-        ],
+    return ListTile(
+      leading: Icon(Icons.schedule, color: shadowColor,),
+      trailing: Text(
+        DateFormat("dd-MM-yyyy").format(_taskProvider.selectedTask.deadline).toString(),
+        style: TextStyle(
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w600,
+            fontSize: 17.0
+        ),
+      ),
+      title: Text(
+        "Batas tugas selesai",
+        style: TextStyle(
+            fontSize: 18.0,
+            color: shadowColor,
+            fontFamily: "Poppins",
+            fontWeight: FontWeight.w600
+        ),
       ),
     );
   }

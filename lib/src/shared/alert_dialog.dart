@@ -4,6 +4,46 @@ import 'package:mobile_unity/src/widgets/loading.dart';
 
 import 'constants.dart';
 
+Future achievementDialog(BuildContext context, String message){
+  return showDialog(context: context, builder: (context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      content: Container(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ClipRRect(
+              child: Image(
+                image: AssetImage("assets/images/achievement_dialog.png"),
+              ),
+            ),
+            Text(
+              "Selamat!",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.w600,
+                fontSize: 25.0,
+              ),
+            ),
+            Text(
+              message,
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.w600,
+                fontSize: 18.0,
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  });
+}
+
 Future successMessage(BuildContext context, String message){
   return showDialog(context: context, builder: (context) {
     return AlertDialog(

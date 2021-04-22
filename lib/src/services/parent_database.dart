@@ -28,7 +28,7 @@ class ParentDatabase{
   }
 
   Stream<Parent> getParentDataFromUser(AuthUser user){
-    return user != null ? _parentCollection.doc(user.uid).snapshots().map(_parentFromSnapshot) : null;
+    return user != null ? user.uid != null ? _parentCollection.doc(user.uid).snapshots().map(_parentFromSnapshot) : null : null;
   }
 
   Parent _parentFromSnapshot(DocumentSnapshot snapshot) {

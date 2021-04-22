@@ -34,7 +34,7 @@ class ChildDatabase{
   }
 
   Stream<Child> getChildDataFromUser(AuthUser user){
-    return user == null ? null : _childCollection.doc(user.uid).snapshots().map(_parentFromSnapshot);
+    return user == null ? null : user.uid != null ? _childCollection.doc(user.uid).snapshots().map(_parentFromSnapshot) : null;
   }
 
   Child _parentFromSnapshot(DocumentSnapshot snapshot) {
@@ -62,9 +62,9 @@ class ChildDatabase{
   }
 
   Child _mapDataFromDynamic(String uid, Map<String, dynamic> data){
-    print("DATA ${data}");
     DateTime bornDate = data["born_date"].toDate();
     DateTime createdAt = data["created_at"].toDate();
+    List<bool> achievements = data["achievements"].cast<bool>();
     return Child(
         uid: uid,
         phoneNumber: data["phone_number"],
@@ -78,6 +78,7 @@ class ChildDatabase{
         bornDate: bornDate,
         imageUrl: data["image_url"],
         createdAt: createdAt,
+        achievements: achievements
     );
   }
 

@@ -21,6 +21,11 @@ class _DetailWishChildState extends State<DetailWishChild> {
   WishProvider _wishProvider;
   ChildProvider _childProvider;
   bool _loading = true;
+  List<String> frekuensi = [
+    'Setiap Hari',
+    'Setiap Minggu',
+    'Setiap Bulan',
+  ];
 
   @override
   void initState() {
@@ -48,10 +53,18 @@ class _DetailWishChildState extends State<DetailWishChild> {
             child: Column(
               children: [
                 _buildChildProfile(),
-                SizedBox(height: 20.0,),
                 _buildTitleField(),
+                SizedBox(height: 20.0,),
+                _buildStatusField(),
+                SizedBox(height: 20.0,),
                 _buildDeadlineField(),
                 _buildPointField(),
+                _buildFrekuensiField(),
+                _buildExpectedMoneyField(),
+                SizedBox(height: 20.0,),
+                Divider(color: shadowColor, thickness: 1.0,),
+                SizedBox(height: 20.0,),
+                SubHeader(title: "Progress", isLihatSemua: false,),
                 SizedBox(height: 20.0,),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
@@ -92,6 +105,77 @@ class _DetailWishChildState extends State<DetailWishChild> {
     );
   }
 
+  Widget _buildExpectedMoneyField(){
+    return ListTile(
+      leading: Icon(Icons.attach_money, color: shadowColor,),
+      title: Text(
+        "Jumlah Yang Ingin Ditabung",
+        style: TextStyle(
+            fontSize: 18.0,
+            color: shadowColor,
+            fontFamily: "Poppins",
+            fontWeight: FontWeight.w600
+        ),
+      ),
+      trailing: Text(
+        "Rp ${_wishProvider.selectedWish.expectedMoney}",
+        style: TextStyle(
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w600,
+            fontSize: 17.0
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFrekuensiField(){
+    return ListTile(
+      leading: Icon(Icons.timeline, color: shadowColor,),
+      title: Text(
+        "Lama Menabung",
+        style: TextStyle(
+            fontSize: 18.0,
+            color: shadowColor,
+            fontFamily: "Poppins",
+            fontWeight: FontWeight.w600
+        ),
+      ),
+      trailing: Text(
+        frekuensi[_wishProvider.selectedWish.frekuensi],
+        style: TextStyle(
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w600,
+            fontSize: 17.0
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusField(){
+    var isFinished;
+    if (_wishProvider.selectedWish.deadline.difference(DateTime.now()).inDays < 0 && !_wishProvider.selectedWish.isDone) isFinished = 0;
+    else if (_wishProvider.selectedWish.isDone) isFinished = 1;
+    else isFinished = 2;
+    return Container(
+      decoration: BoxDecoration(
+        color: isFinished == 1 ? greenColor : isFinished == 0 ? redColor : primaryColor,
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      child: ListTile(
+        leading: Icon(Icons.star, color: Colors.white),
+        title: Text(
+          isFinished == 1 ? "Sudah Terkabul" : isFinished == 0 ? "Belum Terkabul" : "Masih diwujudkan",
+          style: TextStyle(
+              fontSize: 18.0,
+              color: Colors.white,
+              fontFamily: "Poppins",
+              fontWeight: FontWeight.w600
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildChildProfile(){
     return Row(
       children: [
@@ -113,21 +197,24 @@ class _DetailWishChildState extends State<DetailWishChild> {
   }
 
   Widget _buildPointField(){
-    return Container(
-      padding: EdgeInsets.all(15.0),
-      child: Row(
-        children: [
-          Icon(Icons.card_giftcard, color: shadowColor,),
-          SizedBox(width: 10.0,),
-          Text(
-            "${_wishProvider.selectedWish.point}pts",
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                fontSize: 17.0
-            ),
-          ),
-        ],
+    return ListTile(
+      leading: Icon(Icons.card_giftcard, color: shadowColor,),
+      title: Text(
+        "Hadiah",
+        style: TextStyle(
+            fontSize: 18.0,
+            color: shadowColor,
+            fontFamily: "Poppins",
+            fontWeight: FontWeight.w600
+        ),
+      ),
+      trailing: Text(
+        "${_wishProvider.selectedWish.point}pts",
+        style: TextStyle(
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w600,
+            fontSize: 17.0
+        ),
       ),
     );
   }
@@ -162,21 +249,24 @@ class _DetailWishChildState extends State<DetailWishChild> {
   }
 
   Widget _buildDeadlineField() {
-    return Container(
-      padding: EdgeInsets.all(15.0),
-      child: Row(
-        children: [
-          Icon(Icons.schedule, color: shadowColor,),
-          SizedBox(width: 10.0,),
-          Text(
-            DateFormat("dd MMMM yyyy").format(_wishProvider.selectedWish.deadline).toString(),
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                fontSize: 17.0
-            ),
-          ),
-        ],
+    return ListTile(
+      leading: Icon(Icons.schedule, color: shadowColor,),
+      title: Text(
+        "Batas Waktu Impian",
+        style: TextStyle(
+            fontSize: 18.0,
+            color: shadowColor,
+            fontFamily: "Poppins",
+            fontWeight: FontWeight.w600
+        ),
+      ),
+      trailing: Text(
+        DateFormat("dd MMMM yyyy").format(_wishProvider.selectedWish.deadline).toString(),
+        style: TextStyle(
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w600,
+            fontSize: 17.0
+        ),
       ),
     );
   }

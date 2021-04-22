@@ -46,10 +46,15 @@ class _ChildAchievementState extends State<ChildAchievement> {
   Widget build(BuildContext context) {
     _childProvider = Provider.of<ChildProvider>(context);
     financials = Provider.of<List<Financial>>(context);
-    print(financials.length);
-    var _filteredFinancials = filterFinancial();
-    int _outcome = _countIncomeOutcome("outcome", _filteredFinancials);
-    int _income = _countIncomeOutcome("income", _filteredFinancials);
+    List<Financial> _filteredFinancials;
+    int _outcome = 0;
+    int _income = 0;
+    if (financials != null) {
+      _filteredFinancials = filterFinancial();
+      _outcome = _countIncomeOutcome("outcome", _filteredFinancials);
+      _income = _countIncomeOutcome("income", _filteredFinancials);
+    }
+
     return Scaffold(
       appBar: CustomAppBar(false, "Prestasi"),
       body: ListView(
@@ -170,7 +175,7 @@ class _ChildAchievementState extends State<ChildAchievement> {
                   color: redColor,
                 ),
                 child: Text(
-                  "Tdk Ada Transaksi Keuangan",
+                  "Tidak Ada Transaksi Keuangan",
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16.0,

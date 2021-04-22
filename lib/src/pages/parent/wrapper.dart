@@ -41,7 +41,10 @@ class _WrapperParentState extends State<WrapperParent> {
     childProvider = Provider.of<ChildProvider>(context, listen: false);
     parent = Provider.of<Parent>(context, listen: false);
     childProvider.getCurrentChild(parentId: parent.uid);
+    _tabIndex = Provider.of<TabIndex>(context, listen: false);
+    _tabIndex.currentIndex = 0;
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,19 +55,19 @@ class _WrapperParentState extends State<WrapperParent> {
       providers: [
         StreamProvider<List<Child>>.value(
           value: ChildDatabase().getChildrenFromParent(parent.uid),
-          initialData: [],
+          initialData: null,
         ),
         StreamProvider<List<Task>>.value(
           value: TaskDatabase().getTasks(parent.uid, childProvider.selectedChild),
-          initialData: [],
+          initialData: null,
         ),
         StreamProvider<List<Wish>>.value(
           value: WishDatabase().getWish(childProvider.selectedChild),
-          initialData: [],
+          initialData: null,
         ),
         StreamProvider<List<Financial>>.value(
           value: FinancialDatabase().getFinancials(childProvider.selectedChild),
-          initialData: [],
+          initialData: null,
         ),
       ],
       child: Scaffold(

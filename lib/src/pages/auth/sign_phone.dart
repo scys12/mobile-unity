@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_unity/src/services/auth.dart';
+import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/loading.dart';
 
@@ -84,11 +85,15 @@ class _SignPhoneState extends State<SignPhone> {
                         primaryColor
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState.validate()) {
+                      createLoadingAlertDialog(context);
                       var phoneNumber = "+62${_phoneController.text}";
+                      var authService = AuthService();
+                      await authService.verifyPhoneNumber(phoneNumber);
+                      Navigator.pop(context);
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => OTPScreen(phoneNumber:phoneNumber)));
+                          builder: (context) => OTPScreen(phoneNumber:phoneNumber, authService: authService)));
                     }
                   },
                   child: Text(

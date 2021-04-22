@@ -15,15 +15,14 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 
 class OTPScreen extends StatefulWidget {
   final String phoneNumber;
-  OTPScreen({this.phoneNumber});
+  final AuthService authService;
+  OTPScreen({this.phoneNumber, this.authService});
   @override
   _OTPScreenState createState() => _OTPScreenState();
 }
 
 class _OTPScreenState extends State<OTPScreen> {
   var onTapRecognizer;
-  final AuthService _authService = AuthService();
-
   TextEditingController textEditingController = TextEditingController();
 
   StreamController<ErrorAnimationType> errorController;
@@ -37,16 +36,11 @@ class _OTPScreenState extends State<OTPScreen> {
   @override
   void initState() {
     super.initState();
-    _verifyPhone();
     onTapRecognizer = TapGestureRecognizer()
       ..onTap = () {
         Navigator.pop(context);
       };
     errorController = StreamController<ErrorAnimationType>();
-  }
-
-  Future _verifyPhone() async{
-    await _authService.verifyPhoneNumber(widget.phoneNumber);
   }
 
   @override
@@ -152,7 +146,7 @@ class _OTPScreenState extends State<OTPScreen> {
                         if(_loading) {
                           createLoadingAlertDialog(context);
                         }
-                        var resp = await _authService.signInWithPhoneNumber(v);
+                        var resp = await widget.authService.signInWithPhoneNumber(v);
                         print("SONO ${resp.uid}");
                         if(resp != null) {
                           var isExist = await ChildDatabase(uid: resp.uid).checkUser();

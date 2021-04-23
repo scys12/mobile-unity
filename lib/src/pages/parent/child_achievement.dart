@@ -68,20 +68,66 @@ class _ChildAchievementState extends State<ChildAchievement> {
           SizedBox(height: 25.0,),
           SubHeader(title: 'Lencana', isLihatSemua: false, path: ''),
           SizedBox(height: 25.0,),
-          ListView.builder(
-            itemCount: 9,
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index){
-              return InkWell(
-                onTap: ()=>Navigator.pushNamed(context, '/parent/detail_task'),
-                splashFactory: InkRipple.splashFactory,
-                child: Container()
-              );
-            },
-          )
+          _childProvider.selectedChild != null
+              ? _buildAchievement()
+              : Text(
+            "Belum menambahkan si kecil",
+            style: TextStyle(
+              fontFamily: "Poppins",
+              fontSize: 16.0,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAchievement(){
+    List<String> message  = [
+      "Selamat ${_childProvider.selectedChild.name} telah menyelesaikan 1 tugas",
+      "Selamat ${_childProvider.selectedChild.name}kamu telah menyelesaikan 1 impian",
+      "Selamat ${_childProvider.selectedChild.name} telah menyelesaikan 5 tugas",
+      "Selamat ${_childProvider.selectedChild.name} telah menyelesaikan 5 impian",
+      "Selamat ${_childProvider.selectedChild.name} telah menyelesaikan 20 tugas",
+      "Selamat ${_childProvider.selectedChild.name} telah menyelesaikan 15 impian",
+    ];
+    var achievements = _childProvider.selectedChild.achievements;
+    return GridView.builder(
+      itemCount: 6,
+      padding: EdgeInsets.all(5.0),
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisSpacing: 10.0,
+      ),
+      itemBuilder: (BuildContext context, int index) {
+        return InkWell(
+          onTap: achievements[index]
+              ? (){
+            achievementDialog(context, message[index]);
+          }
+              : null,
+          child: Column(
+            children: [
+              Text(
+                "0${(index+1).toString()}",
+                style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    color: achievements[index] ? primaryColor : shadowColor
+                ),
+              ),
+              Expanded(
+                child: Image(
+                  image: AssetImage(achievements[index] ? "assets/images/achievement.png" : "assets/images/not_achievement.png"),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

@@ -69,6 +69,10 @@ class _WrapperParentState extends State<WrapperParent> {
           value: FinancialDatabase().getFinancials(childProvider.selectedChild),
           initialData: null,
         ),
+        StreamProvider<Wish>.value(
+          value: WishDatabase().getActiveWishFromChild(childProvider.selectedChild),
+          initialData: null,
+        ),
       ],
       child: Scaffold(
         body: tabs[_tabIndex.currentIndex],

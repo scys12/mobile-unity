@@ -26,6 +26,15 @@ class _KidAchievementState extends State<KidAchievement> with TickerProviderStat
     "Lencana",
     "Tugas Selesai"
   ];
+  List<String> message  = [
+    "Selamat kamu telah menyelesaikan 1 tugas",
+    "Selamat kamu telah menyelesaikan 1 impian",
+    "Selamat kamu telah menyelesaikan 5 tugas",
+    "Selamat kamu telah menyelesaikan 5 impian",
+    "Selamat kamu telah menyelesaikan 20 tugas",
+    "Selamat kamu telah menyelesaikan 15 impian",
+  ];
+
   TaskProvider _taskProvider;
   Wish _wish;
   bool _loading = true;
@@ -215,7 +224,7 @@ class _KidAchievementState extends State<KidAchievement> with TickerProviderStat
         return InkWell(
           onTap: achievements[index]
               ? (){
-                  achievementDialog(context, "Halo");
+                  achievementDialog(context, message[index]);
                 }
               : null,
           child: Column(

@@ -64,6 +64,7 @@ class _DashboardKidState extends State<DashboardKid> {
     user = Provider.of<Child>(context);
     tasks = Provider.of<List<Task>>(context);
     tasks = tasks.take(2).toList();
+    _financialProvider = Provider.of(context);
     _wish = Provider.of<Wish>(context);
     if (_financialProvider.financials != null) {
       setState(() {

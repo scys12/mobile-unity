@@ -16,9 +16,10 @@ class TaskDatabase {
     return await _tasksCollection.doc(uid).update(answers);
   }
 
-  Future<int> countFinishedTask() async{
+  Future<int> countFinishedTask(String childId) async{
     var resp = await _tasksCollection
-        .where('is_finished', isEqualTo: true)
+        .where('is_done', isEqualTo: true)
+        .where('child_id', isEqualTo: childId)
         .get();
     return resp.docs.map(_taskListFromQueryDocumentSnapshot).toList().length;
   }

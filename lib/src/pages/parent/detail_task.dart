@@ -224,7 +224,7 @@ class _DetailTaskChildState extends State<DetailTaskChild> {
                         Map<String, dynamic> userData = {
                           "total_point" : _childProvider.selectedChild.totalPoint+_taskProvider.selectedTask.point,
                         };
-                        var totalTask = await TaskDatabase().countFinishedTask();
+                        var totalTask = await TaskDatabase().countFinishedTask(_childProvider.selectedChild.uid);
                         userData["achievements"] = _childProvider.selectedChild.achievements;
                         if (totalTask >= 1) {
                           userData["achievements"][0] = true;

@@ -32,7 +32,6 @@ class TeenagerDatabase{
   }
 
   Stream<Teenager> getTeenagerDataFromUser(AuthUser user){
-    print("Sini teenager ${user}");
     return user == null ? null : user.uid != null ? _teenagerCollection.doc(user.uid).snapshots().map(_teenagerFromSnapshot) : null;
   }
 

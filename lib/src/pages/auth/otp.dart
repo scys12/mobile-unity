@@ -163,6 +163,7 @@ class _OTPScreenState extends State<OTPScreen> {
                               'parent_id' : "",
                               "image_url" : "",
                               "created_at" : DateTime.now(),
+                              "achievements" : [false, false, false, false, false, false]
                             };
                             await ChildDatabase(uid: resp.uid).createChildData(data);
                             print("ab");

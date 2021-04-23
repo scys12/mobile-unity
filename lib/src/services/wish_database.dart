@@ -18,9 +18,10 @@ class WishDatabase {
     var response = await _wishesCollection.doc(uid).update(answers);
   }
 
-  Future<int> countFinishedWish() async{
+  Future<int> countFinishedWish(String childId) async{
     var resp = await _wishesCollection
-        .where('is_finished', isEqualTo: true)
+        .where('is_done', isEqualTo: true)
+        .where('child_id', isEqualTo: childId)
         .get();
     return resp.docs.map(_wishListFromQueryDocumentSnapshot).toList().length;
   }
@@ -88,6 +89,21 @@ class WishDatabase {
     return oneWish.map((event){
       return event.length > 0? event.first : null;
     });
+  }
 
+  Stream<Wish> getActiveWishFromChild(Child child) {
+    if (child == null) {
+      return null;
+    }else {
+      var wish = _wishesCollection
+          .where('child_id', isEqualTo: child.uid)
+          .where('is_done', isEqualTo: false)
+          .where('deadline', isGreaterThanOrEqualTo: DateTime.now())
+          .snapshots();
+      var oneWish =  wish.map(_wishListFromSnapshot);
+      return oneWish.map((event){
+        return event.length > 0? event.first : null;
+      });
+    }
   }
 }

@@ -13,12 +13,14 @@ Future achievementDialog(BuildContext context, String message){
       content: Container(
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ClipRRect(
               child: Image(
                 image: AssetImage("assets/images/achievement_dialog.png"),
               ),
             ),
+            SizedBox(height: 10.0,),
             Text(
               "Selamat!",
               style: TextStyle(
@@ -28,13 +30,32 @@ Future achievementDialog(BuildContext context, String message){
                 fontSize: 25.0,
               ),
             ),
+            SizedBox(height: 10.0,),
             Text(
               message,
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: "Poppins",
-                fontWeight: FontWeight.w600,
-                fontSize: 18.0,
+                fontWeight: FontWeight.w500,
+                fontSize: 15.0,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 10.0,),
+            Container(
+              width: double.infinity,
+              child: TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(primaryColor),
+                ),
+                child: Text(
+                  "Donasi Sekarang",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: "Poppins",
+                    fontSize: 18.0
+                  ),
+                ),
               ),
             )
           ],

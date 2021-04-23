@@ -268,7 +268,6 @@ class _AddChildScreenState extends State<AddChildScreen> {
               'parent_id' : user.uid,
               'is_profile_filled' : true,
               "image_url" : imageUrl,
-              "achievements" : [false, false, false, false, false, false]
             };
             var document = ChildDatabase(uid: children[0].uid).updateChildData(answers);
             Navigator.pushReplacementNamed(context, '/parent/wrapper');

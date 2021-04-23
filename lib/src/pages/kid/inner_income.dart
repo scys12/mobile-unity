@@ -36,9 +36,7 @@ class _State extends State<InnerIncome> {
   Child _user;
   bool _loadingWish = true;
   List<String> choices = [
-    "Makanan & Minuman",
-    "Belanja",
-    "Berkendara",
+    "Uang sakue",
     "Lainnya"
   ];
 
@@ -127,7 +125,7 @@ class _State extends State<InnerIncome> {
                           alignment: Alignment.topLeft,
                           nip: BubbleNip.leftTop,
                           child: Text(
-                            'Untuk apa uangnya?',
+                            'Darimana uangnya?',
                             style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontWeight: FontWeight.w500,
@@ -335,7 +333,8 @@ class _State extends State<InnerIncome> {
                               }
                               await WishDatabase(uid: wish.uid).updateWish(wishData);
                             }
-                            var totalWish = await WishDatabase().countFinishedWish();
+                            var totalWish = await WishDatabase().countFinishedWish(_user.uid);
+                            print(totalWish);
                             childData["achievements"] = _user.achievements;
                             if (totalWish >= 1) {
                               childData["achievements"][1] = true;

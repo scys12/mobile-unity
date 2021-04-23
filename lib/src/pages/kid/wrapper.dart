@@ -40,7 +40,6 @@ class _State extends State<WrapperChildren> {
     final String arguments = ModalRoute.of(context).settings.arguments;
     _tabIndex = Provider.of<TabIndex>(context);
     final Child user = Provider.of<Child>(context);
-
     return MultiProvider(
       providers: [
         StreamProvider<List<Task>>.value(

@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_unity/src/models/child.dart';
+import 'package:mobile_unity/src/models/financial.dart';
 import 'package:mobile_unity/src/models/parent.dart';
+import 'package:mobile_unity/src/models/wish.dart';
 import 'package:mobile_unity/src/pages/parent/child_task.dart';
 import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/services/auth.dart';
@@ -20,6 +22,13 @@ class _DashboardParentState extends State<DashboardParent> {
   int _currentIndex = 0;
   ChildProvider _childProvider;
   Parent user;
+  Wish _wish;
+  List<Financial> financials = [];
+  bool _loading = true;
+  List<Financial> _filteredFinancials = [];
+  int _income = 0;
+  int _outcome = 0;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -28,12 +37,38 @@ class _DashboardParentState extends State<DashboardParent> {
     _childProvider = Provider.of<ChildProvider>(context, listen: false);
     _childProvider.getCurrentChild(parentId: user.uid);
   }
+  List<Financial> filterFinancial(int _currentType, DateTime wishCreatedAt){
+    List<Financial> filtered = [];
+    var now = DateTime.now();
+    var weekDay = now.weekday;
+    var startDate = now.subtract(Duration(days: weekDay-1));
+
+    if (_currentType == 0) {
+      filtered = financials.where((element) => element.createdAt.difference(now).inDays == 0 && element.createdAt.difference(wishCreatedAt).inSeconds > 0).toList();
+    }else if (_currentType == 1) {
+      filtered = financials.where((element) => (startDate.difference(element.createdAt).inDays <=0 && startDate.difference(element.createdAt).inDays >=-6) && element.createdAt.difference(wishCreatedAt).inSeconds > 0).toList();
+    }else if(_currentType == 2) {
+      filtered = financials.where((element) => element.createdAt.month == now.month && element.createdAt.year == now.year && element.createdAt.difference(wishCreatedAt).inSeconds > 0).toList();
+    }
+    return filtered;
+  }
+
 
   @override
   Widget build(BuildContext context) {
     user = Provider.of<Parent>(context);
     children = Provider.of<List<Child>>(context);
     _childProvider = Provider.of<ChildProvider>(context);
+    _wish = Provider.of<Wish>(context);
+    financials = Provider.of<List<Financial>>(context);
+
+    if (financials != null) {
+      setState(() {
+        _loading = false;
+      });
+      _checkWishReminder();
+    }
+
     return Scaffold(
       body: ListView(
         physics: ClampingScrollPhysics(),
@@ -351,88 +386,108 @@ class _DashboardParentState extends State<DashboardParent> {
                     color: Colors.black,
                   ),
                 ),
-                TextButton(
-                  child: Text(
-                    'LIHAT SEMUA',
-                    style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15.0,
-                        color: secondaryColor),
-                  ),
-                )
               ],
             ),
           ),
-          ListView.builder(
-            itemCount: 3,
-            shrinkWrap: true,
-            physics: ClampingScrollPhysics(),
-            itemBuilder: (context, index) {
-              return Container(
-                margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.0),
-                    boxShadow: [
-                      BoxShadow(
-                          color: shadowColor,
-                          blurRadius: 8,
-                          spreadRadius: 0,
-                          offset: Offset(1.0, 3.0))
-                    ]),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.my_library_books_outlined,
-                      color: primaryColor,
-                      size: 60.0,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 200,
-                          child: Text(
-                            'Berhasil menyelesaikan tugas',
-                            style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 15.0,
-                                color: Colors.black),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5.0,
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(6.0),
-                          decoration: BoxDecoration(
-                            color: greenColor,
-                          ),
-                          child: Text(
-                            "Pendidikan",
-                            style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 15.0,
-                                color: Colors.white),
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              );
-            },
-          )
+          Padding(
+            padding: EdgeInsets.only(right: 20.0, left: 20.0, top: 20.0),
+            child: _buildReminder(),
+          ),
         ],
       ),
     );
+  }
+
+  Widget _buildReminder(){
+    var type;
+    if (_wish != null) {
+      type = _wish.frekuensi == 0 ? "hari" : _wish.frekuensi == 1 ? "minggu" : "bulan";
+    } else {
+      type = "";
+    }
+    return _wish != null
+        ? Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(15.0),
+      decoration: BoxDecoration(
+          color: _filteredFinancials.length > 0 ? _income-_outcome > _wish.expectedMoney ? primaryColor : redColor : redColor,
+          borderRadius: BorderRadius.circular(5.0)
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Icon(Icons.notifications, color: Colors.white,),
+          SizedBox(height: 10.0,),
+          _filteredFinancials.length > 0
+              ? _income-_outcome >= _wish.expectedMoney
+              ? Text(
+            "${_childProvider.selectedChild.name} sudah berhasil menabung sebanyak ${_income-_outcome} untuk impian ${_wish.title} pada ${type} ini",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              fontSize: 15.0,
+            ),
+          )
+              : Text(
+            "Tabungan ${_childProvider.selectedChild.name}  untuk memenuhi impian pada ${type} ini masih belum tercapai. ${_childProvider.selectedChild.name} baru menabung sebanyak Rp ${_income-_outcome} dari Rp ${_wish.expectedMoney}.",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              fontSize: 15.0,
+            ),
+          )
+              : Text(
+            "${_childProvider.selectedChild.name} belum ada menabung pada ${type} ini untuk impian ${_wish.title}. ${_childProvider.selectedChild.name} harus menabung sebanyak Rp ${_wish.expectedMoney}",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              fontSize: 15.0,
+            ),
+          )
+        ],
+      ),
+    )
+        : Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Icon(Icons.notifications, color: Colors.white,),
+          SizedBox(height: 10.0,),
+          Text(
+            _childProvider.selectedChild == null ? "Anda belum menambahkan si kecil" : "${_childProvider.selectedChild.name} belum membuat satu impian",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              fontSize: 15.0,
+            ),
+          ),
+        ],
+      ),
+      width: double.infinity,
+      padding: EdgeInsets.all(15.0),
+      decoration: BoxDecoration(
+          color: redColor,
+          borderRadius: BorderRadius.circular(5.0)
+      ),
+    );
+  }
+
+  int _countIncomeOutcome(String type, List<Financial> finances){
+    return finances.where((element) => element.type == type).toList().fold(0, (previous, current) => previous + current.money);
+  }
+
+  _checkWishReminder(){
+    if (_wish != null) {
+      var expectedMoney = _wish.expectedMoney;
+      var frekuensi = _wish.frekuensi;
+      _filteredFinancials = filterFinancial(frekuensi, _wish.createdAt);
+      _outcome = _countIncomeOutcome("outcome", _filteredFinancials);
+      _income = _countIncomeOutcome("income", _filteredFinancials);
+    }
   }
 
   void _addChildButtonPressed(Child child) {
@@ -474,8 +529,8 @@ class _DashboardParentState extends State<DashboardParent> {
                               'Belum menambahkan si kecil',
                               style: TextStyle(
                                 fontFamily: "Poppins",
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18.0,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15.0,
                               ),
                             ),
                             trailing: Icon(

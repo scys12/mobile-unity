@@ -53,7 +53,7 @@ class _State extends State<InnerOutcome> {
     _wishProvider = Provider.of<WishProvider>(context);
     _loadingWish = _wishProvider.wishes != null ? false : true;
     return _loadingWish ? Loading() : Scaffold(
-      appBar: CustomAppBar(true, "Pemasukan Baru"),
+      appBar: CustomAppBar(true, "Pengeluaran Baru"),
       body: ListView(
         children: [
           Container(

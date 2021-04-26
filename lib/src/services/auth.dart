@@ -106,6 +106,8 @@ class AuthService {
         data["total_point"] = 0;
         data["outcome"] = 0;
         data["income"] = 0;
+        data["born_date"] = DateTime.now();
+        data["achievements"] = [false, false, false, false, false, false];
         await TeenagerDatabase(uid: user.uid).createTeenagerData(data);
         _user = await _teenagerFromFirebaseUser(user);
       }

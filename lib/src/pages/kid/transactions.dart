@@ -87,7 +87,7 @@ class _KidTransactionsState extends State<KidTransactions> with TickerProviderSt
     int _income = _countIncomeOutcome("income", _filteredFinancials);
     _filteredFinancials = filterIncomeOutcome(_filteredFinancials);
     return _loading ? Loading() : Scaffold(
-      appBar: CustomAppBar(false, "Prestasi"),
+      appBar: CustomAppBar(false, "Ringkasan"),
       body: Container(
         height: MediaQuery.of(context).size.height,
         child: Stack(

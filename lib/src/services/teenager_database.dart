@@ -37,6 +37,8 @@ class TeenagerDatabase{
 
   Teenager _teenagerFromSnapshot(DocumentSnapshot snapshot) {
     var data = snapshot.data();
+    DateTime bornDate = data["born_date"].toDate();
+    List<bool> achievements = data["achievements"].cast<bool>();
     return data != null ? Teenager(
         uid: snapshot.id,
         phoneNumber: data["phone_number"],
@@ -47,7 +49,9 @@ class TeenagerDatabase{
         imageUrl: data["image_url"],
         totalPoint: data["total_point"],
         outcome: data["outcome"],
-        income: data["income"]
+        income: data["income"],
+        achievements: achievements,
+        bornDate: bornDate
     ) : null;
   }
 

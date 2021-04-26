@@ -8,6 +8,7 @@ import 'package:mobile_unity/src/pages/kid/detail_task.dart';
 import 'package:mobile_unity/src/pages/kid/detail_wish.dart';
 import 'package:mobile_unity/src/provider/task_provider.dart';
 import 'package:mobile_unity/src/provider/wish_provider.dart';
+import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
 import 'package:mobile_unity/src/widgets/loading.dart';
@@ -201,7 +202,51 @@ class _TeenagerAchivementState extends State<TeenagerAchivement> with TickerProv
   }
 
   Widget _buildAchievement(){
-    return Container();
+    List<String> message  = [
+      "Selamat ${_user.name} telah menyelesaikan 1 tugas",
+      "Selamat ${_user.name}kamu telah menyelesaikan 1 impian",
+      "Selamat ${_user.name} telah menyelesaikan 5 tugas",
+      "Selamat ${_user.name} telah menyelesaikan 5 impian",
+      "Selamat ${_user.name} telah menyelesaikan 20 tugas",
+      "Selamat ${_user.name} telah menyelesaikan 15 impian",
+    ];
+    var achievements = _user.achievements;
+    return GridView.builder(
+      itemCount: 6,
+      padding: EdgeInsets.all(5.0),
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisSpacing: 10.0,
+      ),
+      itemBuilder: (BuildContext context, int index) {
+        return InkWell(
+          onTap: achievements[index]
+              ? (){
+            achievementDialog(context, message[index]);
+          }
+              : null,
+          child: Column(
+            children: [
+              Text(
+                "0${(index+1).toString()}",
+                style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    color: achievements[index] ? primaryColor : shadowColor
+                ),
+              ),
+              Expanded(
+                child: Image(
+                  image: AssetImage(achievements[index] ? "assets/images/achievement.png" : "assets/images/not_achievement.png"),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildHeader(String title, String description){

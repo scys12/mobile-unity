@@ -31,11 +31,14 @@ import 'package:mobile_unity/src/pages/parent/transactions.dart';
 import 'package:mobile_unity/src/pages/parent/wrapper.dart';
 import 'package:mobile_unity/src/pages/teenager/add_wish.dart';
 import 'package:mobile_unity/src/pages/teenager/auth/authenticate.dart';
+import 'package:mobile_unity/src/pages/teenager/change_profile.dart';
 import 'package:mobile_unity/src/pages/teenager/dashboard.dart';
 import 'package:mobile_unity/src/pages/teenager/inner_income.dart';
 import 'package:mobile_unity/src/pages/teenager/inner_outcome.dart';
+import 'package:mobile_unity/src/pages/teenager/reminder.dart';
 import 'package:mobile_unity/src/pages/teenager/transactions.dart';
 import 'package:mobile_unity/src/pages/teenager/wishes.dart';
+import 'package:mobile_unity/src/pages/teenager/wrapper.dart';
 import 'package:mobile_unity/src/pages/welcome_parent_child.dart';
 import 'package:mobile_unity/src/pages/wrapper.dart';
 import 'package:mobile_unity/src/provider/child_provider.dart';
@@ -126,12 +129,15 @@ class MyApp extends StatelessWidget {
                       '/child/transactions': (context) => KidTransactions(),
                       '/child/add_wish': (context) => AddWish(),
                       '/child/detail_task': (context) => DetailTaskKid(),
+                      '/teenager/wrapper' : (context) => WrapperTeenager(),
                       '/teenager/dashboard': (context) => DashboardTeenager(),
                       '/teenager/new_income': (context) => InnerIncomeTeenager(),
                       '/teenager/new_outcome': (context) => InnerOutcomeTeenager(),
+                      '/teenager/change_profile': (context) => ChangeProfileTeenager(),
                       '/teenager/transactions': (context) => TeenagerTransactions(),
                       '/teenager/add_wish': (context) => AddWishTeenager(),
                       '/teenager/all_wishes': (context) => AllTeenagerWishes(),
+                      '/teenager/reminder': (context) => ReminderTeenager(),
                     },
                   )
               );

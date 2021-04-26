@@ -68,7 +68,7 @@ class _ParentSettingState extends State<ParentSetting> {
             ),borderRadius: BorderRadius.circular(30.0),) : Icon(
             Icons.account_circle,
             size: 60.0,
-            color: Colors.white,
+            color: Colors.black,
           ),
           SizedBox(width: 10,),
           Column(

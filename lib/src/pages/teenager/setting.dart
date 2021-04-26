@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:mobile_unity/src/models/child.dart';
+import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/models/teenager.dart';
 import 'package:mobile_unity/src/pages/wrapper.dart';
 import 'package:mobile_unity/src/services/auth.dart';
@@ -68,7 +71,7 @@ class _TeenagerSettingState extends State<TeenagerSetting> {
             ),borderRadius: BorderRadius.circular(30.0),) : Icon(
             Icons.account_circle,
             size: 60.0,
-            color: Colors.white,
+            color: Colors.black,
           ),
           SizedBox(width: 10,),
           Column(
@@ -129,6 +132,25 @@ class _TeenagerSettingState extends State<TeenagerSetting> {
                       ),
                       Text(
                         user.phoneNumber,
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15.0,
+                            color: Colors.black
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.date_range,
+                        color: Colors.black,
+                        size: 20.0,
+                      ),
+                      SizedBox(width: 10.0,),
+                      Text(
+                        DateFormat("dd MMMM yyyy").format(user.bornDate).toString(),
                         style: TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w500,

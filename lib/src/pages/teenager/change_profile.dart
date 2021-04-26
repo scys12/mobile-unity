@@ -5,21 +5,23 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/parent.dart';
+import 'package:mobile_unity/src/models/teenager.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
 import 'package:mobile_unity/src/services/parent_database.dart';
 import 'package:mobile_unity/src/services/storage.dart';
+import 'package:mobile_unity/src/services/teenager_database.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
 import 'package:mobile_unity/src/widgets/custom_picker.dart';
 import 'package:provider/provider.dart';
 
-class ChangeProfileChild extends StatefulWidget {
+class ChangeProfileTeenager extends StatefulWidget {
   @override
-  _ChangeProfileChildState createState() => _ChangeProfileChildState();
+  _ChangeProfileTeenagerState createState() => _ChangeProfileTeenagerState();
 }
 
-class _ChangeProfileChildState extends State<ChangeProfileChild> {
+class _ChangeProfileTeenagerState extends State<ChangeProfileTeenager> {
 
   File _image;
   final ImagePicker _picker = ImagePicker();
@@ -29,13 +31,13 @@ class _ChangeProfileChildState extends State<ChangeProfileChild> {
   TextEditingController _nameController;
   String _selectedGender;
   String _fileError = '';
-  Child user;
+  Teenager user;
   DateTime _date;
   TextEditingController _dateController;
   @override
   void initState() {
     super.initState();
-    user = Provider.of<Child>(context, listen: false);
+    user = Provider.of<Teenager>(context, listen: false);
     _phoneController = TextEditingController(text: user.phoneNumber.length > 0 ? user.phoneNumber.substring(3) : "");
     _nameController = TextEditingController(text: user.name);
     _dateController = TextEditingController(text: DateFormat("dd-MM-yyyy").format(user.bornDate).toString());
@@ -67,6 +69,8 @@ class _ChangeProfileChildState extends State<ChangeProfileChild> {
                 SizedBox(height: 15.0,),
                 _buildName(user.name),
                 SizedBox(height: 15.0,),
+                _buildPhoneNumber(user.phoneNumber),
+                SizedBox(height: 15.0,),
                 SizedBox(height: 15.0,),
                 _buildBornDate(),
                 SizedBox(height: 15.0,),
@@ -80,6 +84,54 @@ class _ChangeProfileChildState extends State<ChangeProfileChild> {
       ),
     );
   }
+
+  Widget _buildPhoneNumber(String phoneNumber) => TextFormField(
+    decoration: InputDecoration(
+        labelText: 'Nomor HP',
+        labelStyle: TextStyle(
+          fontFamily: 'Poppins',
+          fontWeight: FontWeight.w600,
+          color: shadowColor,
+        ),
+        alignLabelWithHint: true,
+        enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: shadowColor, width: 2.0),
+            borderRadius: BorderRadius.circular(20.0)
+        ),
+        focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: secondaryColor, width: 2.0),
+            borderRadius: BorderRadius.circular(20.0)
+        ),
+        prefix: Row(
+          mainAxisSize: MainAxisSize.min,
+
+          children: [
+            CircleAvatar(
+              backgroundImage: AssetImage("assets/images/indonesia.png"),
+              radius: 10.0,
+            ),
+            SizedBox(width: 5.0,),
+            Text(
+              "+62",
+              style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600
+              ),
+            ),
+            SizedBox(width: 10.0,),
+          ],
+        )
+    ),
+    validator: (value) {
+      if (value.length < 10) {
+        return 'Masukkan nomor hp yang valid';
+      }else{
+        return null;
+      }
+    },
+    keyboardType: TextInputType.phone,
+    controller: _phoneController,
+  );
 
   Widget _buildBornDate() => TextFormField(
     onTap: (){
@@ -210,17 +262,18 @@ class _ChangeProfileChildState extends State<ChangeProfileChild> {
           if (_loading) {
             createLoadingAlertDialog(context);
           }
-          var imageUrl = _image != null ? await Storage(image: _image, filename: uid, folderName: "child").uploadPicture() : user.imageUrl;
+          var imageUrl = _image != null ? await Storage(image: _image, filename: uid, folderName: "teenager").uploadPicture() : user.imageUrl;
           var answers = {
             'born_date' : _date,
             'name' : _nameController.text,
             'gender' : _selectedGender,
             'is_profile_filled' : true,
+            'phone_number' : "+62${_phoneController.text}",
             'image_url' : imageUrl
           };
-          var resp = await ChildDatabase(uid: uid).updateChildData(answers);
+          var resp = await TeenagerDatabase(uid: uid).updateTeenagerData(answers);
           Navigator.pop(context);
-          Navigator.pushReplacementNamed(context, '/child/wrapper');
+          Navigator.pushReplacementNamed(context, '/teenager/wrapper');
         }
       },
       child: Text('Simpan Profile'),

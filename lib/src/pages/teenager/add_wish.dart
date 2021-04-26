@@ -48,7 +48,7 @@ class _State extends State<AddWishTeenager> {
   Widget build(BuildContext context) {
     Teenager user = Provider.of<Teenager>(context);
     return Scaffold(
-      appBar: CustomAppBar(true, "Pemasukan Baru"),
+      appBar: CustomAppBar(true, "Impian Baru"),
       body: ListView(
         children: [
           Container(
@@ -308,7 +308,7 @@ class _State extends State<AddWishTeenager> {
                         "deadline" : DateTime(_date.year, _date.month, _date.day, 23, 59, 59),
                       };
                       await WishDatabase().createWish(data);
-                      Navigator.popUntil(context, (route) => route.isFirst);
+                      Navigator.pushReplacementNamed(context, '/teenager/wrapper');
                     },
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all<EdgeInsetsGeometry>(

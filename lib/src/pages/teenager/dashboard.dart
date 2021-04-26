@@ -138,7 +138,7 @@ class _DashboardTeenagerState extends State<DashboardTeenager> {
       margin: EdgeInsets.only(bottom: 100),
       child: Padding(
         padding: const EdgeInsets.only(
-            top: 10.0, bottom: 60.0, left: 20.0, right: 20.0),
+            top: 10.0, bottom: 80.0, left: 20.0, right: 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -319,7 +319,7 @@ class _DashboardTeenagerState extends State<DashboardTeenager> {
                           EdgeInsets.symmetric(horizontal: 10.0)),
                     ),
                     onPressed: () {
-                      Navigator.pushNamed(context, '/child/transactions');
+                      Navigator.pushNamed(context, '/teenager/transactions');
                     },
                     child: Row(
                       children: [
@@ -403,8 +403,8 @@ class _DashboardTeenagerState extends State<DashboardTeenager> {
                     border: Border.all(color: thirdColor),
                     color: Colors.white
                 ),child: _buildCatatanIcon(
-                    Icons.analytics_outlined, secondaryColor, "Reminder", () async {
-                  Navigator.pushNamed(context, '/teenager/transactions');
+                    Icons.alarm_add, primaryColor, "Reminder", () async {
+                  Navigator.pushNamed(context, '/teenager/reminder');
                 }),
               ),
             ),

@@ -36,7 +36,7 @@ class _State extends State<InnerIncome> {
   Child _user;
   bool _loadingWish = true;
   List<String> choices = [
-    "Uang sakue",
+    "Uang saku",
     "Lainnya"
   ];
 

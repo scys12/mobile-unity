@@ -96,7 +96,7 @@ class _AllTeenagerWishesState extends State<AllTeenagerWishes> {
               color: secondaryColor,
               splashRadius: 30.0,
               iconSize: 50.0,
-              onPressed: () => Navigator.pushNamed(context, '/child/add_wish'),
+              onPressed: () => Navigator.pushNamed(context, '/teenager/add_wish'),
             ) : Container()
           ],
         )

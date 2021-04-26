@@ -47,7 +47,7 @@ class _State extends State<AddWish> {
   Widget build(BuildContext context) {
     Child user = Provider.of<Child>(context);
     return Scaffold(
-      appBar: CustomAppBar(true, "Pemasukan Baru"),
+      appBar: CustomAppBar(true, "Impian Baru"),
       body: ListView(
         children: [
           Container(

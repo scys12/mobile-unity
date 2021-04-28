@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_unity/src/models/child.dart';
+import 'package:mobile_unity/src/models/news.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/models/tab_index.dart';
 import 'package:mobile_unity/src/models/teenager.dart';
@@ -22,6 +23,7 @@ import 'package:mobile_unity/src/pages/kid/wrapper.dart';
 import 'package:mobile_unity/src/pages/parent/add_child.dart';
 import 'package:mobile_unity/src/pages/parent/change_profile.dart';
 import 'package:mobile_unity/src/pages/parent/detail_task.dart';
+import 'package:mobile_unity/src/pages/parent/list_all_articles.dart';
 import 'package:mobile_unity/src/pages/parent/list_all_educations.dart';
 import 'package:mobile_unity/src/pages/parent/list_all_tasks.dart';
 import 'package:mobile_unity/src/pages/parent/list_all_wishes.dart';
@@ -47,6 +49,7 @@ import 'package:mobile_unity/src/provider/task_provider.dart';
 import 'package:mobile_unity/src/provider/wish_provider.dart';
 import 'package:mobile_unity/src/services/auth.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
+import 'package:mobile_unity/src/services/news_database.dart';
 import 'package:mobile_unity/src/services/parent_database.dart';
 import 'package:mobile_unity/src/services/teenager_database.dart';
 import 'package:provider/provider.dart';
@@ -87,6 +90,10 @@ class MyApp extends StatelessWidget {
                       value: TeenagerDatabase().getTeenagerDataFromUser(_user),
                       initialData: null,
                     ),
+                    StreamProvider<List<News>>.value(
+                      value: NewsDatabase().getNews(),
+                      initialData: [],
+                    ),
                     ChangeNotifierProvider(create: (e) => TabIndex()),
                     ChangeNotifierProvider(
                       create: (c) => ChildProvider(),
@@ -110,6 +117,7 @@ class MyApp extends StatelessWidget {
                       '/welcome': (context) => Wrapper(),
                       '/welcome/child_parent': (context) => WelcomeParentChild(),
                       '/parent/add_child': (context) => AddChildScreen(),
+                      '/parent/all_articles': (context) => ListArticles(),
                       '/parent/new_task': (context) => NewTaskChild(),
                       '/parent/wrapper': (context) => WrapperParent(),
                       '/parent/new_education': (context) => NewEducationChild(),

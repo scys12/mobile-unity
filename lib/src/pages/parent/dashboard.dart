@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/financial.dart';
+import 'package:mobile_unity/src/models/news.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/models/wish.dart';
 import 'package:mobile_unity/src/pages/parent/child_task.dart';
@@ -9,6 +11,7 @@ import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/services/auth.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/child_tile.dart';
+import 'package:mobile_unity/src/widgets/sub_header.dart';
 import 'package:provider/provider.dart';
 
 class DashboardParent extends StatefulWidget {
@@ -26,6 +29,7 @@ class _DashboardParentState extends State<DashboardParent> {
   List<Financial> financials = [];
   bool _loading = true;
   List<Financial> _filteredFinancials = [];
+  List<News> _news;
   int _income = 0;
   int _outcome = 0;
 
@@ -37,6 +41,7 @@ class _DashboardParentState extends State<DashboardParent> {
     _childProvider = Provider.of<ChildProvider>(context, listen: false);
     _childProvider.getCurrentChild(parentId: user.uid);
   }
+
   List<Financial> filterFinancial(int _currentType, DateTime wishCreatedAt){
     List<Financial> filtered = [];
     var now = DateTime.now();
@@ -61,6 +66,8 @@ class _DashboardParentState extends State<DashboardParent> {
     _childProvider = Provider.of<ChildProvider>(context);
     _wish = Provider.of<Wish>(context);
     financials = Provider.of<List<Financial>>(context);
+    _news = Provider.of<List<News>>(context);
+    _news = _news.take(5).toList();
 
     if (financials != null) {
       setState(() {
@@ -73,328 +80,456 @@ class _DashboardParentState extends State<DashboardParent> {
       body: ListView(
         physics: ClampingScrollPhysics(),
         children: [
-          Stack(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: primaryColor,
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(60.0),
-                      bottomRight: Radius.circular(60.0)),
-                ),
-                margin: EdgeInsets.only(bottom: 50),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      top: 30.0, bottom: 50.0, left: 20.0, right: 20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          user.imageUrl.length > 0
-                            ? ClipRRect(
-                              child: Image.network(
-                              user.imageUrl,
-                              fit: BoxFit.fill,
-                              height: 40,
-                              width: 40,
-                          ),borderRadius: BorderRadius.circular(20.0),) : Icon(
-                            Icons.account_circle,
-                            size: 50.0,
-                            color: Colors.white,
-                          ),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Selamat Datang,',
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 1.0,
-                                  fontSize: 20.0,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              user.isProfileFilled
-                              ? Text(
-                                  user.name,
-                                  style: TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18.0,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : TextButton(
-                                  child: Text(
-                                    'Lengkapi Profile',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                  style: TextButton.styleFrom(
-                                      backgroundColor: Colors.white,
-                                      primary: primaryColor,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 10.0,
-                                          horizontal: 15.0)),
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                        context, '/parent/change_profile');
-                                  },
-                                ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 120,
-                left: 0,
-                right: 0,
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20.0),
-                  child: TextButton(
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        thirdColor,
-                      ),
-                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                          EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 15.0)),
-                    ),
-                    onPressed: () {
-                      _addChildButtonPressed(_childProvider.selectedChild);
-                    },
-                    child: Column(children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            child: _childProvider.selectedChild == null
-                                ? Row(
-                                children: [
-                                  Icon(
-                                    Icons.account_circle,
-                                    color: Colors.black,
-                                  ),
-                                  SizedBox(
-                                    width: 10.0,
-                                  ),
-                                  Text(
-                                    "Tambahkan anak",
-                                    style: TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: .5,
-                                      fontSize: 17.0,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              )
-                                : Row(
-                              children: [
-                                _childProvider.selectedChild.imageUrl.length > 0
-                                    ? ClipRRect(
-                                  child: Image.network(
-                                    _childProvider.selectedChild.imageUrl,
-                                    fit: BoxFit.fill,
-                                    height: 30,
-                                    width: 30,
-                                  ),borderRadius: BorderRadius.circular(20.0),)
-                                    : Icon(
-                                  Icons.account_circle,
-                                  color: Colors.black,
-                                ),
-                                SizedBox(
-                                  width: 10.0,
-                                ),
-                                Text(
-                                  _childProvider.selectedChild.name,
-                                  style: TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: .5,
-                                    fontSize: 17.0,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Icon(
-                            Icons.keyboard_arrow_down,
-                            size: 30.0,
-                            color: Colors.black,
-                          )
-                        ],
-                      ),
-                    ]),
-                  ),
-                ),
-              )
-            ],
-          ),
+          _buildProfile(),
           SizedBox(
             height: 15.0,
           ),
-          Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: secondaryColor,
-              ),
-              padding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 25.0),
-              margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-              child: _childProvider.selectedChild == null
-                  ? Text(
-                      "Anda belum menambahkan si kecil",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15.0,
-                        fontFamily: 'Poppins',
-                      ),
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Column(
-                          children: [
-                            Text(
-                              "Total Uang",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18.0,
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Rp ",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15.0,
-                                      fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w700),
-                                ),
-                                Text(
-                                  "${_childProvider.selectedChild.income - _childProvider.selectedChild.outcome}",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 25.0,
-                                      fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w700),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            TextButton(
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.white),
-                                padding: MaterialStateProperty.all(
-                                    EdgeInsets.symmetric(horizontal: 10.0)),
-                                shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                )),
-                              ),
-                              onPressed: () {
-                                Navigator.pushNamed(context, '/parent/transactions');
-                              },
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "Histori Keuangan",
-                                    style: TextStyle(
-                                      color: secondaryColor,
-                                      fontFamily: 'Poppins',
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.arrow_forward,
-                                    color: secondaryColor,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Total Point",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15.0,
-                                        fontFamily: 'Poppins',
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                  SizedBox(
-                                    width: 10.0,
-                                  ),
-                                  Text(
-                                    "${_childProvider.selectedChild.totalPoint}pts",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 23.0,
-                                        fontFamily: 'Poppins',
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        )
-                      ],
-                    )),
-          Padding(
-            padding: EdgeInsets.only(right: 20.0, left: 20.0, top: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Aktivitas',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 20.0,
-                    color: Colors.black,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          _buildInformasiKeuangan(),
+          _buildAktivitasAnak(),
           Padding(
             padding: EdgeInsets.only(right: 20.0, left: 20.0, top: 20.0),
             child: _buildReminder(),
           ),
+          Padding(
+            padding: EdgeInsets.only(right: 20.0, left: 20.0, top: 20.0),
+            child: _buildArticleHeader(),
+          ),
+          Padding(
+            padding: EdgeInsets.only(right: 20.0, left: 20.0, top: 20.0),
+            child: _news.length > 0
+                ? Column(
+                    children: [
+                      _buildArticle(),
+                      Container(
+                        child: _buildArticleButton(),
+                        width: double.infinity,
+                      )
+                    ],
+                ) : Text(
+                    "Tidak ada artikel"
+                ),
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildArticleButton() {
+    return TextButton(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(primaryColor),
+      ),
+      onPressed: () {
+        Navigator.pushNamed(context, '/parent/all_articles');
+      },
+      child: Text(
+        "Lihat Semua Artikel",
+        style: TextStyle(
+          color: Colors.white
+        ),
+      )
+    );
+  }
+
+  Widget _buildArticleHeader(){
+    return Padding(
+      padding: EdgeInsets.zero,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Artikel Edukasi Finansial',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              fontSize: 20.0,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildArticle(){
+    return ListView.builder(
+      itemCount: _news.length,
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index){
+        return InkWell(
+          onTap: (){print("abc");},
+          child: Padding(
+            padding: EdgeInsets.only(bottom: 10.0),
+            child: Row(
+              children: [
+                Container(
+                  width: 80.0,
+                  height: 80.0,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: Image.network(_news[index].imageUrl).image,
+                      fit: BoxFit.cover
+                    ),
+                    borderRadius: BorderRadius.circular(10.0)
+                  ),
+                ),
+                SizedBox(
+                  width: 20.0,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _news[index].title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 18.0,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                    SizedBox(height: 5.0,),
+                    Row(
+                      children: [
+                        Text(
+                          DateFormat("dd MMMM yyyy").format(_news[index].createdAt),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14.0,
+                            color: shadowColor,
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                        SizedBox(width: 10.0,),
+                        Icon(Icons.circle, size: 10.0, color: shadowColor,),
+                        SizedBox(width: 10.0,),
+                        Text(
+                          DateFormat("HH:mm").format(_news[index].createdAt),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14.0,
+                            color: shadowColor,
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildAktivitasAnak(){
+    return Padding(
+      padding: EdgeInsets.only(right: 20.0, left: 20.0, top: 20.0),
+      child: SubHeader(isLihatSemua: false, title: "Aktivitas",),
+    );
+  }
+
+  Widget _buildInformasiKeuangan(){
+    return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: secondaryColor,
+        ),
+        padding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 25.0),
+        margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+        child: _childProvider.selectedChild == null
+            ? Text(
+          "Anda belum menambahkan si kecil",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 15.0,
+            fontFamily: 'Poppins',
+          ),
+        )
+            : Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Column(
+              children: [
+                Text(
+                  "Total Uang",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18.0,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600),
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Rp ",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.0,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w700),
+                    ),
+                    Text(
+                      "${_childProvider.selectedChild.income - _childProvider.selectedChild.outcome}",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 25.0,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w700),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                TextButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                    MaterialStateProperty.all<Color>(
+                        Colors.white),
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(horizontal: 10.0)),
+                    shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        )),
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/parent/transactions');
+                  },
+                  child: Row(
+                    children: [
+                      Text(
+                        "Histori Keuangan",
+                        style: TextStyle(
+                          color: secondaryColor,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                      Icon(
+                        Icons.arrow_forward,
+                        color: secondaryColor,
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  child: Row(
+                    mainAxisAlignment:
+                    MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Total Point",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15.0,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w600),
+                      ),
+                      SizedBox(
+                        width: 10.0,
+                      ),
+                      Text(
+                        "${_childProvider.selectedChild.totalPoint}pts",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 23.0,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            )
+          ],
+        ));
+  }
+
+  Widget _buildProfile(){
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: primaryColor,
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(60.0),
+                bottomRight: Radius.circular(60.0)),
+          ),
+          margin: EdgeInsets.only(bottom: 50),
+          child: Padding(
+            padding: const EdgeInsets.only(
+                top: 30.0, bottom: 50.0, left: 20.0, right: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    user.imageUrl.length > 0
+                        ? ClipRRect(
+                      child: Image.network(
+                        user.imageUrl,
+                        fit: BoxFit.fill,
+                        height: 40,
+                        width: 40,
+                      ),borderRadius: BorderRadius.circular(20.0),) : Icon(
+                      Icons.account_circle,
+                      size: 50.0,
+                      color: Colors.white,
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Selamat Datang,',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1.0,
+                            fontSize: 20.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                        user.isProfileFilled
+                            ? Text(
+                          user.name,
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18.0,
+                            color: Colors.white,
+                          ),
+                        )
+                            : TextButton(
+                          child: Text(
+                            'Lengkapi Profile',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700),
+                          ),
+                          style: TextButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              primary: primaryColor,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10.0,
+                                  horizontal: 15.0)),
+                          onPressed: () {
+                            Navigator.pushNamed(
+                                context, '/parent/change_profile');
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        Positioned(
+          top: 120,
+          left: 0,
+          right: 0,
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 20.0),
+            child: TextButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  thirdColor,
+                ),
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    EdgeInsets.symmetric(
+                        horizontal: 20.0, vertical: 15.0)),
+              ),
+              onPressed: () {
+                _addChildButtonPressed(_childProvider.selectedChild);
+              },
+              child: Column(children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      child: _childProvider.selectedChild == null
+                          ? Row(
+                        children: [
+                          Icon(
+                            Icons.account_circle,
+                            color: Colors.black,
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Text(
+                            "Tambahkan anak",
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: .5,
+                              fontSize: 17.0,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      )
+                          : Row(
+                        children: [
+                          _childProvider.selectedChild.imageUrl.length > 0
+                              ? ClipRRect(
+                            child: Image.network(
+                              _childProvider.selectedChild.imageUrl,
+                              fit: BoxFit.fill,
+                              height: 30,
+                              width: 30,
+                            ),borderRadius: BorderRadius.circular(20.0),)
+                              : Icon(
+                            Icons.account_circle,
+                            color: Colors.black,
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Text(
+                            _childProvider.selectedChild.name,
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: .5,
+                              fontSize: 17.0,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 30.0,
+                      color: Colors.black,
+                    )
+                  ],
+                ),
+              ]),
+            ),
+          ),
+        )
+      ],
     );
   }
 

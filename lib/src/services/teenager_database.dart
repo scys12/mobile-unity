@@ -37,9 +37,10 @@ class TeenagerDatabase{
 
   Teenager _teenagerFromSnapshot(DocumentSnapshot snapshot) {
     var data = snapshot.data();
-    DateTime bornDate = data["born_date"].toDate();
-    List<bool> achievements = data["achievements"].cast<bool>();
-    return data != null ? Teenager(
+    if (data != null) {
+      DateTime bornDate = data["born_date"].toDate();
+      List<bool> achievements = data["achievements"].cast<bool>();
+      return Teenager(
         uid: snapshot.id,
         phoneNumber: data["phone_number"],
         isProfileFilled: data["is_profile_filled"],
@@ -52,7 +53,10 @@ class TeenagerDatabase{
         income: data["income"],
         achievements: achievements,
         bornDate: bornDate
-    ) : null;
+    );
+    } else {
+      return null;
+    }
   }
 
 

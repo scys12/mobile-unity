@@ -6,6 +6,7 @@ import 'package:mobile_unity/src/models/teenager.dart';
 import 'package:mobile_unity/src/models/wish.dart';
 import 'package:mobile_unity/src/pages/kid/detail_task.dart';
 import 'package:mobile_unity/src/pages/kid/detail_wish.dart';
+import 'package:mobile_unity/src/pages/teenager/detail_wish.dart';
 import 'package:mobile_unity/src/provider/task_provider.dart';
 import 'package:mobile_unity/src/provider/wish_provider.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
@@ -323,7 +324,7 @@ class _TeenagerAchivementState extends State<TeenagerAchivement> with TickerProv
       onTap: (){
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => DetailWishKid(wishId: _wish.uid))
+          MaterialPageRoute(builder: (context) => DetailWishTeenager(wishId: _wish.uid))
         );
       },
       child: Container(

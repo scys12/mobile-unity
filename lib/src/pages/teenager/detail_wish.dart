@@ -4,10 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/child.dart';
+import 'package:mobile_unity/src/models/teenager.dart';
 import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/provider/task_provider.dart';
 import 'package:mobile_unity/src/provider/wish_provider.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
+import 'package:mobile_unity/src/services/teenager_database.dart';
 import 'package:mobile_unity/src/services/wish_database.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
@@ -16,16 +18,16 @@ import 'package:mobile_unity/src/widgets/loading.dart';
 import 'package:mobile_unity/src/widgets/sub_header.dart';
 import 'package:provider/provider.dart';
 
-class DetailWishKid extends StatefulWidget {
+class DetailWishTeenager extends StatefulWidget {
   final String wishId;
-  DetailWishKid({this.wishId});
+  DetailWishTeenager({this.wishId});
   @override
-  _DetailWishKidState createState() => _DetailWishKidState();
+  _DetailWishTeenagerState createState() => _DetailWishTeenagerState();
 }
 
-class _DetailWishKidState extends State<DetailWishKid> {
+class _DetailWishTeenagerState extends State<DetailWishTeenager> {
   WishProvider _wishProvider;
-  Child _user;
+  Teenager _user;
   bool _loading = true;
   List<String> frekuensi = [
     'Setiap Hari',
@@ -36,7 +38,7 @@ class _DetailWishKidState extends State<DetailWishKid> {
   @override
   void initState() {
     super.initState();
-    _user = Provider.of<Child>(context, listen: false);
+    _user = Provider.of<Teenager>(context, listen: false);
     _wishProvider = Provider.of(context, listen: false);
     _wishProvider.getWish(wishId: widget.wishId);
   }
@@ -93,25 +95,25 @@ class _DetailWishKidState extends State<DetailWishKid> {
           "is_done" : true
         };
         await WishDatabase(uid: _wishProvider.selectedWish.uid).updateWish(wishData);
-        Map<String, dynamic> childData = {
+        Map<String, dynamic> teenagerData = {
           "total_point" : _user.totalPoint + _wishProvider.selectedWish.point,
           "achievements" : _user.achievements,
         };
         var totalWish = await WishDatabase().countFinishedWish(_user.uid);
         if (totalWish >= 1) {
-          childData["achievements"][1] = true;
+          teenagerData["achievements"][1] = true;
         }
         if (totalWish >= 5) {
-          childData["achievements"][3] = true;
+          teenagerData["achievements"][3] = true;
         }
         if (totalWish >= 15) {
-          childData["achievements"][5] = true;
+          teenagerData["achievements"][5] = true;
         }
-        await ChildDatabase(uid: _user.uid).updateChildData(childData);
+        await TeenagerDatabase(uid: _user.uid).updateTeenagerData(teenagerData);
         successMessage(context, "Selamat harapan kamu sudah terkabul");
         Timer(Duration(seconds: 1), () {
           Navigator.pop(context);
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => DetailWishKid(wishId: widget.wishId,)));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DetailWishTeenager(wishId: widget.wishId,)));
         });
       },
       child: Text("Selesaikan impian!", style: TextStyle(

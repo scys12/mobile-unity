@@ -4,6 +4,7 @@ import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/teenager.dart';
 import 'package:mobile_unity/src/models/wish.dart';
 import 'package:mobile_unity/src/pages/kid/detail_wish.dart';
+import 'package:mobile_unity/src/pages/teenager/detail_wish.dart';
 import 'package:mobile_unity/src/provider/wish_provider.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
@@ -107,7 +108,7 @@ class _AllTeenagerWishesState extends State<AllTeenagerWishes> {
     return _wish != null ? InkWell(
       splashFactory: InkRipple.splashFactory,
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => DetailWishKid(wishId: _wish.uid,)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => DetailWishTeenager(wishId: _wish.uid,)));
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
@@ -207,7 +208,7 @@ class _AllTeenagerWishesState extends State<AllTeenagerWishes> {
       physics: NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) => InkWell(
         onTap: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => DetailWishKid(wishId: pastWish[index].uid,)));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => DetailWishTeenager(wishId: pastWish[index].uid,)));
         },
         splashFactory: InkRipple.splashFactory,
         child: Container(

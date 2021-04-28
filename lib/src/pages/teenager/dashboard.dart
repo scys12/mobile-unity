@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_unity/src/models/child.dart';
+import 'package:mobile_unity/src/models/financial.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/models/task.dart';
 import 'package:mobile_unity/src/models/teenager.dart';
+import 'package:mobile_unity/src/models/wish.dart';
 import 'package:mobile_unity/src/pages/kid/detail_task.dart';
+import 'package:mobile_unity/src/provider/finance_provider.dart';
 import 'package:mobile_unity/src/provider/task_provider.dart';
 import 'package:mobile_unity/src/shared/alert_dialog.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
@@ -21,10 +24,60 @@ class DashboardTeenager extends StatefulWidget {
 class _DashboardTeenagerState extends State<DashboardTeenager> {
   Teenager user;
   List<Task> tasks = [];
+  Wish _wish;
+  FinancialProvider _financialProvider;
+  List<Financial> financials = [];
+  bool _loading = true;
+  List<Financial> _filteredFinancials = [];
+  int _income = 0;
+  int _outcome = 0;
+  final List<String> frekuensi = [
+    "hari",
+    "minggu",
+    "bulan"
+  ];
+
+  List<Financial> filterFinancial(int _currentType, DateTime wishCreatedAt){
+    List<Financial> filtered = [];
+    var now = DateTime.now();
+    var weekDay = now.weekday;
+    var startDate = now.subtract(Duration(days: weekDay-1));
+
+    if (_currentType == 0) {
+      filtered = financials.where((element) => element.createdAt.difference(now).inDays == 0 && element.createdAt.difference(wishCreatedAt).inSeconds > 0).toList();
+    }else if (_currentType == 1) {
+      filtered = financials.where((element) => (startDate.difference(element.createdAt).inDays <=0 && startDate.difference(element.createdAt).inDays >=-6) && element.createdAt.difference(wishCreatedAt).inSeconds > 0).toList();
+    }else if(_currentType == 2) {
+      filtered = financials.where((element) => element.createdAt.month == now.month && element.createdAt.year == now.year && element.createdAt.difference(wishCreatedAt).inSeconds > 0).toList();
+    }
+    return filtered;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    user = Provider.of<Teenager>(context, listen: false);
+    _financialProvider = Provider.of(context, listen: false);
+    initData();
+  }
+
+  initData() async{
+    await _financialProvider.getFinancialBasedChildId(childId: user.uid);
+  }
+
   @override
   Widget build(BuildContext context) {
     user = Provider.of<Teenager>(context);
-    return Scaffold(
+    _financialProvider = Provider.of(context);
+    _wish = Provider.of<Wish>(context);
+    if (_financialProvider.financials != null) {
+      setState(() {
+        _loading = false;
+      });
+      financials = _financialProvider.financials;
+      _checkWishReminder();
+    }
+    return _loading ? Loading() :  Scaffold(
       body: ListView(
         physics: ClampingScrollPhysics(),
         children: [
@@ -45,31 +98,19 @@ class _DashboardTeenagerState extends State<DashboardTeenager> {
                   height: 15.0,
                 ),
                 SubHeader(
-                  title: 'Tugasku',
+                  title: 'Reminder',
                   isLihatSemua: false,
                 ),
                 SizedBox(
                   height: 15.0,
                 ),
-                tasks.length > 0 ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ...tasks.asMap().map((idx, element) =>
-                        MapEntry(idx, Expanded(
-                          child: _buildCard(idx, element),
-                        )
-                        )).values.toList(),
-                  ],
-                ) : Text(
-                  'Tidak ada tugas',
-                  style: TextStyle(
-                      fontSize: 15.0,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500
-                  ),
-                ),
+                _buildReminder(),
                 SizedBox(
-                  height: 25.0,
+                  height: 10.0,
+                ),
+                _buildReminderIncomeOutcome(),
+                SizedBox(
+                  height: 15.0,
                 ),
                 _buildButtonAllTask(),
               ],
@@ -86,6 +127,107 @@ class _DashboardTeenagerState extends State<DashboardTeenager> {
         _buildWelcomeInformation(),
         _buildTransactionInformation(),
       ],
+    );
+  }
+
+  Widget _buildReminderIncomeOutcome(){
+    return Column(
+      children: [
+        user.incomeFrekuensi > 0
+          ? _buildReminderIncome()
+          : Container(),
+        SizedBox(height: 10.0,),
+        user.outcomeFrekuensi > 0
+          ? _buildReminderOutcome()
+          : Container(),
+      ],
+    );
+  }
+
+  Widget _buildReminderOutcome(){
+    List<Financial> filteredFinancials = filterFinancial(user.outcomeFrekuensi-1, user.outcomeDate);
+    int outcome = _countIncomeOutcome("outcome", filteredFinancials);
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(15.0),
+      decoration: BoxDecoration(
+          color: filteredFinancials.length >= 0 ? outcome < user.outcomeMoney ? greenColor : redColor : redColor,
+          borderRadius: BorderRadius.circular(5.0)
+      ),
+      child: Column(
+        children: [
+          Icon(Icons.notifications, color: Colors.white,),
+          SizedBox(height: 10.0,),
+          Text(
+            outcome < user.outcomeMoney
+                ? "Yeay, pengeluaranmu masih sedikit"
+                : "Yahh, pengeluaranmu melebihi yang kamu inginkan",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w500,
+              fontSize: 14.0,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 20.0,),
+          Text(
+            outcome < user.outcomeMoney
+                ? "Pengeluaran kamu untuk ${frekuensi[user.outcomeFrekuensi-1]} ini berupa Rp ${outcome} dari Rp ${user.outcomeMoney}"
+                : "Pengeluaran kamu melebihi yang kamu inginkan pada ${frekuensi[user.outcomeFrekuensi-1]} ini. Pengeluaran kamu sebanyak Rp ${outcome} dari Rp ${user.outcomeMoney}",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              fontSize: 15.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReminderIncome(){
+    List<Financial> filteredFinancials = filterFinancial(user.incomeFrekuensi-1, user.incomeDate);
+    int outcome = _countIncomeOutcome("outcome", filteredFinancials);
+    int income = _countIncomeOutcome("income", filteredFinancials);
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(15.0),
+      decoration: BoxDecoration(
+          color: filteredFinancials.length > 0 ? income-outcome > user.incomeMoney ? greenColor : redColor : redColor,
+          borderRadius: BorderRadius.circular(5.0)
+      ),
+      child: Column(
+        children: [
+          Icon(Icons.notifications, color: Colors.white,),
+          SizedBox(height: 10.0,),
+          Text(
+            income-outcome < user.incomeMoney
+                ? "Yahh, kamu belum mencapai target pemasukan yang kamu inginkan"
+                : "Yeay, pemasukanmu sesuai dengan yang kamu inginkan",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w500,
+              fontSize: 14.0,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 20.0,),
+          Text(
+            income-outcome < user.incomeMoney
+              ? "Kamu baru berhasil menabung sebanyak Rp ${income-outcome} dari Rp ${user.incomeMoney} untuk pemasukan pada ${frekuensi[user.incomeFrekuensi-1]} ini"
+              : "Kamu sudah berhasil menabung sebanyak ${income-outcome} untuk pemasukan pada ${frekuensi[user.incomeFrekuensi-1]} ini",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              fontSize: 15.0,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -109,7 +251,7 @@ class _DashboardTeenagerState extends State<DashboardTeenager> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "Lihat semua tugasku",
+            "Lihat semua tantanganku",
             style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w600,
@@ -211,7 +353,7 @@ class _DashboardTeenagerState extends State<DashboardTeenager> {
                               horizontal: 15.0)),
                       onPressed: () {
                         Navigator.pushNamed(
-                            context, '/parent/change_profile');
+                            context, '/teenager/change_profile');
                       },
                     ),
                   ],
@@ -560,6 +702,97 @@ class _DashboardTeenagerState extends State<DashboardTeenager> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  int _countIncomeOutcome(String type, List<Financial> finances){
+    return finances.where((element) => element.type == type).toList().fold(0, (previous, current) => previous + current.money);
+  }
+
+  _checkWishReminder(){
+    if (_wish != null) {
+      var frekuensi = _wish.frekuensi;
+      _filteredFinancials = filterFinancial(frekuensi, _wish.createdAt);
+      _outcome = _countIncomeOutcome("outcome", _filteredFinancials);
+      _income = _countIncomeOutcome("income", _filteredFinancials);
+    }
+  }
+
+  Widget _buildReminder(){
+    var type;
+    if (_wish != null) {
+      type = _wish.frekuensi == 0 ? "hari" : _wish.frekuensi == 1 ? "minggu" : "bulan";
+    } else {
+      type = "";
+    }
+    return _wish != null
+        ? Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(15.0),
+      decoration: BoxDecoration(
+          color: _filteredFinancials.length > 0 ? _income-_outcome > _wish.expectedMoney ? primaryColor : redColor : redColor,
+          borderRadius: BorderRadius.circular(5.0)
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Icon(Icons.notifications, color: Colors.white,),
+          SizedBox(height: 10.0,),
+          _filteredFinancials.length > 0
+              ? _income-_outcome >= _wish.expectedMoney
+              ? Text(
+            "Kamu sudah berhasil menabung sebanyak ${_income-_outcome} untuk impian ${_wish.title} pada ${type} ini",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              fontSize: 15.0,
+            ),
+          )
+              : Text(
+            "Tabunganmu untuk memenuhi impian pada ${type} ini masih belum tercapai. Kamu baru menabung sebanyak Rp ${_income-_outcome} dari Rp ${_wish.expectedMoney}.",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              fontSize: 15.0,
+            ),
+          )
+              : Text(
+            "Kamu belum ada menabung pada ${type} ini untuk impian ${_wish.title}. Kamu harus menabung sebanyak Rp ${_wish.expectedMoney}",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              fontSize: 15.0,
+            ),
+          )
+        ],
+      ),
+    )
+        : Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Icon(Icons.notifications, color: Colors.white,),
+          SizedBox(height: 10.0,),
+          Text(
+            "Kamu belum membuat satu impian",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              fontSize: 15.0,
+            ),
+          ),
+        ],
+      ),
+      width: double.infinity,
+      padding: EdgeInsets.all(15.0),
+      decoration: BoxDecoration(
+          color: redColor,
+          borderRadius: BorderRadius.circular(5.0)
       ),
     );
   }

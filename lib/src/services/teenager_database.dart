@@ -13,18 +13,34 @@ class TeenagerDatabase{
     print("FUTURE TEENAGER ${uid}");
     var resp =  await _teenagerCollection.doc(uid).get();
     var data = resp.data();
-    return data != null ? Teenager(
-      uid: uid,
-      phoneNumber: data["phone_number"],
-      isProfileFilled: data["is_profile_filled"],
-      gender: data["gender"],
-      email: data["email"],
-      name: data["name"],
-      imageUrl: data["image_url"],
-      totalPoint: data["total_point"],
-      outcome: data["outcome"],
-      income: data["income"]
-    ) : null;
+    if (data != null) {
+      DateTime bornDate = data["born_date"].toDate();
+      DateTime incomeDate = data["income_date"].toDate();
+      DateTime outcomeDate = data["outcome_date"].toDate();
+      List<bool> achievements = data["achievements"].cast<bool>();
+      return Teenager(
+        uid: resp.id,
+        phoneNumber: data["phone_number"],
+        isProfileFilled: data["is_profile_filled"],
+        gender: data["gender"],
+        email: data["email"],
+        name: data["name"],
+        imageUrl: data["image_url"],
+        totalPoint: data["total_point"],
+        outcome: data["outcome"],
+        income: data["income"],
+        achievements: achievements,
+        bornDate: bornDate,
+        incomeFrekuensi: data["income_frekuensi"],
+        incomeMoney: data["income_money"],
+        outcomeFrekuensi: data["outcome_frekuensi"],
+        outcomeMoney: data["outcome_money"],
+        incomeDate: incomeDate,
+        outcomeDate: outcomeDate,
+      );
+    } else {
+      return null;
+    }
   }
 
   Stream<Teenager> getTeenagerData(){
@@ -39,6 +55,8 @@ class TeenagerDatabase{
     var data = snapshot.data();
     if (data != null) {
       DateTime bornDate = data["born_date"].toDate();
+      DateTime incomeDate = data["income_date"].toDate();
+      DateTime outcomeDate = data["outcome_date"].toDate();
       List<bool> achievements = data["achievements"].cast<bool>();
       return Teenager(
         uid: snapshot.id,
@@ -52,8 +70,14 @@ class TeenagerDatabase{
         outcome: data["outcome"],
         income: data["income"],
         achievements: achievements,
-        bornDate: bornDate
-    );
+        bornDate: bornDate,
+        incomeFrekuensi: data["income_frekuensi"],
+        incomeMoney: data["income_money"],
+        outcomeFrekuensi: data["outcome_frekuensi"],
+        outcomeMoney: data["outcome_money"],
+        incomeDate: incomeDate,
+        outcomeDate: outcomeDate,
+      );
     } else {
       return null;
     }

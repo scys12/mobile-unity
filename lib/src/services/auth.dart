@@ -108,6 +108,12 @@ class AuthService {
         data["income"] = 0;
         data["born_date"] = DateTime.now();
         data["achievements"] = [false, false, false, false, false, false];
+        data["income_frekuensi"] = 0;
+        data["income_money"] = 0;
+        data["outcome_frekuensi"] = 0;
+        data["outcome_money"] = 0;
+        data["income_date"] = DateTime.now();
+        data["outcome_date"] = DateTime.now();
         await TeenagerDatabase(uid: user.uid).createTeenagerData(data);
         _user = await _teenagerFromFirebaseUser(user);
       }

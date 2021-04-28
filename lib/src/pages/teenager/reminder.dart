@@ -271,7 +271,7 @@ class _State extends State<ReminderTeenager> {
                     ),
                   ) : Container(),
                   SizedBox(height: 40.0,),
-                  (_detail != "")
+                  (_dropDownFrequencyState != "")
                       ? ElevatedButton(
                     onPressed: () async {
                       setState(() {
@@ -279,53 +279,32 @@ class _State extends State<ReminderTeenager> {
                       });
                       if(_loading) createLoadingAlertDialog(context);
 
-
-                      var data = {
-                        "child_id" : _user.uid,
-                        "created_at" : DateTime.now(),
-                        "description" : _detail,
-                        "money" : int.parse(_amount),
-                        "type" : "income",
-                        "title" : "",
-                      };
-                      await FinancialDatabase().createFinancial(data);
-
                       Map<String, dynamic> childData = {
-                        "income" : _user.income + int.parse(_amount),
                       };
-                      var wishes = _wishProvider.wishes.where((element) => !element.isDone && element.deadline.difference(DateTime.now()).inDays >= 0);
-                      var returnContext = false;
-                      if(wishes.length > 0) {
-                        var wish = wishes.first;
-                        Map<String, dynamic> wishData = {
-                          "current_money" : wish.currentMoney + int.parse(_amount)
-                        };
-                        if (wishData["current_money"] >= wish.target) {
-                          returnContext = true;
-                          wishData["is_done"] = true;
-                          childData["total_point"] = _user.totalPoint + wish.point;
+                      if (_dropDownReminderState == "Pemasukan") {
+                        childData["income_money"] = int.parse(_amount);
+                        childData["income_date"] = DateTime.now();
+                        if (_dropDownFrequencyState == "hari") {
+                          childData["income_frekuensi"] = 1;
+                        }else if (_dropDownFrequencyState == "minggu") {
+                          childData["income_frekuensi"] = 2;
+                        }else {
+                          childData["income_frekuensi"] = 3;
                         }
-                        await WishDatabase(uid: wish.uid).updateWish(wishData);
-                      }
-                      var totalWish = await WishDatabase().countFinishedWish(_user.uid);
-                      childData["achievements"] = _user.achievements;
-                      if (totalWish >= 1) {
-                        childData["achievements"][1] = true;
-                      }
-                      if (totalWish >= 5) {
-                        childData["achievements"][3] = true;
-                      }
-                      if (totalWish >= 15) {
-                        childData["achievements"][5] = true;
+                      }else{
+                        childData["outcome_money"] = int.parse(_amount);
+                        childData["outcome_date"] = DateTime.now();
+                        if (_dropDownFrequencyState == "hari") {
+                          childData["outcome_frekuensi"] = 1;
+                        }else if (_dropDownFrequencyState == "minggu") {
+                          childData["outcome_frekuensi"] = 2;
+                        }else {
+                          childData["outcome_frekuensi"] = 3;
+                        }
                       }
                       await TeenagerDatabase(uid: _user.uid).updateTeenagerData(childData);
                       Navigator.pop(context);
-                      if (returnContext) {
-                        successMessage(context, "Selamat harapan kamu sudah terkabul");
-                        Timer(Duration(seconds: 3), () {
-                          Navigator.pushReplacementNamed(context, '/teenager/wrapper');
-                        });
-                      } else Navigator.pushReplacementNamed(context, '/teenager/wrapper');
+                      Navigator.pushReplacementNamed(context, '/teenager/wrapper');
                     },
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all<EdgeInsetsGeometry>(

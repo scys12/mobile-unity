@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.myits.mobile_unity">
    <application
-        android:label="mobile_unity"
-        android:icon="@mipmap/ic_launcher">
+        android:label="AturUang"
+        android:icon="@drawable/splash">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

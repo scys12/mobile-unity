@@ -11,6 +11,7 @@ import 'package:mobile_unity/src/services/teenager_database.dart';
 class AuthService {
   final FirebaseAuth _auth =  FirebaseAuth.instance;
   String verificationId;
+  int resendToken;
 
   Future<Parent> _parentFromFirebaseUser(User user) async{
     return user != null && user.providerData[0].providerId == 'password' ? await ParentDatabase(uid: user.uid).users : null ;
@@ -48,6 +49,7 @@ class AuthService {
     }
 
     void codeSent(String verificationId, [int resendToken]) async {
+      this.resendToken = resendToken;
       this.verificationId = verificationId;
     }
 
@@ -62,6 +64,7 @@ class AuthService {
           verificationFailed: verificationFailed,
           codeSent: codeSent,
           timeout: const Duration(minutes: 2),
+          forceResendingToken: this.resendToken,
           codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
     }catch (e) {
       print("AUTH VERIFY PHONE NUMBER FAILED : ${e}");

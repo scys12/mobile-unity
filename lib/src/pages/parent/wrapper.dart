@@ -41,6 +41,7 @@ class _WrapperParentState extends State<WrapperParent> {
     childProvider = Provider.of<ChildProvider>(context, listen: false);
     parent = Provider.of<Parent>(context, listen: false);
     childProvider.getCurrentChild(parentId: parent.uid);
+    print("abc");
     _tabIndex = Provider.of<TabIndex>(context, listen: false);
     _tabIndex.currentIndex = 0;
   }

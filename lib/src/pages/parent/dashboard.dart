@@ -39,7 +39,9 @@ class _DashboardParentState extends State<DashboardParent> {
     super.initState();
     user = Provider.of<Parent>(context, listen: false);
     _childProvider = Provider.of<ChildProvider>(context, listen: false);
-    _childProvider.getCurrentChild(parentId: user.uid);
+    if (_childProvider.selectedChild == null) {
+      _childProvider.getCurrentChild(parentId: user.uid);
+    }
   }
 
   List<Financial> filterFinancial(int _currentType, DateTime wishCreatedAt){

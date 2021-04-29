@@ -407,7 +407,7 @@ class _DashboardKidState extends State<DashboardKid> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    "Total Uang",
+                    "Total Point",
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w400,

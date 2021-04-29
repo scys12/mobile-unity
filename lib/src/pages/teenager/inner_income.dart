@@ -4,7 +4,9 @@ import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile_unity/src/models/child.dart';
+import 'package:mobile_unity/src/models/financial.dart';
 import 'package:mobile_unity/src/models/teenager.dart';
+import 'package:mobile_unity/src/provider/finance_provider.dart';
 import 'package:mobile_unity/src/provider/wish_provider.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
 import 'package:mobile_unity/src/services/financial_database.dart';
@@ -42,6 +44,20 @@ class _State extends State<InnerIncomeTeenager> {
     "Lainnya"
   ];
 
+  FinancialProvider _financialProvider;
+  List<Financial> financials = [];
+  List<Financial> _filteredFinancials = [];
+  int _income = 0;
+  int _outcome = 0;
+
+  List<Financial> filterFinancial(){
+    List<Financial> filtered = [];
+    var now = DateTime.now();
+    var startDate = now.subtract(Duration(days: 6));
+    filtered = financials.where((element) => (startDate.difference(element.createdAt).inDays <=0 && startDate.difference(element.createdAt).inDays >=-5)).toList();
+    return filtered;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -54,6 +70,8 @@ class _State extends State<InnerIncomeTeenager> {
   Widget build(BuildContext context) {
     _wishProvider = Provider.of<WishProvider>(context);
     _loadingWish = _wishProvider.wishes != null ? false : true;
+    _financialProvider = Provider.of(context);
+
     return _loadingWish ? Loading() : Scaffold(
       appBar: CustomAppBar(true, "Pemasukan Baru"),
       body: ListView(
@@ -299,41 +317,53 @@ class _State extends State<InnerIncomeTeenager> {
                   (_detail != "")
                       ? ElevatedButton(
                     onPressed: () async {
-                      setState(() {
-                        _loading = true;
+                      await _financialProvider.getFinancialBasedChildId(childId: _user.uid);
+                      financials = _financialProvider.financials;
+                      _filteredFinancials = filterFinancial();
+                      Set<int> date;
+                      _filteredFinancials.forEach((element) {
+                        date.add(element.createdAt.day);
                       });
-                      if(_loading) createLoadingAlertDialog(context);
+                      if (date.length == 7) {
+                        _outcome = _countIncomeOutcome("outcome", _filteredFinancials);
+                        _income = _countIncomeOutcome("income", _filteredFinancials);
 
-                      var _title = _dropDownState;
-                      if (_dropDownState == "Lainnya") {
-                        _title = _dropDownLainnyaState;
                       }
-                      var data = {
-                        "child_id" : _user.uid,
-                        "created_at" : DateTime.now(),
-                        "description" : _detail,
-                        "money" : int.parse(_amount),
-                        "type" : "income",
-                        "title" : _title,
-                      };
-                      await FinancialDatabase().createFinancial(data);
-
-                      Map<String, dynamic> childData = {
-                        "income" : _user.income + int.parse(_amount),
-                      };
-                      var wishes = _wishProvider.wishes.where((element) => !element.isDone && element.deadline.difference(DateTime.now()).inDays >= 0);
-                      var returnContext = false;
-                      if(wishes.length > 0) {
-                        var wish = wishes.first;
-                        Map<String, dynamic> wishData = {
-                          "current_money" : wish.currentMoney + int.parse(_amount)
-                        };
-                        await WishDatabase(uid: wish.uid).updateWish(wishData);
-                      }
-
-                      await TeenagerDatabase(uid: _user.uid).updateTeenagerData(childData);
-                      Navigator.pop(context);
-                      Navigator.pushReplacementNamed(context, '/teenager/wrapper');
+                      // setState(() {
+                      //   _loading = true;
+                      // });
+                      // if(_loading) createLoadingAlertDialog(context);
+                      //
+                      // var _title = _dropDownState;
+                      // if (_dropDownState == "Lainnya") {
+                      //   _title = _dropDownLainnyaState;
+                      // }
+                      // var data = {
+                      //   "child_id" : _user.uid,
+                      //   "created_at" : DateTime.now(),
+                      //   "description" : _detail,
+                      //   "money" : int.parse(_amount),
+                      //   "type" : "income",
+                      //   "title" : _title,
+                      // };
+                      // await FinancialDatabase().createFinancial(data);
+                      //
+                      // Map<String, dynamic> childData = {
+                      //   "income" : _user.income + int.parse(_amount),
+                      // };
+                      // var wishes = _wishProvider.wishes.where((element) => !element.isDone && element.deadline.difference(DateTime.now()).inDays >= 0);
+                      // var returnContext = false;
+                      // if(wishes.length > 0) {
+                      //   var wish = wishes.first;
+                      //   Map<String, dynamic> wishData = {
+                      //     "current_money" : wish.currentMoney + int.parse(_amount)
+                      //   };
+                      //   await WishDatabase(uid: wish.uid).updateWish(wishData);
+                      // }
+                      //
+                      // await TeenagerDatabase(uid: _user.uid).updateTeenagerData(childData);
+                      // Navigator.pop(context);
+                      // Navigator.pushReplacementNamed(context, '/teenager/wrapper');
                     },
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
@@ -375,5 +405,9 @@ class _State extends State<InnerIncomeTeenager> {
         ],
       ),
     );
+  }
+
+  int _countIncomeOutcome(String type, List<Financial> finances){
+    return finances.where((element) => element.type == type).toList().fold(0, (previous, current) => previous + current.money);
   }
 }

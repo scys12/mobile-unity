@@ -192,7 +192,7 @@ class _AllTeenagerWishesState extends State<AllTeenagerWishes> {
         ),
       ),
     ) : Text(
-      'Tidak ada impian yang sedang diwujudkan si kecil',
+      'Tidak ada impian yang sedang aku diwujudkan',
       style: TextStyle(
           fontSize: 15.0,
           fontFamily: 'Poppins',

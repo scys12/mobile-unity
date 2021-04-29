@@ -17,6 +17,7 @@ class TeenagerDatabase{
       DateTime bornDate = data["born_date"].toDate();
       DateTime incomeDate = data["income_date"].toDate();
       DateTime outcomeDate = data["outcome_date"].toDate();
+      DateTime lastLogin = data["last_login"].toDate();
       List<bool> achievements = data["achievements"].cast<bool>();
       return Teenager(
         uid: resp.id,
@@ -37,6 +38,8 @@ class TeenagerDatabase{
         outcomeMoney: data["outcome_money"],
         incomeDate: incomeDate,
         outcomeDate: outcomeDate,
+        lastLogin: lastLogin,
+        totalLogin: data["total_login"]
       );
     } else {
       return null;
@@ -57,6 +60,7 @@ class TeenagerDatabase{
       DateTime bornDate = data["born_date"].toDate();
       DateTime incomeDate = data["income_date"].toDate();
       DateTime outcomeDate = data["outcome_date"].toDate();
+      DateTime lastLogin = data["last_login"].toDate();
       List<bool> achievements = data["achievements"].cast<bool>();
       return Teenager(
         uid: snapshot.id,
@@ -77,6 +81,8 @@ class TeenagerDatabase{
         outcomeMoney: data["outcome_money"],
         incomeDate: incomeDate,
         outcomeDate: outcomeDate,
+        lastLogin: lastLogin,
+        totalLogin: data["total_login"],
       );
     } else {
       return null;

@@ -17,6 +17,8 @@ class Teenager{
   final int outcomeFrekuensi;
   final DateTime incomeDate;
   final DateTime outcomeDate;
+  final int totalLogin;
+  final DateTime lastLogin;
 
-  Teenager({this.uid, this.incomeDate, this.outcomeDate, this.email, this.name, this.gender, this.phoneNumber, this.isProfileFilled, this.imageUrl, this.totalPoint, this.income, this.outcome, this.achievements, this.bornDate, this.incomeMoney, this.outcomeMoney, this.incomeFrekuensi, this.outcomeFrekuensi});
+  Teenager({this.uid, this.incomeDate, this.outcomeDate, this.email, this.name, this.gender, this.phoneNumber, this.isProfileFilled, this.imageUrl, this.totalPoint, this.income, this.outcome, this.achievements, this.bornDate, this.incomeMoney, this.outcomeMoney, this.incomeFrekuensi, this.outcomeFrekuensi, this.lastLogin, this.totalLogin});
 }

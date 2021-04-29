@@ -33,6 +33,7 @@ import 'package:mobile_unity/src/pages/parent/transactions.dart';
 import 'package:mobile_unity/src/pages/parent/wrapper.dart';
 import 'package:mobile_unity/src/pages/teenager/add_wish.dart';
 import 'package:mobile_unity/src/pages/teenager/auth/authenticate.dart';
+import 'package:mobile_unity/src/pages/teenager/challenges.dart';
 import 'package:mobile_unity/src/pages/teenager/change_profile.dart';
 import 'package:mobile_unity/src/pages/teenager/dashboard.dart';
 import 'package:mobile_unity/src/pages/teenager/inner_income.dart';
@@ -43,6 +44,7 @@ import 'package:mobile_unity/src/pages/teenager/wishes.dart';
 import 'package:mobile_unity/src/pages/teenager/wrapper.dart';
 import 'package:mobile_unity/src/pages/welcome_parent_child.dart';
 import 'package:mobile_unity/src/pages/wrapper.dart';
+import 'package:mobile_unity/src/provider/challenge_provider.dart';
 import 'package:mobile_unity/src/provider/child_provider.dart';
 import 'package:mobile_unity/src/provider/finance_provider.dart';
 import 'package:mobile_unity/src/provider/task_provider.dart';
@@ -102,6 +104,9 @@ class MyApp extends StatelessWidget {
                       create: (c) => TaskProvider(),
                     ),
                     ChangeNotifierProvider(
+                      create: (c) => ChallengeProvider(),
+                    ),
+                    ChangeNotifierProvider(
                       create: (c) => WishProvider(),
                     ),
                     ChangeNotifierProvider(
@@ -146,6 +151,7 @@ class MyApp extends StatelessWidget {
                       '/teenager/add_wish': (context) => AddWishTeenager(),
                       '/teenager/all_wishes': (context) => AllTeenagerWishes(),
                       '/teenager/reminder': (context) => ReminderTeenager(),
+                      '/teenager/challenges': (context) => Challenges(),
                     },
                   )
               );

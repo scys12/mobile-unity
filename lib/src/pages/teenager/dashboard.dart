@@ -112,7 +112,6 @@ class _DashboardTeenagerState extends State<DashboardTeenager> {
                 SizedBox(
                   height: 15.0,
                 ),
-                _buildButtonAllTask(),
               ],
             ),
           )
@@ -225,44 +224,6 @@ class _DashboardTeenagerState extends State<DashboardTeenager> {
               fontWeight: FontWeight.w600,
               fontSize: 15.0,
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildButtonAllTask() {
-    return ElevatedButton(
-      onPressed: () {
-        Navigator.pushNamed(context, '/teenager/tasks');
-      },
-      style: ButtonStyle(
-        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-          EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        ),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-        ),
-        elevation: MaterialStateProperty.all<double>(0.0),
-        backgroundColor: MaterialStateProperty.all<Color>(secondaryColor),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Lihat semua tantanganku",
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w600,
-              fontSize: 17.0,
-            ),
-          ),
-          SizedBox(
-            width: 15.0,
-          ),
-          Icon(
-            Icons.arrow_forward,
           ),
         ],
       ),

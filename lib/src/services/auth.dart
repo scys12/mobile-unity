@@ -3,6 +3,7 @@ import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/parent.dart';
 import 'package:mobile_unity/src/models/teenager.dart';
 import 'package:mobile_unity/src/models/user.dart';
+import 'package:mobile_unity/src/services/challenge_database.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
 import 'package:mobile_unity/src/services/parent_database.dart';
 import 'package:mobile_unity/src/services/teenager_database.dart';
@@ -114,7 +115,10 @@ class AuthService {
         data["outcome_money"] = 0;
         data["income_date"] = DateTime.now();
         data["outcome_date"] = DateTime.now();
+        data["last_login"] = DateTime.now();
+        data["total_login"] = 0;
         await TeenagerDatabase(uid: user.uid).createTeenagerData(data);
+        await ChallengeDatabase().initChallenge(user.uid);
         _user = await _teenagerFromFirebaseUser(user);
       }
     } on FirebaseAuthException catch (e) {

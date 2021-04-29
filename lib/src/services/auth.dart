@@ -40,7 +40,7 @@ class AuthService {
     phoneNumber  = phoneNumber.toString().trim();
 
     void verificationCompleted(PhoneAuthCredential credential) async {
-      var a = await _auth.signInWithCredential(credential);
+      // var a = await _auth.signInWithCredential(credential);
     }
 
     void verificationFailed(FirebaseAuthException e){
@@ -69,11 +69,14 @@ class AuthService {
   }
 
   Future<User> signInWithPhoneNumber(String pin) async{
-    print(pin);
-    print(verificationId);
+    User user;
     PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: pin);
-    UserCredential userCredential = await _auth.signInWithCredential(phoneAuthCredential);
-    User user = userCredential.user;
+    try {
+      UserCredential userCredential = await _auth.signInWithCredential(phoneAuthCredential);
+      user = userCredential.user;
+    }catch(e) {
+      print(e);
+    }
     return user;
   }
 

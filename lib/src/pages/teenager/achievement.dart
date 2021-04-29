@@ -161,12 +161,12 @@ class _TeenagerAchivementState extends State<TeenagerAchivement> with TickerProv
 
   Widget _buildAchievement(){
     List<String> message  = [
-      "Selamat ${_user.name} telah menyelesaikan 1 tantangan",
-      "Selamat ${_user.name}kamu telah menyelesaikan 1 impian",
-      "Selamat ${_user.name} telah menyelesaikan 2 tantangan",
-      "Selamat ${_user.name} telah menyelesaikan 5 impian",
-      "Selamat ${_user.name} telah menyelesaikan 3 tantangan",
-      "Selamat ${_user.name} telah menyelesaikan 15 impian",
+      "Selamat ${_user.name}, kamu telah menyelesaikan 1 tantangan",
+      "Selamat ${_user.name}, kamu telah menyelesaikan 1 impian",
+      "Selamat ${_user.name}, kamu telah menyelesaikan 2 tantangan",
+      "Selamat ${_user.name}, kamu telah menyelesaikan 5 impian",
+      "Selamat ${_user.name}, kamu telah menyelesaikan 3 tantangan",
+      "Selamat ${_user.name}, kamu telah menyelesaikan 15 impian",
     ];
     var achievements = _user.achievements;
     return GridView.builder(

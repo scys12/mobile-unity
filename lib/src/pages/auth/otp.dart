@@ -147,7 +147,6 @@ class _OTPScreenState extends State<OTPScreen> {
                           createLoadingAlertDialog(context);
                         }
                         var resp = await widget.authService.signInWithPhoneNumber(v);
-                        print("SONO ${resp.uid}");
                         if(resp != null) {
                           var isExist = await ChildDatabase(uid: resp.uid).checkUser();
                           if(!isExist) {
@@ -166,9 +165,7 @@ class _OTPScreenState extends State<OTPScreen> {
                               "achievements" : [false, false, false, false, false, false]
                             };
                             await ChildDatabase(uid: resp.uid).createChildData(data);
-                            print("ab");
                           }
-                          print("cd");
                           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => Wrapper()), (route) => false);
                         }
                         else {

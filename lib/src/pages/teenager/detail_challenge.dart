@@ -71,10 +71,8 @@ class _DetailChallengeState extends State<DetailChallenge> {
         date.add(element.createdAt.day);
       }
     });
-    if (date.length == 2) {
-      _outcome = _countIncomeOutcome("outcome", _filteredFinancials);
-      _income = _countIncomeOutcome("income", _filteredFinancials);
-    }
+    _outcome = _countIncomeOutcome("outcome", _filteredFinancials);
+    _income = _countIncomeOutcome("income", _filteredFinancials);
 
     return _loading ? Loading() : Scaffold(
       appBar: CustomAppBar(true, "Detail Tantangan"),

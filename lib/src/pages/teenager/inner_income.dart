@@ -3,11 +3,14 @@ import 'dart:async';
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mobile_unity/src/models/challenge.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/financial.dart';
 import 'package:mobile_unity/src/models/teenager.dart';
+import 'package:mobile_unity/src/provider/challenge_provider.dart';
 import 'package:mobile_unity/src/provider/finance_provider.dart';
 import 'package:mobile_unity/src/provider/wish_provider.dart';
+import 'package:mobile_unity/src/services/challenge_database.dart';
 import 'package:mobile_unity/src/services/child_database.dart';
 import 'package:mobile_unity/src/services/financial_database.dart';
 import 'package:mobile_unity/src/services/teenager_database.dart';
@@ -49,6 +52,7 @@ class _State extends State<InnerIncomeTeenager> {
   List<Financial> _filteredFinancials = [];
   int _income = 0;
   int _outcome = 0;
+  ChallengeProvider _challengeProvider;
 
   List<Financial> filterFinancial(){
     List<Financial> filtered = [];
@@ -61,17 +65,23 @@ class _State extends State<InnerIncomeTeenager> {
   @override
   void initState() {
     super.initState();
+    initData();
+  }
+
+  initData() async {
     _user = Provider.of<Teenager>(context, listen: false);
     _wishProvider = Provider.of<WishProvider>(context, listen: false);
     _wishProvider.getWishes(childId: _user.uid);
+    _challengeProvider = Provider.of<ChallengeProvider>(context, listen: false);
+    await _challengeProvider.getUserChallenge(userId: _user.uid);
   }
 
   @override
   Widget build(BuildContext context) {
+    _challengeProvider = Provider.of<ChallengeProvider>(context);
     _wishProvider = Provider.of<WishProvider>(context);
-    _loadingWish = _wishProvider.wishes != null ? false : true;
-    _financialProvider = Provider.of(context);
-
+    _financialProvider = Provider.of<FinancialProvider>(context);
+    _loadingWish = _wishProvider.wishes != null && _challengeProvider.challenges != null ? false : true;
     return _loadingWish ? Loading() : Scaffold(
       appBar: CustomAppBar(true, "Pemasukan Baru"),
       body: ListView(
@@ -317,53 +327,79 @@ class _State extends State<InnerIncomeTeenager> {
                   (_detail != "")
                       ? ElevatedButton(
                     onPressed: () async {
-                      await _financialProvider.getFinancialBasedChildId(childId: _user.uid);
-                      financials = _financialProvider.financials;
-                      _filteredFinancials = filterFinancial();
-                      Set<int> date;
-                      _filteredFinancials.forEach((element) {
-                        date.add(element.createdAt.day);
+                      setState(() {
+                        _loading = true;
                       });
-                      if (date.length == 7) {
-                        _outcome = _countIncomeOutcome("outcome", _filteredFinancials);
-                        _income = _countIncomeOutcome("income", _filteredFinancials);
+                      if(_loading) createLoadingAlertDialog(context);
 
+                      var _title = _dropDownState;
+                      if (_dropDownState == "Lainnya") {
+                        _title = _dropDownLainnyaState;
                       }
-                      // setState(() {
-                      //   _loading = true;
-                      // });
-                      // if(_loading) createLoadingAlertDialog(context);
-                      //
-                      // var _title = _dropDownState;
-                      // if (_dropDownState == "Lainnya") {
-                      //   _title = _dropDownLainnyaState;
-                      // }
-                      // var data = {
-                      //   "child_id" : _user.uid,
-                      //   "created_at" : DateTime.now(),
-                      //   "description" : _detail,
-                      //   "money" : int.parse(_amount),
-                      //   "type" : "income",
-                      //   "title" : _title,
-                      // };
-                      // await FinancialDatabase().createFinancial(data);
-                      //
-                      // Map<String, dynamic> childData = {
-                      //   "income" : _user.income + int.parse(_amount),
-                      // };
-                      // var wishes = _wishProvider.wishes.where((element) => !element.isDone && element.deadline.difference(DateTime.now()).inDays >= 0);
-                      // var returnContext = false;
-                      // if(wishes.length > 0) {
-                      //   var wish = wishes.first;
-                      //   Map<String, dynamic> wishData = {
-                      //     "current_money" : wish.currentMoney + int.parse(_amount)
-                      //   };
-                      //   await WishDatabase(uid: wish.uid).updateWish(wishData);
-                      // }
-                      //
-                      // await TeenagerDatabase(uid: _user.uid).updateTeenagerData(childData);
-                      // Navigator.pop(context);
-                      // Navigator.pushReplacementNamed(context, '/teenager/wrapper');
+                      var data = {
+                        "child_id" : _user.uid,
+                        "created_at" : DateTime.now(),
+                        "description" : _detail,
+                        "money" : int.parse(_amount),
+                        "type" : "income",
+                        "title" : _title,
+                      };
+                      await FinancialDatabase().createFinancial(data);
+
+                      Map<String, dynamic> childData = {
+                        "income" : _user.income + int.parse(_amount),
+                      };
+                      int countFinishedChallenge = await ChallengeDatabase().countFinishedChallenge(_user.uid);
+                      if (countFinishedChallenge <= 3) {
+                        await _financialProvider.getFinancialBasedChildId(childId: _user.uid);
+                        financials = _financialProvider.financials;
+                        financials.forEach((element) {print(element.createdAt.day);});
+                        _filteredFinancials = filterFinancial();
+                        Set<int> date = {};
+                        _filteredFinancials.forEach((element) {
+                          date.add(element.createdAt.day);
+                        });
+                        print(date);
+                        if (date.length == 7) {
+                          var tabungChallenges = _challengeProvider.challenges.where((element) => element.key == "tabung").toList();
+                          var kumpulChallenges = _challengeProvider.challenges.where((element) => element.key == "kumpul").toList();
+
+                          _outcome = _countIncomeOutcome("outcome", _filteredFinancials);
+                          _income = _countIncomeOutcome("income", _filteredFinancials);
+
+                          Map<String, dynamic> challenge = {
+                            "isDone": true,
+                          };
+
+                          if (tabungChallenges.length > 0) {
+                            await ChallengeDatabase(uid: tabungChallenges[0].uid).updateChallenge(challenge);
+                          }
+                          if (_income - _outcome >= 100000 && kumpulChallenges.length > 0) {
+                            await ChallengeDatabase(uid: kumpulChallenges[0].uid).updateChallenge(challenge);
+                          }
+                        }
+                        childData["achievements"] = _user.achievements;
+                        countFinishedChallenge == 1
+                            ? childData["achievements"][0] = true
+                            : countFinishedChallenge == 2
+                            ? childData["achievements"][2] = true
+                            : countFinishedChallenge >= 3
+                            ? childData["achievements"][4] = true
+                            : childData["achievements"] = _user.achievements;
+                      }
+                      var wishes = _wishProvider.wishes.where((element) => !element.isDone && element.deadline.difference(DateTime.now()).inDays >= 0);
+                      var returnContext = false;
+                      if(wishes.length > 0) {
+                        var wish = wishes.first;
+                        Map<String, dynamic> wishData = {
+                          "current_money" : wish.currentMoney + int.parse(_amount)
+                        };
+                        await WishDatabase(uid: wish.uid).updateWish(wishData);
+                      }
+
+                      await TeenagerDatabase(uid: _user.uid).updateTeenagerData(childData);
+                      Navigator.pop(context);
+                      Navigator.pushReplacementNamed(context, '/teenager/wrapper');
                     },
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all<EdgeInsetsGeometry>(

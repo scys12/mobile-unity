@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile_unity/src/models/challenge.dart';
 import 'package:mobile_unity/src/models/child.dart';
 import 'package:mobile_unity/src/models/task.dart';
 import 'package:mobile_unity/src/models/teenager.dart';
 import 'package:mobile_unity/src/models/wish.dart';
 import 'package:mobile_unity/src/pages/kid/detail_task.dart';
 import 'package:mobile_unity/src/pages/kid/detail_wish.dart';
+import 'package:mobile_unity/src/pages/teenager/detail_challenge.dart';
 import 'package:mobile_unity/src/pages/teenager/detail_wish.dart';
 import 'package:mobile_unity/src/provider/task_provider.dart';
 import 'package:mobile_unity/src/provider/wish_provider.dart';
@@ -24,31 +26,25 @@ class _TeenagerAchivementState extends State<TeenagerAchivement> with TickerProv
   int _tabIndex = 0;
   TabController _tabController;
   Teenager _user;
+  List<Challenge> _challenges;
   List<String> tabItems = [
     "Lencana",
     "Tantangan Selesai"
   ];
-  TaskProvider _taskProvider;
   Wish _wish;
-  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _user = Provider.of<Teenager>(context, listen: false);
-    _taskProvider = Provider.of<TaskProvider>(context, listen: false);
-    _taskProvider.getTeenagerFinishTasks(childId: _user.uid);
   }
   @override
   Widget build(BuildContext context) {
-    _taskProvider = Provider.of<TaskProvider>(context);
-    if(_taskProvider.tasks != null)
-      setState(() {
-        _loading = false;
-      });
+    _challenges = Provider.of<List<Challenge>>(context);
+    _challenges = _challenges.where((element) => element.isDone).toList();
     _wish = Provider.of<Wish>(context);
-    return _loading ? Loading() : Scaffold(
+    return Scaffold(
       appBar: CustomAppBar(false, "Prestasi"),
       body: ListView(
         padding: EdgeInsets.all(20.0),
@@ -59,7 +55,7 @@ class _TeenagerAchivementState extends State<TeenagerAchivement> with TickerProv
           SizedBox(height: 20.0,),
           _tabIndex == 0
               ? _buildAchievement()
-              : _taskProvider.tasks.length <= 0
+              : _challenges.length <= 0
               ? Text(
                   "Tidak ada tantangan yang sudah diselesaikan",
                   style: TextStyle(
@@ -68,7 +64,7 @@ class _TeenagerAchivementState extends State<TeenagerAchivement> with TickerProv
                     fontSize: 16.0
                   ),
                 )
-              : _buildFinishedTask(_taskProvider.tasks),
+              : _buildFinishedTask(),
           SizedBox(height: 20.0,),
           _buildHeader("Impianku", "Impian yang aku inginkan"),
           SizedBox(height: 20.0,),
@@ -80,15 +76,15 @@ class _TeenagerAchivementState extends State<TeenagerAchivement> with TickerProv
     );
   }
 
-  Widget _buildFinishedTask(List<Task> tasks){
+  Widget _buildFinishedTask(){
     return ListView.builder(
-      itemCount: tasks.length,
+      itemCount: _challenges.length,
       shrinkWrap: true,
       controller: ScrollController(keepScrollOffset: false),
       itemBuilder: (context, index){
         return InkWell(
           onTap: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => DetailTaskKid(taskId: tasks[index].uid,)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => DetailChallenge(uid: _challenges[index].uid,)));
           },
           splashFactory: InkRipple.splashFactory,
           child: Container(
@@ -121,7 +117,7 @@ class _TeenagerAchivementState extends State<TeenagerAchivement> with TickerProv
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Text(
-                        tasks[index].title,
+                        _challenges[index].title,
                         style: TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w600,
@@ -137,11 +133,11 @@ class _TeenagerAchivementState extends State<TeenagerAchivement> with TickerProv
                           Container(
                             padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
                             decoration: BoxDecoration(
-                                color: primaryColor,
+                                color: greenColor,
                                 borderRadius: BorderRadius.circular(10.0)
                             ),
                             child: Text(
-                              tasks[index].category,
+                              "Selesai",
                               style: TextStyle(
                                   fontFamily: 'Poppins',
                                   fontWeight: FontWeight.w500,
@@ -152,45 +148,6 @@ class _TeenagerAchivementState extends State<TeenagerAchivement> with TickerProv
                           ),
                         ],
                       ),
-                      SizedBox(height: 10.0,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
-                            decoration: BoxDecoration(
-                                color: greenColor,
-                                borderRadius: BorderRadius.circular(10.0)
-                            ),
-                            child: Text(
-                              DateFormat("dd MMMM yyyy").format(tasks[index].deadline).toString(),
-                              style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15.0,
-                                  color: Colors.white
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(vertical:3.0, horizontal: 15.0),
-                            decoration: BoxDecoration(
-                                color: secondaryColor,
-                                borderRadius: BorderRadius.circular(10.0)
-                            ),
-                            child: Text(
-                              "+${tasks[index].point}pts",
-                              style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15.0,
-                                  color: Colors.white
-                              ),
-                            ),
-                          )
-                        ],
-                      )
                     ],
                   ),
                 ),

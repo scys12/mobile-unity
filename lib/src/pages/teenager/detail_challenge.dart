@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_unity/src/models/challenge.dart';
+import 'package:mobile_unity/src/models/financial.dart';
 import 'package:mobile_unity/src/models/teenager.dart';
 import 'package:mobile_unity/src/provider/challenge_provider.dart';
+import 'package:mobile_unity/src/provider/finance_provider.dart';
 import 'package:mobile_unity/src/services/challenge_database.dart';
 import 'package:mobile_unity/src/shared/constants.dart';
 import 'package:mobile_unity/src/widgets/app_bar.dart';
@@ -20,6 +22,20 @@ class _DetailChallengeState extends State<DetailChallenge> {
   ChallengeProvider _challengeProvider;
   bool _loading = true;
   Teenager _teenager;
+  FinancialProvider _financialProvider;
+  List<Financial> financials = [];
+  List<Financial> _filteredFinancials = [];
+  int _income = 0;
+  int _outcome = 0;
+  final Set<int> date = {};
+
+  List<Financial> filterFinancial(){
+    List<Financial> filtered = [];
+    var now = DateTime.now();
+    var startDate = now.subtract(Duration(days: 6));
+    filtered = financials.where((element) => (startDate.difference(element.createdAt).inDays <=0 && startDate.difference(element.createdAt).inDays >=-5)).toList();
+    return filtered;
+  }
 
   @override
   void initState() {
@@ -27,17 +43,37 @@ class _DetailChallengeState extends State<DetailChallenge> {
     initData();
   }
   initData() async{
+    _teenager = Provider.of<Teenager>(context, listen: false);
     _challengeProvider = Provider.of<ChallengeProvider>(context, listen: false);
     await _challengeProvider.getChallenge(challengeId: widget.uid);
+    _financialProvider = Provider.of<FinancialProvider>(context, listen: false);
+    await _financialProvider.getFinancialBasedChildId(childId: _teenager.uid);
   }
+
+  int _countIncomeOutcome(String type, List<Financial> finances){
+    return finances.where((element) => element.type == type).toList().fold(0, (previous, current) => previous + current.money);
+  }
+
   @override
   Widget build(BuildContext context) {
     _challengeProvider = Provider.of<ChallengeProvider>(context);
     _teenager = Provider.of<Teenager>(context);
-
-    if (_challengeProvider.selectedChallenge != null && _challengeProvider.selectedChallenge.uid == widget.uid) {
+    _financialProvider = Provider.of<FinancialProvider>(context);
+    if (_challengeProvider.selectedChallenge != null && _challengeProvider.selectedChallenge.uid == widget.uid && _financialProvider.financials != null) {
       _challenge = _challengeProvider.selectedChallenge;
       _loading = false;
+      financials = _financialProvider.financials;
+    }
+
+    _filteredFinancials = filterFinancial();
+    _filteredFinancials.forEach((element) {
+      if (element != null) {
+        date.add(element.createdAt.day);
+      }
+    });
+    if (date.length == 2) {
+      _outcome = _countIncomeOutcome("outcome", _filteredFinancials);
+      _income = _countIncomeOutcome("income", _filteredFinancials);
     }
 
     return _loading ? Loading() : Scaffold(
@@ -72,11 +108,29 @@ class _DetailChallengeState extends State<DetailChallenge> {
               SizedBox(height: 10.0,),
               Divider(height: 1.0, color: Colors.black,),
               SizedBox(height: 20.0,),
-              _challenge.key == "login" ? _buildLoginChallenge() : _challenge.key == "tabung" ? _buildTabungChallenge() : Container(),
+              _challenge.key == "login" ? _buildLoginChallenge() : _challenge.key == "tabung" ? _buildTabungChallenge() : _buildKumpulChallenge(),
             ],
           ) : Container()
         ]
       )
+    );
+  }
+
+  Widget _buildKumpulChallenge(){
+    return Container(
+      padding: EdgeInsets.all(10.0),
+      decoration: BoxDecoration(
+        color: primaryColor,
+        borderRadius: BorderRadius.circular(5.0),
+      ),
+      child: Text(
+        "Kamu baru mengumpulkan uang sebesar Rp ${_income-_outcome} dari ${date.length} hari selama 7 hari",
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 15.0,
+            fontFamily: "Poppins"
+        ),
+      ),
     );
   }
 
@@ -88,7 +142,7 @@ class _DetailChallengeState extends State<DetailChallenge> {
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: Text(
-        "Kamu baru menabung dari ${_teenager.totalLogin} hari selama 7 hari",
+        "Kamu baru menabung dari ${date.length} hari selama 7 hari",
         style: TextStyle(
             color: Colors.white,
             fontSize: 15.0,

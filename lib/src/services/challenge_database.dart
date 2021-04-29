@@ -50,6 +50,13 @@ class ChallengeDatabase {
     );
   }
 
+  Future<List<Challenge>> getChallengesByUserId() async {
+    var resp = await _challengesCollection
+        .where('teenagerId', isEqualTo: uid)
+        .get();
+    return resp.docs.map(_challengeListFromQueryDocumentSnapshot).toList();
+  }
+
   Stream<List<Challenge>> getChallenge(Teenager teenager) {
     return teenager == null ? null : _challengesCollection
         .where('teenagerId', isEqualTo: teenager.uid)
